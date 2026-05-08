@@ -479,6 +479,11 @@
     border-color: var(--accent);
   }
 
+  .daily-dot.done-fail {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
   .daily-counter {
     text-align: center;
     font-size: 0.72rem;
@@ -718,8 +723,10 @@ let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
 
 let dailyMode = false;
 let dailyAttempts = [];
+let dailyFailed = [];
 let dailyCurrent = 0;
 let dailyDeck = [];
+const DAILY_MAX_ATTEMPTS = 5;
 
 const DAILY_EPOCH = new Date(2026, 4, 8);
 
@@ -761,6 +768,7 @@ function startDaily() {
   dailyMode = true;
   dailyDeck = getDailyCards();
   dailyAttempts = new Array(7).fill(0);
+  dailyFailed = new Array(7).fill(false);
   dailyCurrent = 0;
 
   document.getElementById('dailyBtnRow').style.display = 'none';
@@ -789,7 +797,9 @@ function renderDailyDots() {
   dots.innerHTML = dailyDeck.map((_, i) => {
     let cls = 'daily-dot';
     if (i < dailyCurrent) {
-      cls += dailyAttempts[i] === 1 ? ' done' : ' done-multi';
+      if (dailyFailed[i]) cls += ' done-fail';
+      else if (dailyAttempts[i] === 1) cls += ' done';
+      else cls += ' done-multi';
     } else if (i === dailyCurrent) {
       cls += ' current';
     }
@@ -807,8 +817,9 @@ function renderDailyCard() {
   }
 
   const card = dailyDeck[dailyCurrent];
+  const attemptsLeft = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
   area.innerHTML = `
-    <div class="daily-counter">Card ${dailyCurrent + 1} of 7</div>
+    <div class="daily-counter">Card ${dailyCurrent + 1} of 7 · ${attemptsLeft} ${attemptsLeft === 1 ? 'try' : 'tries'} left</div>
     <div class="card">
       <div class="card-meta">${card.verb} &mdash; present tense</div>
       <div class="card-prompt">${card.meaning}</div>
@@ -821,6 +832,7 @@ function renderDailyCard() {
       <div id="revealArea"></div>
     </div>
     <div class="controls">
+      <button class="ctrl-btn" onclick="skipDailyCard()">Skip →</button>
       <button class="ctrl-btn" onclick="exitDaily()">← Back to practice</button>
     </div>
   `;
@@ -868,11 +880,14 @@ function checkDailyAnswer() {
     revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
     renderDailyDots();
     setTimeout(() => btn.focus(), 0);
+  } else if (dailyAttempts[dailyCurrent] >= DAILY_MAX_ATTEMPTS) {
+    failDailyCard();
   } else {
     input.classList.add('shake');
     input.classList.add('wrong');
     feedback.className = 'feedback err';
-    feedback.textContent = '✗ Not quite — try again!';
+    const left = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
+    feedback.textContent = `✗ Not quite — ${left} ${left === 1 ? 'try' : 'tries'} left`;
     setTimeout(() => {
       input.classList.remove('shake', 'wrong');
       input.value = '';
@@ -883,52 +898,70 @@ function checkDailyAnswer() {
   }
 }
 
+function failDailyCard() {
+  const card = dailyDeck[dailyCurrent];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+
+  dailyFailed[dailyCurrent] = true;
+  dailyAnswered = true;
+  input.disabled = true;
+  input.classList.add('wrong');
+  btn.classList.add('go-red');
+  feedback.className = 'feedback err';
+  feedback.innerHTML = `✗ The answer was <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+  renderDailyDots();
+  setTimeout(() => btn.focus(), 0);
+}
+
+function skipDailyCard() {
+  dailyFailed[dailyCurrent] = true;
+  dailyCurrent++;
+  dailyAnswered = false;
+  renderDailyCard();
+}
+
 function buildShareString() {
   const num = getDailyNumber();
   const date = formatDailyDate();
-  let lines = [`Verbos em Portugues \u2014 Daily #${num}`, date, ''];
-
-  const maxVerbLen = Math.max(...dailyDeck.map(c => c.verb.length));
+  let lines = [`Portugese verbs! Daily #${num}`, date, ''];
 
   dailyDeck.forEach((card, i) => {
-    const attempts = dailyAttempts[i];
-    const verb = card.verb.padEnd(maxVerbLen, ' ');
-    let dots;
-    if (attempts === 1) {
-      dots = '\uD83D\uDFE2';
-    } else if (attempts <= 5) {
-      dots = '\uD83D\uDFE1'.repeat(attempts);
-    } else {
-      dots = '\uD83D\uDFE1'.repeat(4) + '\uD83D\uDD34';
-    }
-    lines.push(`${i + 1}. ${verb}  ${dots}`);
+    const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
+    lines.push(`${card.verb} \u2192 ${dots}`);
   });
 
-  const firstTry = dailyAttempts.filter(a => a === 1).length;
+  const solved = dailyFailed.filter(f => !f).length;
+  const firstTry = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
   lines.push('');
-  lines.push(`${firstTry}/7 first try!`);
+  lines.push(`${solved}/7 solved \u00b7 ${firstTry} first try!`);
+  lines.push('');
+  lines.push('Play \u2192 gjermundbae.github.io/portuguese-verb-flashcards');
   return lines.join('\n');
+}
+
+function buildResultDots(attempts, failed) {
+  if (failed) {
+    return '\uD83D\uDFE1'.repeat(attempts) + '\uD83D\uDD34';
+  } else if (attempts === 1) {
+    return '\uD83D\uDFE2';
+  } else {
+    return '\uD83D\uDFE1'.repeat(attempts - 1) + '\uD83D\uDFE2';
+  }
 }
 
 function renderDailyComplete() {
   renderDailyDots();
   const area = document.getElementById('cardArea');
-  const allFirstTry = dailyAttempts.every(a => a === 1);
-  const firstTryCount = dailyAttempts.filter(a => a === 1).length;
-  const totalAttempts = dailyAttempts.reduce((a, b) => a + b, 0);
-
-  const maxVerbLen = Math.max(...dailyDeck.map(c => c.verb.length));
+  const allFirstTry = dailyAttempts.every(a => a === 1) && dailyFailed.every(f => !f);
+  const solvedCount = dailyFailed.filter(f => !f).length;
+  const firstTryCount = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
 
   const rows = dailyDeck.map((card, i) => {
-    const attempts = dailyAttempts[i];
-    let dots;
-    if (attempts === 1) {
-      dots = '\uD83D\uDFE2';
-    } else if (attempts <= 5) {
-      dots = '\uD83D\uDFE1'.repeat(attempts);
-    } else {
-      dots = '\uD83D\uDFE1'.repeat(4) + '\uD83D\uDD34';
-    }
+    const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
     return `<div class="daily-result-row">
       <span class="daily-result-num">${i + 1}.</span>
       <span class="daily-result-verb">${card.verb}</span>
@@ -936,11 +969,21 @@ function renderDailyComplete() {
     </div>`;
   }).join('');
 
-  const title = allFirstTry ? 'Perfeito!' : 'Challenge Complete!';
-  const trophy = allFirstTry ? '\uD83C\uDF86' : '\uD83C\uDFC6';
-  const subtitle = allFirstTry
-    ? 'All 7 on the first try. Incredible!'
-    : `${firstTryCount}/7 first try \u2014 ${totalAttempts} total attempts`;
+  const allSolved = solvedCount === 7;
+  let title, trophy, subtitle;
+  if (allFirstTry) {
+    title = 'Perfeito!';
+    trophy = '\uD83C\uDF86';
+    subtitle = 'All 7 on the first try. Incredible!';
+  } else if (allSolved) {
+    title = 'Challenge Complete!';
+    trophy = '\uD83C\uDFC6';
+    subtitle = `${solvedCount}/7 solved \u00b7 ${firstTryCount} first try`;
+  } else {
+    title = 'Challenge Complete';
+    trophy = '\uD83D\uDCAA';
+    subtitle = `${solvedCount}/7 solved \u00b7 ${firstTryCount} first try`;
+  }
 
   area.innerHTML = `
     <div class="card done-screen">
