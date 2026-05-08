@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norwegian Verb Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F0E8;
+    --surface: #FFFDF7;
+    --surface2: #EDE8DC;
+    --border: #D4CCBA;
+    --border2: #BEB5A0;
+    --text: #1A1712;
+    --text2: #6B6456;
+    --text3: #9E9485;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --green-light: #B7E4C7;
+    --red: #7D2B2B;
+    --red-bg: #FFE8E8;
+    --red-light: #FFCACA;
+    --accent: #C4922A;
+    --accent-bg: #FFF3DC;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  header p {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* Filter tabs */
+  .filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .fc-tag {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .fc-tag:hover { border-color: var(--border2); }
+
+  .fc-tag.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+
+  .stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+
+  .progress-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 0.7rem;
+    color: var(--text3);
+    min-width: 32px;
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.75rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-meta {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-prompt {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .answer-input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .answer-input:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .answer-input.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .answer-input.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .answer-input:disabled { opacity: 1; }
+
+  .check-btn {
+    font-size: 1.15rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn.go-green { background: var(--green); border-color: var(--green); }
+  .check-btn.go-red { background: var(--red); border-color: var(--red); }
+
+  .feedback {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    min-height: 18px;
+    line-height: 1.5;
+  }
+
+  .feedback.ok { color: var(--green); }
+  .feedback.err { color: var(--red); }
+
+  .example {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-style: italic;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
+
+  /* Done screen */
+  .done-screen {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .done-screen .trophy {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .done-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .done-screen p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Pronunciation tag */
+  .pron-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid #E8C97A;
+    border-radius: 999px;
+    padding: 2px 10px;
+    letter-spacing: 0.04em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* Fireworks */
+  .fireworks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Conjugation table (wrong-answer reveal) */
+  .conj-table-wrapper {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    background: var(--red-bg);
+    border: 1px solid var(--red-light);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .conj-table-wrapper.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .conj-table-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .conj-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .conj-table tr + tr { border-top: 1px dashed var(--red-light); }
+
+  .conj-table td { padding: 0.35rem 0; }
+
+  .conj-pronoun {
+    color: var(--text3);
+    width: 60px;
+  }
+
+  .conj-form {
+    color: var(--red);
+    font-weight: 500;
+  }
+
+  .conj-pron {
+    color: var(--text3);
+    font-size: 0.7rem;
+    text-align: right;
+  }
+
+  /* Daily challenge */
+  .daily-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .daily-btn:hover { background: var(--accent); color: var(--surface); }
+
+  .daily-header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .daily-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+
+  .daily-header .daily-date {
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .daily-progress-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .daily-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .daily-dot.current {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.25);
+  }
+
+  .daily-dot.done {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .daily-dot.done-multi {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .daily-dot.done-fail {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  .daily-counter {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .answer-input.shake {
+    animation: shake 0.4s ease;
+  }
+
+  .daily-results {
+    text-align: left;
+    margin: 1.5rem 0;
+  }
+
+  .daily-result-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 0.82rem;
+  }
+
+  .daily-result-row + .daily-result-row {
+    border-top: 1px dashed var(--border);
+  }
+
+  .daily-result-num {
+    color: var(--text3);
+    font-size: 0.7rem;
+    min-width: 18px;
+  }
+
+  .daily-result-verb {
+    color: var(--text2);
+    min-width: 80px;
+  }
+
+  .daily-result-dots {
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.65rem 1.6rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--surface);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { opacity: 0.85; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 10000;
+    letter-spacing: 0.04em;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Verbs in <em>Norwegian</em></h1>
+  <p>Present tense</p>
+</header>
+
+<div class="container">
+  <div id="dailyBtnRow" style="text-align:center;">
+    <button class="daily-btn" onclick="startDaily()">&#9733; Daily Challenge</button>
+  </div>
+
+  <div id="dailyHeader" class="daily-header" style="display:none;"></div>
+  <div id="dailyDots" class="daily-progress-dots" style="display:none;"></div>
+
+  <div id="practiceChrome">
+    <div class="filters" id="filterRow"></div>
+
+    <div class="stats" id="statsRow">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
+      <div class="stat"><div class="stat-num red" id="statLeft">0</div><div class="stat-lbl">Left</div></div>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bg"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+  </div>
+
+  <div id="cardArea"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ALL_CARDS = [
+  { verb:"være", conj:"jeg er", pron:"EHR", meaning:"I am", example:"Jeg er norsk.", group:"essential verbs" },
+  { verb:"ha", conj:"jeg har", pron:"HAHR", meaning:"I have", example:"Jeg har kaffe.", group:"essential verbs" },
+  { verb:"ville", conj:"jeg vil", pron:"VEEL", meaning:"I want", example:"Jeg vil lære mer.", group:"essential verbs" },
+  { verb:"kunne", conj:"jeg kan", pron:"KAHN", meaning:"I can", example:"Jeg kan hjelpe.", group:"essential verbs" },
+  { verb:"måtte", conj:"jeg må", pron:"MOH", meaning:"I must / have to", example:"Jeg må gå nå.", group:"essential verbs" },
+  { verb:"gå", conj:"jeg går", pron:"GOR", meaning:"I walk / go", example:"Jeg går til kontoret.", group:"movement" },
+  { verb:"komme", conj:"jeg kommer", pron:"KOM-er", meaning:"I come", example:"Jeg kommer snart.", group:"movement" },
+  { verb:"reise", conj:"jeg reiser", pron:"RYE-ser", meaning:"I travel", example:"Jeg reiser til Oslo i morgen.", group:"movement" },
+  { verb:"snakke", conj:"jeg snakker", pron:"SNAHK-er", meaning:"I speak / talk", example:"Jeg snakker litt norsk.", group:"daily life" },
+  { verb:"jobbe", conj:"jeg jobber", pron:"YOB-er", meaning:"I work", example:"Jeg jobber i sentrum.", group:"daily life" },
+  { verb:"bo", conj:"jeg bor", pron:"BOOR", meaning:"I live", example:"Jeg bor i Rio nå.", group:"daily life" },
+  { verb:"like", conj:"jeg liker", pron:"LEE-ker", meaning:"I like", example:"Jeg liker kaffe.", group:"daily life" },
+  { verb:"spise", conj:"jeg spiser", pron:"SPEE-ser", meaning:"I eat", example:"Jeg spiser frokost.", group:"daily life" },
+  { verb:"drikke", conj:"jeg drikker", pron:"DRIK-er", meaning:"I drink", example:"Jeg drikker vann.", group:"daily life" },
+  { verb:"lese", conj:"jeg leser", pron:"LEH-ser", meaning:"I read", example:"Jeg leser en bok.", group:"daily life" },
+  { verb:"skrive", conj:"jeg skriver", pron:"SKREE-ver", meaning:"I write", example:"Jeg skriver en e-post.", group:"daily life" },
+  { verb:"se", conj:"jeg ser", pron:"SEHR", meaning:"I see / watch", example:"Jeg ser på TV.", group:"daily life" },
+  { verb:"forstå", conj:"jeg forstår", pron:"for-STOR", meaning:"I understand", example:"Jeg forstår litt norsk.", group:"daily life" },
+  { verb:"lære", conj:"jeg lærer", pron:"LEH-rer", meaning:"I learn", example:"Jeg lærer norsk.", group:"daily life" },
+];
+
+const GROUPS = ["essential verbs", "daily life", "movement"];
+let activeGroups = new Set(GROUPS);
+let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
+
+let dailyMode = false;
+let dailyAttempts = [];
+let dailyFailed = [];
+let dailyCurrent = 0;
+let dailyDeck = [];
+const DAILY_MAX_ATTEMPTS = 5;
+
+const DAILY_EPOCH = new Date(2026, 4, 8);
+
+function dailySeed() {
+  const d = new Date();
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+function seededRandom(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function getDailyCards() {
+  const rng = seededRandom(dailySeed());
+  const indices = [];
+  const targetCount = Math.min(7, ALL_CARDS.length);
+  while (indices.length < targetCount) {
+    const idx = Math.floor(rng() * ALL_CARDS.length);
+    if (!indices.includes(idx)) indices.push(idx);
+  }
+  return indices.map(i => ALL_CARDS[i]);
+}
+
+function getDailyNumber() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.floor((today - DAILY_EPOCH) / 86400000);
+}
+
+function formatDailyDate() {
+  return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function startDaily() {
+  dailyMode = true;
+  dailyDeck = getDailyCards();
+  dailyAttempts = new Array(dailyDeck.length).fill(0);
+  dailyFailed = new Array(dailyDeck.length).fill(false);
+  dailyCurrent = 0;
+
+  document.getElementById('dailyBtnRow').style.display = 'none';
+  document.getElementById('practiceChrome').style.display = 'none';
+  document.getElementById('dailyHeader').style.display = '';
+  document.getElementById('dailyDots').style.display = '';
+
+  document.getElementById('dailyHeader').innerHTML =
+    `<h2>&#9733; Daily Challenge #${getDailyNumber()}</h2>` +
+    `<div class="daily-date">${formatDailyDate()}</div>`;
+
+  renderDailyCard();
+}
+
+function exitDaily() {
+  dailyMode = false;
+  document.getElementById('dailyBtnRow').style.display = '';
+  document.getElementById('practiceChrome').style.display = '';
+  document.getElementById('dailyHeader').style.display = 'none';
+  document.getElementById('dailyDots').style.display = 'none';
+  buildDeck();
+}
+
+function renderDailyDots() {
+  const dots = document.getElementById('dailyDots');
+  dots.innerHTML = dailyDeck.map((_, i) => {
+    let cls = 'daily-dot';
+    if (i < dailyCurrent) {
+      if (dailyFailed[i]) cls += ' done-fail';
+      else if (dailyAttempts[i] === 1) cls += ' done';
+      else cls += ' done-multi';
+    } else if (i === dailyCurrent) {
+      cls += ' current';
+    }
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function renderDailyCard() {
+  renderDailyDots();
+  const area = document.getElementById('cardArea');
+
+  if (dailyCurrent >= dailyDeck.length) {
+    renderDailyComplete();
+    return;
+  }
+
+  const card = dailyDeck[dailyCurrent];
+  const attemptsLeft = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
+  area.innerHTML = `
+    <div class="daily-counter">Card ${dailyCurrent + 1} of ${dailyDeck.length} · ${attemptsLeft} ${attemptsLeft === 1 ? 'try' : 'tries'} left</div>
+    <div class="card">
+      <div class="card-meta">${card.verb} &mdash; present tense</div>
+      <div class="card-prompt">${card.meaning}</div>
+      <div class="card-sub">Type the Norwegian conjugation</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleDailyAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipDailyCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="exitDaily()">← Back to practice</button>
+    </div>
+  `;
+
+  const input = document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleDailyAction();
+  });
+}
+
+let dailyAnswered = false;
+
+function handleDailyAction() {
+  if (dailyAnswered) {
+    dailyCurrent++;
+    dailyAnswered = false;
+    renderDailyCard();
+    return;
+  }
+  checkDailyAnswer();
+}
+
+function checkDailyAnswer() {
+  const card = dailyDeck[dailyCurrent];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  if (!input.value.trim()) return;
+
+  dailyAttempts[dailyCurrent]++;
+  const correct = normalize(card.conj);
+  const given = normalize(input.value);
+
+  if (given === correct) {
+    dailyAnswered = true;
+    input.disabled = true;
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    const tries = dailyAttempts[dailyCurrent];
+    const tryText = tries === 1 ? '1st try!' : `${tries} tries`;
+    feedback.innerHTML = `✓ Correct — ${tryText} <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+    renderDailyDots();
+    setTimeout(() => btn.focus(), 0);
+  } else if (dailyAttempts[dailyCurrent] >= DAILY_MAX_ATTEMPTS) {
+    failDailyCard();
+  } else {
+    input.classList.add('shake');
+    input.classList.add('wrong');
+    feedback.className = 'feedback err';
+    const left = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
+    feedback.textContent = `✗ Not quite — ${left} ${left === 1 ? 'try' : 'tries'} left`;
+    setTimeout(() => {
+      input.classList.remove('shake', 'wrong');
+      input.value = '';
+      input.focus();
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+    }, 700);
+  }
+}
+
+function failDailyCard() {
+  const card = dailyDeck[dailyCurrent];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+
+  dailyFailed[dailyCurrent] = true;
+  dailyAnswered = true;
+  input.disabled = true;
+  input.classList.add('wrong');
+  btn.classList.add('go-red');
+  feedback.className = 'feedback err';
+  feedback.innerHTML = `✗ The answer was <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+  renderDailyDots();
+  setTimeout(() => btn.focus(), 0);
+}
+
+function skipDailyCard() {
+  dailyFailed[dailyCurrent] = true;
+  dailyCurrent++;
+  dailyAnswered = false;
+  renderDailyCard();
+}
+
+function buildShareString() {
+  const num = getDailyNumber();
+  const date = formatDailyDate();
+  let lines = [`Norwegian verbs! Daily #${num}`, date, ''];
+
+  dailyDeck.forEach((card, i) => {
+    const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
+    lines.push(`${card.verb} → ${dots}`);
+  });
+
+  const solved = dailyFailed.filter(f => !f).length;
+  const firstTry = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
+  lines.push('');
+  lines.push(`${solved}/${dailyDeck.length} solved · ${firstTry} first try!`);
+  lines.push('');
+  lines.push('Play → gjermundbae.github.io/norwegian-verb-flashcards#daily');
+  return lines.join('\n');
+}
+
+function buildResultDots(attempts, failed) {
+  if (failed) {
+    return '🟡'.repeat(attempts) + '🔴';
+  } else if (attempts === 1) {
+    return '🟢';
+  } else {
+    return '🟡'.repeat(attempts - 1) + '🟢';
+  }
+}
+
+function renderDailyComplete() {
+  renderDailyDots();
+  const area = document.getElementById('cardArea');
+  const allFirstTry = dailyAttempts.every(a => a === 1) && dailyFailed.every(f => !f);
+  const solvedCount = dailyFailed.filter(f => !f).length;
+  const firstTryCount = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
+
+  const rows = dailyDeck.map((card, i) => {
+    const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
+    return `<div class="daily-result-row">
+      <span class="daily-result-num">${i + 1}.</span>
+      <span class="daily-result-verb">${card.verb}</span>
+      <span class="daily-result-dots">${dots}</span>
+    </div>`;
+  }).join('');
+
+  const allSolved = solvedCount === dailyDeck.length;
+  let title, trophy, subtitle;
+  if (allFirstTry) {
+    title = 'Perfect!';
+    trophy = '🎆';
+    subtitle = `All ${dailyDeck.length} on the first try. Incredible!`;
+  } else if (allSolved) {
+    title = 'Challenge Complete!';
+    trophy = '🏆';
+    subtitle = `${solvedCount}/${dailyDeck.length} solved · ${firstTryCount} first try`;
+  } else {
+    title = 'Challenge Complete';
+    trophy = '💪';
+    subtitle = `${solvedCount}/${dailyDeck.length} solved · ${firstTryCount} first try`;
+  }
+
+  area.innerHTML = `
+    <div class="card done-screen">
+      <div class="trophy">${trophy}</div>
+      <h2>${title}</h2>
+      <p>${subtitle}</p>
+      <div class="daily-results">${rows}</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="copy-btn" onclick="copyDailyResults()">Copy results</button>
+        <button class="ctrl-btn" onclick="exitDaily()" style="font-size:0.78rem;padding:0.6rem 1.2rem;">Practice all cards</button>
+      </div>
+    </div>
+  `;
+
+  if (allFirstTry) launchFireworks();
+}
+
+function copyDailyResults() {
+  const text = buildShareString();
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard!');
+  }).catch(() => {
+    showToast('Could not copy');
+  });
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function normalize(str) {
+  return str.trim().toLowerCase()
+    .normalize("NFC")
+    .replace(/\s+/g, " ");
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function buildDeck() {
+  deck = shuffle(ALL_CARDS.filter(c => activeGroups.has(c.group)));
+  current = 0; known = new Set(); answered = false; perfect = true;
+  render();
+}
+
+function updateStats() {
+  const total = deck.length, knownCount = known.size;
+  const pct = total > 0 ? Math.round((knownCount / total) * 100) : 0;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statKnown').textContent = knownCount;
+  document.getElementById('statLeft').textContent = total - knownCount;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function render() {
+  updateStats();
+  const area = document.getElementById('cardArea');
+  const remaining = deck.filter((_, i) => !known.has(i));
+
+  if (remaining.length === 0 && deck.length > 0) {
+    const msg = perfect
+      ? `<h2>Perfect!</h2><p>Zero mistakes across ${deck.length} cards.</p>`
+      : `<h2>Deck complete!</h2><p>You typed all ${deck.length} conjugations correctly.</p>`;
+    area.innerHTML = `
+      <div class="card done-screen">
+        <div class="trophy">${perfect ? '🎆' : '🏆'}</div>
+        ${msg}
+        <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
+      </div>`;
+    if (perfect) launchFireworks();
+    return;
+  }
+
+  while (known.has(current)) current = (current + 1) % deck.length;
+  const card = deck[current];
+
+  area.innerHTML = `
+    <div class="card">
+      <div class="card-meta">${card.verb} &mdash; present tense</div>
+      <div class="card-prompt">${card.meaning}</div>
+      <div class="card-sub">Type the Norwegian conjugation</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
+    </div>
+  `;
+
+  answered = false;
+  const input = document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAction();
+  });
+}
+
+function handleAction() {
+  if (answered) { nextCard(); return; }
+  checkAnswer();
+}
+
+function checkAnswer() {
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  if (!input.value.trim()) return;
+
+  answered = true;
+  input.disabled = true;
+  const correct = normalize(card.conj);
+  const given = normalize(input.value);
+
+  if (given === correct) {
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    feedback.innerHTML = `✓ Correct! <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+    known.add(current);
+    updateStats();
+  } else {
+    perfect = false;
+    input.classList.add('wrong');
+    btn.classList.add('go-red');
+    feedback.className = 'feedback err';
+    feedback.innerHTML = `✗ The answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = `<div class="example">"${card.example}"</div>` + buildConjugationTable(card.verb);
+    requestAnimationFrame(() => {
+      const el = document.querySelector('.conj-table-wrapper');
+      if (el) el.classList.add('visible');
+    });
+  }
+
+  setTimeout(() => btn.focus(), 0);
+}
+
+function buildConjugationTable(verb) {
+  const form = ALL_CARDS.find(c => c.verb === verb);
+  if (!form) return '';
+  const parts = form.conj.split(' ');
+  const pronoun = parts[0];
+  const conjugated = parts.slice(1).join(' ');
+  const rows = `<tr><td class="conj-pronoun">${pronoun}</td><td class="conj-form">${conjugated}</td><td class="conj-pron">${form.pron}</td></tr>`;
+  return `<div class="conj-table-wrapper"><div class="conj-table-label">${verb} — present tense</div><table class="conj-table">${rows}</table></div>`;
+}
+
+function advanceToNextUnknown() {
+  if (deck.length === 0 || known.size === deck.length) {
+    answered = false;
+    render();
+    return;
+  }
+
+  current = (current + 1) % deck.length;
+  while (known.has(current)) current = (current + 1) % deck.length;
+  answered = false;
+  render();
+}
+
+function nextCard() {
+  advanceToNextUnknown();
+}
+
+function skipCard() {
+  known.add(current);
+  updateStats();
+  advanceToNextUnknown();
+}
+
+function renderFilters() {
+  document.getElementById('filterRow').innerHTML = GROUPS.map(g =>
+    `<div class="fc-tag active" onclick="toggleGroup(this,'${g}')">${g}</div>`
+  ).join('');
+}
+
+function toggleGroup(el, g) {
+  if (activeGroups.has(g)) {
+    if (activeGroups.size === 1) return;
+    activeGroups.delete(g); el.classList.remove('active');
+  } else {
+    activeGroups.add(g); el.classList.add('active');
+  }
+  buildDeck();
+}
+
+function launchFireworks() {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'fireworks-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = [];
+  const colors = ['#C4922A','#2D6A4F','#7D2B2B','#E8C97A','#B7E4C7','#FFCACA','#6B6456','#F5F0E8'];
+
+  function burst(x, y) {
+    const count = 50 + Math.random() * 30;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.012,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+
+  let bursts = 0, maxBursts = 6;
+  function scheduleBurst() {
+    if (bursts >= maxBursts) return;
+    burst(W * (0.2 + Math.random() * 0.6), H * (0.15 + Math.random() * 0.45));
+    bursts++;
+    setTimeout(scheduleBurst, 250 + Math.random() * 350);
+  }
+  scheduleBurst();
+
+  let raf;
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.vx *= 0.99;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (particles.length > 0 || bursts < maxBursts) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+  raf = requestAnimationFrame(frame);
+}
+
+renderFilters();
+buildDeck();
+if (window.location.hash === '#daily') startDaily();
+</script>
+</body>
+</html>
