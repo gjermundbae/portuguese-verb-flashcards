@@ -847,6 +847,7 @@ function skipDailyCard() {
 function buildShareString() {
   const num = getDailyNumber();
   const date = formatDailyDate();
+  const dailyUrl = `${window.location.origin}${window.location.pathname}#daily`;
   let lines = [`Norwegian verbs! Daily #${num}`, date, ''];
 
   dailyDeck.forEach((card, i) => {
@@ -859,7 +860,7 @@ function buildShareString() {
   lines.push('');
   lines.push(`${solved}/${dailyDeck.length} solved · ${firstTry} first try!`);
   lines.push('');
-  lines.push('Play → gjermundbae.github.io/norwegian-verb-flashcards#daily');
+  lines.push(`Play → ${dailyUrl}`);
   return lines.join('\n');
 }
 
