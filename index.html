@@ -939,7 +939,7 @@ function buildShareString() {
   lines.push('');
   lines.push(`${solved}/7 solved \u00b7 ${firstTry} first try!`);
   lines.push('');
-  lines.push('Play \u2192 gjermundbae.github.io/portuguese-verb-flashcards');
+  lines.push('Play \u2192 gjermundbae.github.io/portuguese-verb-flashcards#daily');
   return lines.join('\n');
 }
 
@@ -1249,6 +1249,7 @@ function launchFireworks() {
 
 renderFilters();
 buildDeck();
+if (window.location.hash === '#daily') startDaily();
 </script>
 </body>
 </html>
