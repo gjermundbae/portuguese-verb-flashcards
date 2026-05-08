@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Português — Verb Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F0E8;
+    --surface: #FFFDF7;
+    --surface2: #EDE8DC;
+    --border: #D4CCBA;
+    --border2: #BEB5A0;
+    --text: #1A1712;
+    --text2: #6B6456;
+    --text3: #9E9485;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --green-light: #B7E4C7;
+    --red: #7D2B2B;
+    --red-bg: #FFE8E8;
+    --red-light: #FFCACA;
+    --accent: #C4922A;
+    --accent-bg: #FFF3DC;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  header p {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* Filter tabs */
+  .filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .fc-tag {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .fc-tag:hover { border-color: var(--border2); }
+
+  .fc-tag.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+
+  .stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+
+  .progress-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 0.7rem;
+    color: var(--text3);
+    min-width: 32px;
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.75rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-meta {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-prompt {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .answer-input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .answer-input:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .answer-input.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .answer-input.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .answer-input:disabled { opacity: 1; }
+
+  .check-btn {
+    font-size: 1.15rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn.go-green { background: var(--green); border-color: var(--green); }
+  .check-btn.go-red { background: var(--red); border-color: var(--red); }
+
+  .feedback {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    min-height: 18px;
+    line-height: 1.5;
+  }
+
+  .feedback.ok { color: var(--green); }
+  .feedback.err { color: var(--red); }
+
+  .example {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-style: italic;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
+
+  /* Done screen */
+  .done-screen {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .done-screen .trophy {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .done-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .done-screen p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Pronunciation tag */
+  .pron-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid #E8C97A;
+    border-radius: 999px;
+    padding: 2px 10px;
+    letter-spacing: 0.04em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* Fireworks */
+  .fireworks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Conjugation table (wrong-answer reveal) */
+  .conj-table-wrapper {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    background: var(--red-bg);
+    border: 1px solid var(--red-light);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .conj-table-wrapper.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .conj-table-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .conj-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .conj-table tr + tr { border-top: 1px dashed var(--red-light); }
+
+  .conj-table td { padding: 0.35rem 0; }
+
+  .conj-pronoun {
+    color: var(--text3);
+    width: 60px;
+  }
+
+  .conj-form {
+    color: var(--red);
+    font-weight: 500;
+  }
+
+  .conj-pron {
+    color: var(--text3);
+    font-size: 0.7rem;
+    text-align: right;
+  }
+
+  /* Daily challenge */
+  .daily-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .daily-btn:hover { background: var(--accent); color: var(--surface); }
+
+  .daily-header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .daily-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+
+  .daily-header .daily-date {
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .daily-progress-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .daily-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .daily-dot.current {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.25);
+  }
+
+  .daily-dot.done {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .daily-dot.done-multi {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .daily-counter {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .answer-input.shake {
+    animation: shake 0.4s ease;
+  }
+
+  .daily-results {
+    text-align: left;
+    margin: 1.5rem 0;
+  }
+
+  .daily-result-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 0.82rem;
+  }
+
+  .daily-result-row + .daily-result-row {
+    border-top: 1px dashed var(--border);
+  }
+
+  .daily-result-num {
+    color: var(--text3);
+    font-size: 0.7rem;
+    min-width: 18px;
+  }
+
+  .daily-result-verb {
+    color: var(--text2);
+    min-width: 80px;
+  }
+
+  .daily-result-dots {
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.65rem 1.6rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--surface);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { opacity: 0.85; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 10000;
+    letter-spacing: 0.04em;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Verbos em <em>Português</em></h1>
+  <p>Present tense</p>
+</header>
+
+<div class="container">
+  <div id="dailyBtnRow" style="text-align:center;">
+    <button class="daily-btn" onclick="startDaily()">&#9733; Daily Challenge</button>
+  </div>
+
+  <div id="dailyHeader" class="daily-header" style="display:none;"></div>
+  <div id="dailyDots" class="daily-progress-dots" style="display:none;"></div>
+
+  <div id="practiceChrome">
+    <div class="filters" id="filterRow"></div>
+
+    <div class="stats" id="statsRow">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
+      <div class="stat"><div class="stat-num red" id="statLeft">0</div><div class="stat-lbl">Left</div></div>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bg"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+  </div>
+
+  <div id="cardArea"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ALL_CARDS = [
+  { verb:"ser", conj:"eu sou", pron:"SOH", meaning:"I am (permanent)", example:"Eu sou brasileiro.", group:"ser / estar" },
+  { verb:"ser", conj:"você é", pron:"EH", meaning:"you are (permanent)", example:"Você é inteligente.", group:"ser / estar" },
+  { verb:"ser", conj:"nós somos", pron:"SOH-moosh", meaning:"we are (permanent)", example:"Nós somos amigos.", group:"ser / estar" },
+  { verb:"ser", conj:"vocês são", pron:"SOWng", meaning:"you all are (permanent)", example:"Vocês são muito gentis.", group:"ser / estar" },
+  { verb:"estar", conj:"eu estou", pron:"ish-TOH", meaning:"I am (temporary)", example:"Eu estou bem.", group:"ser / estar" },
+  { verb:"estar", conj:"você está", pron:"ish-TAH", meaning:"you are (temporary)", example:"Você está cansado?", group:"ser / estar" },
+  { verb:"estar", conj:"nós estamos", pron:"ish-TAH-moosh", meaning:"we are (temporary)", example:"Nós estamos em casa.", group:"ser / estar" },
+  { verb:"estar", conj:"vocês estão", pron:"ish-TOWng", meaning:"you all are (temporary)", example:"Vocês estão prontos?", group:"ser / estar" },
+  { verb:"ter", conj:"eu tenho", pron:"TEN-yoo", meaning:"I have", example:"Eu tenho fome.", group:"irregular" },
+  { verb:"ter", conj:"você tem", pron:"TAYNG", meaning:"you have", example:"Você tem tempo?", group:"irregular" },
+  { verb:"ter", conj:"nós temos", pron:"TEH-moosh", meaning:"we have", example:"Nós temos aula.", group:"irregular" },
+  { verb:"ter", conj:"vocês têm", pron:"TAYNG", meaning:"you all have", example:"Vocês têm uma reserva?", group:"irregular" },
+  { verb:"fazer", conj:"eu faço", pron:"FAH-soo", meaning:"I do / make", example:"Eu faço o jantar.", group:"irregular" },
+  { verb:"fazer", conj:"você faz", pron:"FAHSH", meaning:"you do / make", example:"Você faz exercício?", group:"irregular" },
+  { verb:"fazer", conj:"nós fazemos", pron:"fah-ZEH-moosh", meaning:"we do / make", example:"Nós fazemos café em casa.", group:"irregular" },
+  { verb:"fazer", conj:"vocês fazem", pron:"FAH-zeng", meaning:"you all do / make", example:"Vocês fazem isso todo dia?", group:"irregular" },
+  { verb:"ir", conj:"eu vou", pron:"VOH", meaning:"I go", example:"Eu vou ao mercado.", group:"irregular" },
+  { verb:"ir", conj:"você vai", pron:"VY", meaning:"you go", example:"Você vai ao trabalho?", group:"irregular" },
+  { verb:"ir", conj:"nós vamos", pron:"VAH-moosh", meaning:"we go / let's go", example:"Nós vamos à praia.", group:"irregular" },
+  { verb:"ir", conj:"vocês vão", pron:"VOWng", meaning:"you all go", example:"Vocês vão de carro?", group:"irregular" },
+  { verb:"poder", conj:"eu posso", pron:"POH-soo", meaning:"I can", example:"Eu posso ajudar.", group:"irregular" },
+  { verb:"poder", conj:"você pode", pron:"POH-djee", meaning:"you can", example:"Você pode falar devagar?", group:"irregular" },
+  { verb:"poder", conj:"nós podemos", pron:"poh-DEH-moosh", meaning:"we can", example:"Nós podemos tentar de novo.", group:"irregular" },
+  { verb:"poder", conj:"vocês podem", pron:"POH-deng", meaning:"you all can", example:"Vocês podem entrar agora.", group:"irregular" },
+  { verb:"querer", conj:"eu quero", pron:"KEH-roo", meaning:"I want", example:"Eu quero água.", group:"irregular" },
+  { verb:"querer", conj:"você quer", pron:"KEHR", meaning:"you want", example:"Você quer café?", group:"irregular" },
+  { verb:"querer", conj:"nós queremos", pron:"keh-REH-moosh", meaning:"we want", example:"Nós queremos aprender mais.", group:"irregular" },
+  { verb:"querer", conj:"vocês querem", pron:"KEH-reng", meaning:"you all want", example:"Vocês querem sobremesa?", group:"irregular" },
+  { verb:"saber", conj:"eu sei", pron:"SAY", meaning:"I know (a fact)", example:"Eu sei a resposta.", group:"irregular" },
+  { verb:"saber", conj:"você sabe", pron:"SAH-bee", meaning:"you know", example:"Você sabe onde fica?", group:"irregular" },
+  { verb:"saber", conj:"nós sabemos", pron:"sah-BEH-moosh", meaning:"we know", example:"Nós sabemos a verdade.", group:"irregular" },
+  { verb:"saber", conj:"vocês sabem", pron:"SAH-beng", meaning:"you all know", example:"Vocês sabem a resposta?", group:"irregular" },
+  { verb:"falar", conj:"eu falo", pron:"FAH-loo", meaning:"I speak / talk", example:"Eu falo português.", group:"-ar verbs" },
+  { verb:"falar", conj:"você fala", pron:"FAH-lah", meaning:"you speak", example:"Você fala inglês?", group:"-ar verbs" },
+  { verb:"falar", conj:"nós falamos", pron:"fah-LAH-moosh", meaning:"we speak / talk", example:"Nós falamos no telefone.", group:"-ar verbs" },
+  { verb:"falar", conj:"vocês falam", pron:"FAH-lahng", meaning:"you all speak / talk", example:"Vocês falam muito rápido.", group:"-ar verbs" },
+  { verb:"trabalhar", conj:"eu trabalho", pron:"trah-BAH-lyoo", meaning:"I work", example:"Eu trabalho muito.", group:"-ar verbs" },
+  { verb:"trabalhar", conj:"você trabalha", pron:"trah-BAH-lyah", meaning:"you work", example:"Você trabalha aqui?", group:"-ar verbs" },
+  { verb:"trabalhar", conj:"nós trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we work", example:"Nós trabalhamos juntos.", group:"-ar verbs" },
+  { verb:"trabalhar", conj:"vocês trabalham", pron:"trah-BAH-lyahng", meaning:"you all work", example:"Vocês trabalham aos sábados?", group:"-ar verbs" },
+  { verb:"gostar", conj:"eu gosto", pron:"GOH-stoo", meaning:"I like", example:"Eu gosto de música.", group:"-ar verbs" },
+  { verb:"gostar", conj:"você gosta", pron:"GOH-stah", meaning:"you like", example:"Você gosta de café?", group:"-ar verbs" },
+  { verb:"gostar", conj:"nós gostamos", pron:"goh-STAH-moosh", meaning:"we like", example:"Nós gostamos deste lugar.", group:"-ar verbs" },
+  { verb:"gostar", conj:"vocês gostam", pron:"GOH-stahng", meaning:"you all like", example:"Vocês gostam de viajar?", group:"-ar verbs" },
+  { verb:"morar", conj:"eu moro", pron:"MOH-roo", meaning:"I live (reside)", example:"Eu moro no Rio.", group:"-ar verbs" },
+  { verb:"morar", conj:"você mora", pron:"MOH-rah", meaning:"you live (reside)", example:"Você mora perto daqui?", group:"-ar verbs" },
+  { verb:"morar", conj:"nós moramos", pron:"moh-RAH-moosh", meaning:"we live (reside)", example:"Nós moramos no centro.", group:"-ar verbs" },
+  { verb:"morar", conj:"vocês moram", pron:"MOH-rahng", meaning:"you all live (reside)", example:"Vocês moram no Brasil?", group:"-ar verbs" },
+  { verb:"comer", conj:"eu como", pron:"KOH-moo", meaning:"I eat", example:"Eu como arroz.", group:"-er verbs" },
+  { verb:"comer", conj:"você come", pron:"KOH-mee", meaning:"you eat", example:"Você come carne?", group:"-er verbs" },
+  { verb:"comer", conj:"nós comemos", pron:"koh-MEH-moosh", meaning:"we eat", example:"Nós comemos cedo.", group:"-er verbs" },
+  { verb:"comer", conj:"vocês comem", pron:"KOH-meng", meaning:"you all eat", example:"Vocês comem aqui?", group:"-er verbs" },
+  { verb:"beber", conj:"eu bebo", pron:"BEH-boo", meaning:"I drink", example:"Eu bebo suco.", group:"-er verbs" },
+  { verb:"beber", conj:"você bebe", pron:"BEH-bee", meaning:"you drink", example:"Você bebe café?", group:"-er verbs" },
+  { verb:"beber", conj:"nós bebemos", pron:"beh-BEH-moosh", meaning:"we drink", example:"Nós bebemos muita água.", group:"-er verbs" },
+  { verb:"beber", conj:"vocês bebem", pron:"BEH-beng", meaning:"you all drink", example:"Vocês bebem chá?", group:"-er verbs" },
+  { verb:"conhecer", conj:"eu conheço", pron:"koo-NEH-soo", meaning:"I know (a person/place)", example:"Eu conheço esse lugar.", group:"-er verbs" },
+  { verb:"conhecer", conj:"você conhece", pron:"koo-NEH-see", meaning:"you know (a person/place)", example:"Você conhece a Ana?", group:"-er verbs" },
+  { verb:"conhecer", conj:"nós conhecemos", pron:"koh-nyeh-SEH-moosh", meaning:"we know (a person/place)", example:"Nós conhecemos bem a cidade.", group:"-er verbs" },
+  { verb:"conhecer", conj:"vocês conhecem", pron:"koo-NEH-seng", meaning:"you all know (a person/place)", example:"Vocês conhecem este restaurante?", group:"-er verbs" },
+  { verb:"abrir", conj:"eu abro", pron:"AH-broo", meaning:"I open", example:"Eu abro a porta.", group:"-ir verbs" },
+  { verb:"abrir", conj:"você abre", pron:"AH-bree", meaning:"you open", example:"Você abre a janela?", group:"-ir verbs" },
+  { verb:"abrir", conj:"nós abrimos", pron:"ah-BREE-moosh", meaning:"we open", example:"Nós abrimos a loja às nove.", group:"-ir verbs" },
+  { verb:"abrir", conj:"vocês abrem", pron:"AH-breng", meaning:"you all open", example:"Vocês abrem os livros na página dez.", group:"-ir verbs" },
+  { verb:"partir", conj:"eu parto", pron:"PAHR-too", meaning:"I leave / depart", example:"Eu parto amanhã cedo.", group:"-ir verbs" },
+  { verb:"partir", conj:"você parte", pron:"PAHR-chee", meaning:"you leave / depart", example:"Você parte hoje à noite?", group:"-ir verbs" },
+  { verb:"partir", conj:"nós partimos", pron:"pahr-CHEE-moosh", meaning:"we leave / depart", example:"Nós partimos às oito.", group:"-ir verbs" },
+  { verb:"partir", conj:"vocês partem", pron:"PAHR-teng", meaning:"you all leave / depart", example:"Vocês partem juntos?", group:"-ir verbs" },
+  { verb:"decidir", conj:"eu decido", pron:"deh-SEE-doo", meaning:"I decide", example:"Eu decido depois.", group:"-ir verbs" },
+  { verb:"decidir", conj:"você decide", pron:"deh-SEE-djee", meaning:"you decide", example:"Você decide o que comer?", group:"-ir verbs" },
+  { verb:"decidir", conj:"nós decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decide", example:"Nós decidimos juntos.", group:"-ir verbs" },
+  { verb:"decidir", conj:"vocês decidem", pron:"deh-SEE-deng", meaning:"you all decide", example:"Vocês decidem aonde ir?", group:"-ir verbs" },
+  { verb:"assistir", conj:"eu assisto", pron:"ah-SEES-too", meaning:"I watch", example:"Eu assisto televisão.", group:"-ir verbs" },
+  { verb:"assistir", conj:"você assiste", pron:"ah-SEES-chee", meaning:"you watch", example:"Você assiste futebol?", group:"-ir verbs" },
+  { verb:"assistir", conj:"nós assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watch", example:"Nós assistimos ao filme.", group:"-ir verbs" },
+  { verb:"assistir", conj:"vocês assistem", pron:"ah-SEES-teng", meaning:"you all watch", example:"Vocês assistem à novela?", group:"-ir verbs" },
+  { verb:"vir", conj:"eu venho", pron:"VEN-yoo", meaning:"I come", example:"Eu venho de São Paulo.", group:"irregular" },
+  { verb:"vir", conj:"você vem", pron:"VAYNG", meaning:"you come", example:"Você vem comigo?", group:"irregular" },
+  { verb:"vir", conj:"nós vimos", pron:"VEE-moosh", meaning:"we come", example:"Nós vimos cedo hoje.", group:"irregular" },
+  { verb:"vir", conj:"vocês vêm", pron:"VAYNG", meaning:"you all come", example:"Vocês vêm amanhã?", group:"irregular" },
+  { verb:"ver", conj:"eu vejo", pron:"VEH-zhoo", meaning:"I see", example:"Eu vejo um táxi.", group:"irregular" },
+  { verb:"ver", conj:"você vê", pron:"VEH", meaning:"you see", example:"Você vê a montanha?", group:"irregular" },
+  { verb:"ver", conj:"nós vemos", pron:"VEH-moosh", meaning:"we see", example:"Nós vemos tudo daqui.", group:"irregular" },
+  { verb:"ver", conj:"vocês veem", pron:"VEH-eng", meaning:"you all see", example:"Vocês veem aquele prédio?", group:"irregular" },
+  { verb:"dar", conj:"eu dou", pron:"DOH", meaning:"I give", example:"Eu dou um presente.", group:"irregular" },
+  { verb:"dar", conj:"você dá", pron:"DAH", meaning:"you give", example:"Você dá gorjeta?", group:"irregular" },
+  { verb:"dar", conj:"nós damos", pron:"DAH-moosh", meaning:"we give", example:"Nós damos aula de inglês.", group:"irregular" },
+  { verb:"dar", conj:"vocês dão", pron:"DOWng", meaning:"you all give", example:"Vocês dão conta?", group:"irregular" },
+  { verb:"dizer", conj:"eu digo", pron:"DJEE-goo", meaning:"I say / tell", example:"Eu digo a verdade.", group:"irregular" },
+  { verb:"dizer", conj:"você diz", pron:"DJEESS", meaning:"you say / tell", example:"Você diz que sim?", group:"irregular" },
+  { verb:"dizer", conj:"nós dizemos", pron:"djee-ZEH-moosh", meaning:"we say / tell", example:"Nós dizemos obrigado.", group:"irregular" },
+  { verb:"dizer", conj:"vocês dizem", pron:"DJEE-zeng", meaning:"you all say / tell", example:"Vocês dizem isso sempre?", group:"irregular" },
+  { verb:"pedir", conj:"eu peço", pron:"PEH-soo", meaning:"I ask for / order", example:"Eu peço um café.", group:"irregular" },
+  { verb:"pedir", conj:"você pede", pron:"PEH-djee", meaning:"you ask for / order", example:"Você pede a conta?", group:"irregular" },
+  { verb:"pedir", conj:"nós pedimos", pron:"peh-DJEE-moosh", meaning:"we ask for / order", example:"Nós pedimos pizza.", group:"irregular" },
+  { verb:"pedir", conj:"vocês pedem", pron:"PEH-deng", meaning:"you all ask for / order", example:"Vocês pedem desconto?", group:"irregular" },
+  { verb:"dormir", conj:"eu durmo", pron:"DOOR-moo", meaning:"I sleep", example:"Eu durmo cedo.", group:"irregular" },
+  { verb:"dormir", conj:"você dorme", pron:"DOHR-mee", meaning:"you sleep", example:"Você dorme bem?", group:"irregular" },
+  { verb:"dormir", conj:"nós dormimos", pron:"dohr-MEE-moosh", meaning:"we sleep", example:"Nós dormimos oito horas.", group:"irregular" },
+  { verb:"dormir", conj:"vocês dormem", pron:"DOHR-meng", meaning:"you all sleep", example:"Vocês dormem tarde?", group:"irregular" },
+];
+
+const GROUPS = ["ser / estar", "irregular", "-ar verbs", "-er verbs", "-ir verbs"];
+let activeGroups = new Set(GROUPS);
+let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
+
+let dailyMode = false;
+let dailyAttempts = [];
+let dailyCurrent = 0;
+let dailyDeck = [];
+
+const DAILY_EPOCH = new Date(2026, 0, 1);
+
+function dailySeed() {
+  const d = new Date();
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+function seededRandom(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function getDailyCards() {
+  const rng = seededRandom(dailySeed());
+  const indices = [];
+  while (indices.length < 7) {
+    const idx = Math.floor(rng() * ALL_CARDS.length);
+    if (!indices.includes(idx)) indices.push(idx);
+  }
+  return indices.map(i => ALL_CARDS[i]);
+}
+
+function getDailyNumber() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.floor((today - DAILY_EPOCH) / 86400000);
+}
+
+function formatDailyDate() {
+  return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function startDaily() {
+  dailyMode = true;
+  dailyDeck = getDailyCards();
+  dailyAttempts = new Array(7).fill(0);
+  dailyCurrent = 0;
+
+  document.getElementById('dailyBtnRow').style.display = 'none';
+  document.getElementById('practiceChrome').style.display = 'none';
+  document.getElementById('dailyHeader').style.display = '';
+  document.getElementById('dailyDots').style.display = '';
+
+  document.getElementById('dailyHeader').innerHTML =
+    `<h2>&#9733; Daily Challenge #${getDailyNumber()}</h2>` +
+    `<div class="daily-date">${formatDailyDate()}</div>`;
+
+  renderDailyCard();
+}
+
+function exitDaily() {
+  dailyMode = false;
+  document.getElementById('dailyBtnRow').style.display = '';
+  document.getElementById('practiceChrome').style.display = '';
+  document.getElementById('dailyHeader').style.display = 'none';
+  document.getElementById('dailyDots').style.display = 'none';
+  buildDeck();
+}
+
+function renderDailyDots() {
+  const dots = document.getElementById('dailyDots');
+  dots.innerHTML = dailyDeck.map((_, i) => {
+    let cls = 'daily-dot';
+    if (i < dailyCurrent) {
+      cls += dailyAttempts[i] === 1 ? ' done' : ' done-multi';
+    } else if (i === dailyCurrent) {
+      cls += ' current';
+    }
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function renderDailyCard() {
+  renderDailyDots();
+  const area = document.getElementById('cardArea');
+
+  if (dailyCurrent >= 7) {
+    renderDailyComplete();
+    return;
+  }
+
+  const card = dailyDeck[dailyCurrent];
+  area.innerHTML = `
+    <div class="daily-counter">Card ${dailyCurrent + 1} of 7</div>
+    <div class="card">
+      <div class="card-meta">${card.verb} &mdash; present tense</div>
+      <div class="card-prompt">${card.meaning}</div>
+      <div class="card-sub">Type the Portuguese conjugation</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here\u2026" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleDailyAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="exitDaily()">← Back to practice</button>
+    </div>
+  `;
+
+  const input = document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleDailyAction();
+  });
+}
+
+let dailyAnswered = false;
+
+function handleDailyAction() {
+  if (dailyAnswered) {
+    dailyCurrent++;
+    dailyAnswered = false;
+    renderDailyCard();
+    return;
+  }
+  checkDailyAnswer();
+}
+
+function checkDailyAnswer() {
+  const card = dailyDeck[dailyCurrent];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  if (!input.value.trim()) return;
+
+  dailyAttempts[dailyCurrent]++;
+  const correct = normalize(card.conj);
+  const given = normalize(input.value);
+
+  if (given === correct) {
+    dailyAnswered = true;
+    input.disabled = true;
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    const tries = dailyAttempts[dailyCurrent];
+    const tryText = tries === 1 ? '1st try!' : `${tries} tries`;
+    feedback.innerHTML = `✓ Correct — ${tryText} <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+    renderDailyDots();
+    setTimeout(() => btn.focus(), 0);
+  } else {
+    input.classList.add('shake');
+    input.classList.add('wrong');
+    feedback.className = 'feedback err';
+    feedback.textContent = '✗ Not quite — try again!';
+    setTimeout(() => {
+      input.classList.remove('shake', 'wrong');
+      input.value = '';
+      input.focus();
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+    }, 700);
+  }
+}
+
+function buildShareString() {
+  const num = getDailyNumber();
+  const date = formatDailyDate();
+  let lines = [`Verbos em Portugues \u2014 Daily #${num}`, date, ''];
+
+  const maxVerbLen = Math.max(...dailyDeck.map(c => c.verb.length));
+
+  dailyDeck.forEach((card, i) => {
+    const attempts = dailyAttempts[i];
+    const verb = card.verb.padEnd(maxVerbLen, ' ');
+    let dots;
+    if (attempts === 1) {
+      dots = '\uD83D\uDFE2';
+    } else if (attempts <= 5) {
+      dots = '\uD83D\uDFE1'.repeat(attempts);
+    } else {
+      dots = '\uD83D\uDFE1'.repeat(4) + '\uD83D\uDD34';
+    }
+    lines.push(`${i + 1}. ${verb}  ${dots}`);
+  });
+
+  const firstTry = dailyAttempts.filter(a => a === 1).length;
+  lines.push('');
+  lines.push(`${firstTry}/7 first try!`);
+  return lines.join('\n');
+}
+
+function renderDailyComplete() {
+  renderDailyDots();
+  const area = document.getElementById('cardArea');
+  const allFirstTry = dailyAttempts.every(a => a === 1);
+  const firstTryCount = dailyAttempts.filter(a => a === 1).length;
+  const totalAttempts = dailyAttempts.reduce((a, b) => a + b, 0);
+
+  const maxVerbLen = Math.max(...dailyDeck.map(c => c.verb.length));
+
+  const rows = dailyDeck.map((card, i) => {
+    const attempts = dailyAttempts[i];
+    let dots;
+    if (attempts === 1) {
+      dots = '\uD83D\uDFE2';
+    } else if (attempts <= 5) {
+      dots = '\uD83D\uDFE1'.repeat(attempts);
+    } else {
+      dots = '\uD83D\uDFE1'.repeat(4) + '\uD83D\uDD34';
+    }
+    return `<div class="daily-result-row">
+      <span class="daily-result-num">${i + 1}.</span>
+      <span class="daily-result-verb">${card.verb}</span>
+      <span class="daily-result-dots">${dots}</span>
+    </div>`;
+  }).join('');
+
+  const title = allFirstTry ? 'Perfeito!' : 'Challenge Complete!';
+  const trophy = allFirstTry ? '\uD83C\uDF86' : '\uD83C\uDFC6';
+  const subtitle = allFirstTry
+    ? 'All 7 on the first try. Incredible!'
+    : `${firstTryCount}/7 first try \u2014 ${totalAttempts} total attempts`;
+
+  area.innerHTML = `
+    <div class="card done-screen">
+      <div class="trophy">${trophy}</div>
+      <h2>${title}</h2>
+      <p>${subtitle}</p>
+      <div class="daily-results">${rows}</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="copy-btn" onclick="copyDailyResults()">Copy results</button>
+        <button class="ctrl-btn" onclick="exitDaily()" style="font-size:0.78rem;padding:0.6rem 1.2rem;">Practice all cards</button>
+      </div>
+    </div>
+  `;
+
+  if (allFirstTry) launchFireworks();
+}
+
+function copyDailyResults() {
+  const text = buildShareString();
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard!');
+  }).catch(() => {
+    showToast('Could not copy');
+  });
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function normalize(str) {
+  return str.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function buildDeck() {
+  deck = shuffle(ALL_CARDS.filter(c => activeGroups.has(c.group)));
+  current = 0; known = new Set(); answered = false; perfect = true;
+  render();
+}
+
+function updateStats() {
+  const total = deck.length, knownCount = known.size;
+  const pct = total > 0 ? Math.round((knownCount / total) * 100) : 0;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statKnown').textContent = knownCount;
+  document.getElementById('statLeft').textContent = total - knownCount;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function render() {
+  updateStats();
+  const area = document.getElementById('cardArea');
+  const remaining = deck.filter((_, i) => !known.has(i));
+
+  if (remaining.length === 0 && deck.length > 0) {
+    const msg = perfect
+      ? `<h2>Perfeito!</h2><p>Zero mistakes across ${deck.length} cards.</p>`
+      : `<h2>Deck complete!</h2><p>You typed all ${deck.length} conjugations correctly.</p>`;
+    area.innerHTML = `
+      <div class="card done-screen">
+        <div class="trophy">${perfect ? '🎆' : '🏆'}</div>
+        ${msg}
+        <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
+      </div>`;
+    if (perfect) launchFireworks();
+    return;
+  }
+
+  while (known.has(current)) current = (current + 1) % deck.length;
+  const card = deck[current];
+
+  area.innerHTML = `
+    <div class="card">
+      <div class="card-meta">${card.verb} &mdash; present tense</div>
+      <div class="card-prompt">${card.meaning}</div>
+      <div class="card-sub">Type the Portuguese conjugation</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
+    </div>
+  `;
+
+  answered = false;
+  const input = document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAction();
+  });
+}
+
+function handleAction() {
+  if (answered) { nextCard(); return; }
+  checkAnswer();
+}
+
+function checkAnswer() {
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  if (!input.value.trim()) return;
+
+  answered = true;
+  input.disabled = true;
+  const correct = normalize(card.conj);
+  const given = normalize(input.value);
+
+  if (given === correct) {
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    feedback.innerHTML = `✓ Correct! <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+    known.add(current);
+    updateStats();
+  } else {
+    perfect = false;
+    input.classList.add('wrong');
+    btn.classList.add('go-red');
+    feedback.className = 'feedback err';
+    feedback.innerHTML = `✗ The answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = `<div class="example">"${card.example}"</div>` + buildConjugationTable(card.verb);
+    requestAnimationFrame(() => {
+      const el = document.querySelector('.conj-table-wrapper');
+      if (el) el.classList.add('visible');
+    });
+  }
+
+  setTimeout(() => btn.focus(), 0);
+}
+
+function buildConjugationTable(verb) {
+  const forms = ALL_CARDS.filter(c => c.verb === verb);
+  const rows = forms.map(f => {
+    const parts = f.conj.split(' ');
+    const pronoun = parts[0];
+    const conjugated = parts.slice(1).join(' ');
+    return `<tr><td class="conj-pronoun">${pronoun}</td><td class="conj-form">${conjugated}</td><td class="conj-pron">${f.pron}</td></tr>`;
+  }).join('');
+  return `<div class="conj-table-wrapper"><div class="conj-table-label">${verb} — present tense</div><table class="conj-table">${rows}</table></div>`;
+}
+
+function advanceToNextUnknown() {
+  if (deck.length === 0 || known.size === deck.length) {
+    answered = false;
+    render();
+    return;
+  }
+
+  current = (current + 1) % deck.length;
+  while (known.has(current)) current = (current + 1) % deck.length;
+  answered = false;
+  render();
+}
+
+function nextCard() {
+  advanceToNextUnknown();
+}
+
+function skipCard() {
+  known.add(current);
+  updateStats();
+  advanceToNextUnknown();
+}
+
+function renderFilters() {
+  document.getElementById('filterRow').innerHTML = GROUPS.map(g =>
+    `<div class="fc-tag active" onclick="toggleGroup(this,'${g}')">${g}</div>`
+  ).join('');
+}
+
+function toggleGroup(el, g) {
+  if (activeGroups.has(g)) {
+    if (activeGroups.size === 1) return;
+    activeGroups.delete(g); el.classList.remove('active');
+  } else {
+    activeGroups.add(g); el.classList.add('active');
+  }
+  buildDeck();
+}
+
+function launchFireworks() {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'fireworks-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = [];
+  const colors = ['#C4922A','#2D6A4F','#7D2B2B','#E8C97A','#B7E4C7','#FFCACA','#6B6456','#F5F0E8'];
+
+  function burst(x, y) {
+    const count = 50 + Math.random() * 30;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.012,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+
+  let bursts = 0, maxBursts = 6;
+  function scheduleBurst() {
+    if (bursts >= maxBursts) return;
+    burst(W * (0.2 + Math.random() * 0.6), H * (0.15 + Math.random() * 0.45));
+    bursts++;
+    setTimeout(scheduleBurst, 250 + Math.random() * 350);
+  }
+  scheduleBurst();
+
+  let raf;
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.vx *= 0.99;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (particles.length > 0 || bursts < maxBursts) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+  raf = requestAnimationFrame(frame);
+}
+
+renderFilters();
+buildDeck();
+</script>
+</body>
+</html>
