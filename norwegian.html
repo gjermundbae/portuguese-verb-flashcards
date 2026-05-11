@@ -428,6 +428,39 @@
 
   .daily-btn:hover { background: var(--accent); color: var(--surface); }
 
+  .mode-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .mode-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+    box-shadow: 0 8px 20px rgba(26, 23, 18, 0.04);
+  }
+
+  .mode-btn:hover {
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .mode-btn.active {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+    box-shadow: 0 12px 24px rgba(26, 23, 18, 0.12);
+  }
+
   .daily-header {
     text-align: center;
     margin-bottom: 1.25rem;
@@ -510,6 +543,60 @@
     margin: 1.5rem 0;
   }
 
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  .result-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 0.75rem;
+  }
+
+  .result-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.55rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .result-stat-num.accent { color: var(--accent); }
+  .result-stat-num.red { color: var(--red); }
+
+  .result-stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.35rem;
+  }
+
+  .result-badges {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 1.25rem;
+  }
+
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
   .daily-result-row {
     display: flex;
     align-items: center;
@@ -587,6 +674,9 @@
 </header>
 
 <div class="container">
+  <div class="mode-row">
+    <button class="mode-btn" id="hardModeBtn" type="button" onclick="toggleHardMode()" aria-pressed="false">Hard mode</button>
+  </div>
   <div id="dailyBtnRow" style="text-align:center;">
     <button class="daily-btn" onclick="startDaily()">&#9733; Daily Challenge</button>
   </div>
@@ -639,12 +729,15 @@ const ALL_CARDS = [
 const GROUPS = ["essential verbs", "daily life", "movement"];
 let activeGroups = new Set(GROUPS);
 let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
+let hardMode = false;
+let practiceStats = createRunStats();
 
 let dailyMode = false;
 let dailyAttempts = [];
 let dailyFailed = [];
 let dailyCurrent = 0;
 let dailyDeck = [];
+let dailyStats = createRunStats();
 const DAILY_MAX_ATTEMPTS = 5;
 
 const DAILY_EPOCH = new Date(2026, 4, 8);
@@ -684,12 +777,64 @@ function formatDailyDate() {
   return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
+function createRunStats() {
+  return { errors: 0, hardModeSolved: 0 };
+}
+
+function formatCount(count, singular, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function buildPracticeStatsMarkup(stats) {
+  return `
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-num accent">${stats.hardModeSolved}</div>
+        <div class="result-stat-lbl">Hard mode cards</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-num red">${stats.errors}</div>
+        <div class="result-stat-lbl">Errors made</div>
+      </div>
+    </div>
+  `;
+}
+
+function buildDailyHardModeBadge(stats) {
+  if (!stats.hardModeSolved) return '';
+  return `
+    <div class="result-badges">
+      <div class="result-badge">🥷 ${formatCount(stats.hardModeSolved, 'hard mode card')}</div>
+    </div>
+  `;
+}
+
+function getCardMeta(card) {
+  return hardMode ? 'hard mode &mdash; present tense' : `${card.verb} &mdash; present tense`;
+}
+
+function updateHardModeButton() {
+  const btn = document.getElementById('hardModeBtn');
+  if (!btn) return;
+  btn.classList.toggle('active', hardMode);
+  btn.setAttribute('aria-pressed', hardMode ? 'true' : 'false');
+}
+
+function toggleHardMode() {
+  hardMode = !hardMode;
+  updateHardModeButton();
+  if (hardMode) launchHardModeConfetti();
+  if (dailyMode) renderDailyCard();
+  else render();
+}
+
 function startDaily() {
   dailyMode = true;
   dailyDeck = getDailyCards();
   dailyAttempts = new Array(dailyDeck.length).fill(0);
   dailyFailed = new Array(dailyDeck.length).fill(false);
   dailyCurrent = 0;
+  dailyStats = createRunStats();
 
   document.getElementById('dailyBtnRow').style.display = 'none';
   document.getElementById('practiceChrome').style.display = 'none';
@@ -741,7 +886,7 @@ function renderDailyCard() {
   area.innerHTML = `
     <div class="daily-counter">Card ${dailyCurrent + 1} of ${dailyDeck.length} · ${attemptsLeft} ${attemptsLeft === 1 ? 'try' : 'tries'} left</div>
     <div class="card">
-      <div class="card-meta">${card.verb} &mdash; present tense</div>
+      <div class="card-meta">${getCardMeta(card)}</div>
       <div class="card-prompt">${card.meaning}</div>
       <div class="card-sub">Type the Norwegian conjugation</div>
       <div class="input-row">
@@ -789,6 +934,7 @@ function checkDailyAnswer() {
   const given = normalize(input.value);
 
   if (given === correct) {
+    if (hardMode) dailyStats.hardModeSolved++;
     dailyAnswered = true;
     input.disabled = true;
     input.classList.add('correct');
@@ -800,21 +946,24 @@ function checkDailyAnswer() {
     revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
     renderDailyDots();
     setTimeout(() => btn.focus(), 0);
-  } else if (dailyAttempts[dailyCurrent] >= DAILY_MAX_ATTEMPTS) {
-    failDailyCard();
   } else {
-    input.classList.add('shake');
-    input.classList.add('wrong');
-    feedback.className = 'feedback err';
-    const left = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
-    feedback.textContent = `✗ Not quite — ${left} ${left === 1 ? 'try' : 'tries'} left`;
-    setTimeout(() => {
-      input.classList.remove('shake', 'wrong');
-      input.value = '';
-      input.focus();
-      feedback.className = 'feedback';
-      feedback.textContent = '';
-    }, 700);
+    dailyStats.errors++;
+    if (dailyAttempts[dailyCurrent] >= DAILY_MAX_ATTEMPTS) {
+      failDailyCard();
+    } else {
+      input.classList.add('shake');
+      input.classList.add('wrong');
+      feedback.className = 'feedback err';
+      const left = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
+      feedback.textContent = `✗ Not quite — ${left} ${left === 1 ? 'try' : 'tries'} left`;
+      setTimeout(() => {
+        input.classList.remove('shake', 'wrong');
+        input.value = '';
+        input.focus();
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+      }, 700);
+    }
   }
 }
 
@@ -859,6 +1008,9 @@ function buildShareString() {
   const firstTry = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
   lines.push('');
   lines.push(`${solved}/${dailyDeck.length} solved · ${firstTry} first try!`);
+  if (dailyStats.hardModeSolved > 0) {
+    lines.push(`🥷 ${formatCount(dailyStats.hardModeSolved, 'hard mode card')}`);
+  }
   lines.push('');
   lines.push(`Play → ${dailyUrl}`);
   return lines.join('\n');
@@ -880,6 +1032,7 @@ function renderDailyComplete() {
   const allFirstTry = dailyAttempts.every(a => a === 1) && dailyFailed.every(f => !f);
   const solvedCount = dailyFailed.filter(f => !f).length;
   const firstTryCount = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
+  const usedHardMode = dailyStats.hardModeSolved > 0;
 
   const rows = dailyDeck.map((card, i) => {
     const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
@@ -894,15 +1047,15 @@ function renderDailyComplete() {
   let title, trophy, subtitle;
   if (allFirstTry) {
     title = 'Perfect!';
-    trophy = '🎆';
+    trophy = usedHardMode ? '🥷' : '🎆';
     subtitle = `All ${dailyDeck.length} on the first try. Incredible!`;
   } else if (allSolved) {
     title = 'Challenge Complete!';
-    trophy = '🏆';
+    trophy = usedHardMode ? '🥷' : '🏆';
     subtitle = `${solvedCount}/${dailyDeck.length} solved · ${firstTryCount} first try`;
   } else {
     title = 'Challenge Complete';
-    trophy = '💪';
+    trophy = usedHardMode ? '🥷' : '💪';
     subtitle = `${solvedCount}/${dailyDeck.length} solved · ${firstTryCount} first try`;
   }
 
@@ -911,6 +1064,7 @@ function renderDailyComplete() {
       <div class="trophy">${trophy}</div>
       <h2>${title}</h2>
       <p>${subtitle}</p>
+      ${buildDailyHardModeBadge(dailyStats)}
       <div class="daily-results">${rows}</div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
         <button class="copy-btn" onclick="copyDailyResults()">Copy results</button>
@@ -949,6 +1103,7 @@ function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 function buildDeck() {
   deck = shuffle(ALL_CARDS.filter(c => activeGroups.has(c.group)));
   current = 0; known = new Set(); answered = false; perfect = true;
+  practiceStats = createRunStats();
   render();
 }
 
@@ -968,13 +1123,16 @@ function render() {
   const remaining = deck.filter((_, i) => !known.has(i));
 
   if (remaining.length === 0 && deck.length > 0) {
-    const msg = perfect
-      ? `<h2>Perfect!</h2><p>Zero mistakes across ${deck.length} cards.</p>`
-      : `<h2>Deck complete!</h2><p>You typed all ${deck.length} conjugations correctly.</p>`;
+    const title = perfect ? 'Perfect!' : 'Deck complete!';
+    const subtitle = perfect
+      ? `You cleared all ${deck.length} cards.`
+      : `You finished all ${deck.length} cards.`;
     area.innerHTML = `
       <div class="card done-screen">
         <div class="trophy">${perfect ? '🎆' : '🏆'}</div>
-        ${msg}
+        <h2>${title}</h2>
+        <p>${subtitle}</p>
+        ${buildPracticeStatsMarkup(practiceStats)}
         <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
       </div>`;
     if (perfect) launchFireworks();
@@ -986,7 +1144,7 @@ function render() {
 
   area.innerHTML = `
     <div class="card">
-      <div class="card-meta">${card.verb} &mdash; present tense</div>
+      <div class="card-meta">${getCardMeta(card)}</div>
       <div class="card-prompt">${card.meaning}</div>
       <div class="card-sub">Type the Norwegian conjugation</div>
       <div class="input-row">
@@ -1029,6 +1187,7 @@ function checkAnswer() {
   const given = normalize(input.value);
 
   if (given === correct) {
+    if (hardMode) practiceStats.hardModeSolved++;
     input.classList.add('correct');
     btn.classList.add('go-green');
     feedback.className = 'feedback ok';
@@ -1037,6 +1196,7 @@ function checkAnswer() {
     known.add(current);
     updateStats();
   } else {
+    practiceStats.errors++;
     perfect = false;
     input.classList.add('wrong');
     btn.classList.add('go-red');
@@ -1167,7 +1327,77 @@ function launchFireworks() {
   raf = requestAnimationFrame(frame);
 }
 
+function launchHardModeConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'fireworks-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = [];
+  const colors = ['#C4922A', '#E8C97A', '#2D6A4F', '#B7E4C7', '#FFF3DC'];
+
+  for (let burst = 0; burst < 3; burst++) {
+    const originX = W * (0.25 + Math.random() * 0.5);
+    const originY = H * (0.16 + Math.random() * 0.18);
+    for (let i = 0; i < 36; i++) {
+      const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
+      const speed = 2 + Math.random() * 4;
+      particles.push({
+        x: originX,
+        y: originY,
+        vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 2,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.015 + Math.random() * 0.015,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 5 + Math.random() * 6,
+        tilt: Math.random() * Math.PI,
+        spin: (Math.random() - 0.5) * 0.25,
+      });
+    }
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.09;
+      p.vx *= 0.992;
+      p.life -= p.decay;
+      p.tilt += p.spin;
+
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.tilt);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.66);
+      ctx.restore();
+    }
+
+    if (particles.length > 0) {
+      requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
 renderFilters();
+updateHardModeButton();
 buildDeck();
 if (window.location.hash === '#daily') startDaily();
 </script>
