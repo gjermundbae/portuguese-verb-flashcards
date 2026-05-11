@@ -66,6 +66,18 @@
     text-transform: uppercase;
   }
 
+  header p a {
+    color: var(--text3);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, color 0.15s;
+    padding-bottom: 1px;
+  }
+
+  header p a:hover { color: var(--text2); border-bottom-color: var(--border2); }
+
+  header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
+
   .container {
     width: 100%;
     max-width: 520px;
@@ -670,7 +682,7 @@
 
 <header>
   <h1>Verbos em <em>Português</em></h1>
-  <p>Present tense</p>
+  <p><a class="active" href="index.html">verbs</a> · <a href="connecting.html">connecting words</a></p>
 </header>
 
 <div class="container">

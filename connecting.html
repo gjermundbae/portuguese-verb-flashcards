@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portuguese Connecting Words</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F0E8;
+    --surface: #FFFDF7;
+    --surface2: #EDE8DC;
+    --border: #D4CCBA;
+    --border2: #BEB5A0;
+    --text: #1A1712;
+    --text2: #6B6456;
+    --text3: #9E9485;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --green-light: #B7E4C7;
+    --red: #7D2B2B;
+    --red-bg: #FFE8E8;
+    --red-light: #FFCACA;
+    --accent: #C4922A;
+    --accent-bg: #FFF3DC;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header { text-align: center; margin-bottom: 2.5rem; }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 em { font-style: italic; color: var(--accent); }
+
+  header p {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  header p a {
+    color: var(--text3);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, color 0.15s;
+    padding-bottom: 1px;
+  }
+
+  header p a:hover { color: var(--text2); border-bottom-color: var(--border2); }
+
+  header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
+
+  .container { width: 100%; max-width: 520px; }
+
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+
+  .fc-tag {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .fc-tag:hover { border-color: var(--border2); }
+
+  .fc-tag.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+
+  .stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.75rem; }
+
+  .progress-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 0.7rem;
+    color: var(--text3);
+    min-width: 32px;
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.75rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-meta {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-english {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-english b { color: var(--accent); font-weight: inherit; }
+
+  .card-portuguese {
+    font-size: 1.05rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  .blank-slot {
+    display: inline-block;
+    min-width: 3em;
+    border-bottom: 2px dashed var(--accent);
+    text-align: center;
+    color: var(--accent);
+    font-weight: 500;
+    margin: 0 2px;
+    vertical-align: baseline;
+  }
+
+  .blank-slot.revealed {
+    border-bottom-style: solid;
+    border-bottom-color: var(--green);
+    color: var(--green);
+  }
+
+  .blank-slot.revealed-wrong {
+    border-bottom-style: solid;
+    border-bottom-color: var(--red);
+    color: var(--red);
+  }
+
+  .input-row { display: flex; gap: 8px; }
+
+  .answer-input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .answer-input:focus { border-color: var(--accent); background: var(--surface); }
+
+  .answer-input.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .answer-input.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .answer-input:disabled { opacity: 1; }
+
+  .check-btn {
+    font-size: 1.15rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn.go-green { background: var(--green); border-color: var(--green); }
+  .check-btn.go-red { background: var(--red); border-color: var(--red); }
+
+  .feedback {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    min-height: 18px;
+    line-height: 1.5;
+  }
+
+  .feedback.ok { color: var(--green); }
+  .feedback.err { color: var(--red); }
+
+  .tip {
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+    line-height: 1.5;
+  }
+
+  .tip strong { color: var(--text); font-weight: 500; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
+
+  .done-screen { text-align: center; padding: 3rem 1rem; }
+  .done-screen .trophy { font-size: 3rem; margin-bottom: 1rem; }
+
+  .done-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .done-screen p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+  }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  .result-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 0.75rem;
+  }
+
+  .result-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.55rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .result-stat-num.green { color: var(--green); }
+  .result-stat-num.red { color: var(--red); }
+
+  .result-stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.35rem;
+  }
+
+  .fireworks-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .answer-input.shake { animation: shake 0.4s ease; }
+
+  .card-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Palavras de <em>Conexão</em></h1>
+  <p><a href="index.html">verbs</a> · <a class="active" href="connecting.html">connecting words</a></p>
+</header>
+
+<div class="container">
+  <div id="practiceChrome">
+    <div class="filters" id="filterRow"></div>
+
+    <div class="stats" id="statsRow">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
+      <div class="stat"><div class="stat-num red" id="statLeft">0</div><div class="stat-lbl">Left</div></div>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bg"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+  </div>
+
+  <div id="cardArea"></div>
+</div>
+
+<script>
+const ALL_CARDS = [
+  // ── Prepositions ──────────────────────────────────────────
+  { en: "I am **from** Brazil", pt: "Eu sou {de} o Brasil", answer: "de", hint: "from", tip: "'De' means 'from' or 'of'. With definite articles it contracts: de + o = do, de + a = da.", group: "prepositions" },
+  { en: "This is **for** you", pt: "Isso é {para} você", answer: "para", alts: ["pra"], hint: "for", tip: "'Para' means 'for' or 'to' (purpose/destination). In casual speech, 'pra' is common.", group: "prepositions" },
+  { en: "I go **to** the gym every day", pt: "Eu vou {para} a academia todo dia", answer: "para", alts: ["pra"], hint: "to", tip: "'Para' indicates direction/destination. 'Ir para' = to go to (a destination).", group: "prepositions" },
+  { en: "I live **with** my family", pt: "Eu moro {com} a minha família", answer: "com", hint: "with", tip: "'Com' means 'with'. With pronouns it contracts: com + mim = comigo, com + você stays 'com você'.", group: "prepositions" },
+  { en: "She works **at** the hospital", pt: "Ela trabalha {em} um hospital", answer: "em", hint: "at/in", tip: "'Em' means 'in', 'at', or 'on'. It contracts with articles: em + o = no, em + a = na.", group: "prepositions" },
+  { en: "I need to go **by** bus", pt: "Eu preciso ir {de} ônibus", answer: "de", hint: "by", tip: "'De' is used for means of transport: de ônibus (by bus), de carro (by car), de avião (by plane).", group: "prepositions" },
+  { en: "Come **with** me", pt: "Vem {comigo}", answer: "comigo", hint: "with me", tip: "'Comigo' is the contraction of 'com' + 'mim'. Similarly: com + você = contigo (formal) or com você.", group: "prepositions" },
+  { en: "I work **from** 9 **to** 5", pt: "Eu trabalho {das} 9 às 5", answer: "das", hint: "from", tip: "'Das' = de + as. When talking about time ranges, use 'das ... às' (from ... to).", group: "prepositions" },
+  { en: "I think **about** you", pt: "Eu penso {em} você", answer: "em", hint: "about", tip: "'Pensar em' means 'to think about'. Portuguese uses 'em' where English uses 'about'.", group: "prepositions" },
+  { en: "I am waiting **for** the bus", pt: "Eu estou esperando {o} ônibus", answer: "o", hint: "for (the)", tip: "In Portuguese, 'esperar' (to wait for) doesn't need a preposition — just the direct object with its article.", group: "prepositions" },
+  { en: "The book is **on** the table", pt: "O livro está {em cima de} a mesa", answer: "em cima de", hint: "on (top of)", tip: "'Em cima de' means 'on top of'. For general 'on', you can also use 'sobre' or 'na' (em + a).", group: "prepositions" },
+  { en: "I am **at** home", pt: "Eu estou {em} casa", answer: "em", hint: "at", tip: "'Em casa' = at home. No article needed with 'casa' when it means your own home.", group: "prepositions" },
+  { en: "We go **by** foot", pt: "Nós vamos {a} pé", answer: "a", hint: "by/on", tip: "'A pé' means 'on foot'. The preposition 'a' is used for this expression, not 'de'.", group: "prepositions" },
+  { en: "I arrived **at** the airport", pt: "Eu cheguei {ao} aeroporto", answer: "ao", hint: "at the", tip: "'Chegar a' = to arrive at. 'Ao' = a + o. Use 'chegar a' (not 'chegar em') in standard Portuguese.", group: "prepositions" },
+  { en: "He is good **at** cooking", pt: "Ele é bom {de} cozinha", answer: "de", hint: "at", tip: "'Bom de' is used colloquially to mean 'good at'. Formally you might see 'bom em'.", group: "prepositions" },
+  { en: "I need **to** study", pt: "Eu preciso {de} estudar", answer: "de", hint: "to", tip: "'Precisar de' means 'to need'. The 'de' is required before nouns and optional before verbs in casual speech.", group: "prepositions" },
+
+  // ── Contractions ──────────────────────────────────────────
+  { en: "I live **in the** center", pt: "Eu moro {no} centro", answer: "no", hint: "in the (masc)", tip: "'No' = em + o. Used before masculine nouns: no centro, no Brasil, no trabalho.", group: "contractions" },
+  { en: "She is **in the** kitchen", pt: "Ela está {na} cozinha", answer: "na", hint: "in the (fem)", tip: "'Na' = em + a. Used before feminine nouns: na cozinha, na escola, na praia.", group: "contractions" },
+  { en: "I like **the** beach", pt: "Eu gosto {da} praia", answer: "da", hint: "of the (fem)", tip: "'Da' = de + a. 'Gostar de' (to like) requires 'de', which contracts with the article.", group: "contractions" },
+  { en: "The color **of the** sky", pt: "A cor {do} céu", answer: "do", hint: "of the (masc)", tip: "'Do' = de + o. Used to show possession or relation: o nome do professor, a cor do céu.", group: "contractions" },
+  { en: "I go **to the** market", pt: "Eu vou {ao} mercado", answer: "ao", hint: "to the (masc)", tip: "'Ao' = a + o. Used with 'ir a' (to go to): ao mercado, ao cinema, ao banco.", group: "contractions" },
+  { en: "We go **to the** beach", pt: "Nós vamos {à} praia", answer: "à", alts: ["a"], hint: "to the (fem)", tip: "'À' = a + a (crase). Used before feminine nouns with 'ir a': à praia, à escola, à festa.", group: "contractions" },
+  { en: "I work **at the** office", pt: "Eu trabalho {no} escritório", answer: "no", hint: "at the (masc)", tip: "'No' = em + o. 'Em' becomes 'no/na' before articles: no escritório, na empresa.", group: "contractions" },
+  { en: "He lives **in the** United States", pt: "Ele mora {nos} Estados Unidos", answer: "nos", hint: "in the (masc pl)", tip: "'Nos' = em + os. Used before masculine plural: nos Estados Unidos, nos dias de semana.", group: "contractions" },
+  { en: "I think **about the** problem", pt: "Eu penso {no} problema", answer: "no", hint: "about the (masc)", tip: "'Pensar em' + article contracts: em + o = no. 'Penso no problema' = I think about the problem.", group: "contractions" },
+  { en: "The house **of the** neighbors", pt: "A casa {dos} vizinhos", answer: "dos", hint: "of the (masc pl)", tip: "'Dos' = de + os. Plural masculine contraction: dos vizinhos, dos amigos, dos alunos.", group: "contractions" },
+  { en: "I like **the** flowers", pt: "Eu gosto {das} flores", answer: "das", hint: "of the (fem pl)", tip: "'Das' = de + as. Feminine plural: das flores, das crianças, das músicas.", group: "contractions" },
+  { en: "We go **to the** movies", pt: "Nós vamos {ao} cinema", answer: "ao", hint: "to the (masc)", tip: "'Ao cinema' = to the movies. 'Ir ao' is the standard pattern for destinations.", group: "contractions" },
+  { en: "She works **at the** school", pt: "Ela trabalha {na} escola", answer: "na", hint: "at the (fem)", tip: "'Na' = em + a. Location with feminine nouns: na escola, na cidade, na rua.", group: "contractions" },
+  { en: "I am **from the** south", pt: "Eu sou {do} sul", answer: "do", hint: "from the (masc)", tip: "'Do' = de + o. Origin: sou do sul, sou do Brasil, sou do Rio.", group: "contractions" },
+  { en: "The name **of the** street", pt: "O nome {da} rua", answer: "da", hint: "of the (fem)", tip: "'Da' = de + a. Possession/relation with feminine nouns: da rua, da cidade, da escola.", group: "contractions" },
+  { en: "I passed **through the** park", pt: "Eu passei {pelo} parque", answer: "pelo", hint: "through the (masc)", tip: "'Pelo' = por + o. 'Passar pelo' = to pass through the. Also: pela (por + a).", group: "contractions" },
+  { en: "She walked **through the** door", pt: "Ela passou {pela} porta", answer: "pela", hint: "through the (fem)", tip: "'Pela' = por + a. Feminine form: pela porta, pela janela, pela cidade.", group: "contractions" },
+  { en: "I work **from** 9 **to** 5", pt: "Eu trabalho das 9 {às} 5", answer: "às", alts: ["as"], hint: "to (time)", tip: "'Às' = a + as. For time ranges: 'das 9 às 5'. The crase (à/às) marks 'a + a(s)'.", group: "contractions" },
+  { en: "I am going **to the** party", pt: "Eu vou {à} festa", answer: "à", alts: ["a"], hint: "to the (fem)", tip: "'À' = a + a (crase). 'Ir à festa' = go to the party. Crase appears before feminine nouns with 'a'.", group: "contractions" },
+  { en: "She is **in a** meeting", pt: "Ela está {numa} reunião", answer: "numa", hint: "in a (fem)", tip: "'Numa' = em + uma. Informal but very common: numa reunião, num restaurante.", group: "contractions" },
+  { en: "I eat **at a** restaurant", pt: "Eu como {num} restaurante", answer: "num", hint: "at a (masc)", tip: "'Num' = em + um. Common in speech: num restaurante, num hotel, num momento.", group: "contractions" },
+
+  // ── Demonstratives ────────────────────────────────────────
+  { en: "**This** book is good", pt: "{Este} livro é bom", answer: "Este", alts: ["esse"], hint: "this (masc)", tip: "'Este' = this (near me). 'Esse' = that (near you). In casual speech, Brazilians often use 'esse' for both.", group: "demonstratives" },
+  { en: "**This** house is big", pt: "{Esta} casa é grande", answer: "Esta", alts: ["essa"], hint: "this (fem)", tip: "'Esta' = this (feminine). Matches the gender of the noun: esta casa, este livro.", group: "demonstratives" },
+  { en: "I want **that** one", pt: "Eu quero {esse}", answer: "esse", alts: ["este"], hint: "that (masc)", tip: "'Esse' = that (near you, masc). In Brazilian Portuguese, 'esse' is the default for 'this/that'.", group: "demonstratives" },
+  { en: "**That** idea is great", pt: "{Essa} ideia é ótima", answer: "Essa", alts: ["esta"], hint: "that (fem)", tip: "'Essa' = that (feminine, near you). 'Essa ideia' = that idea.", group: "demonstratives" },
+  { en: "What is **this**?", pt: "O que é {isso}?", answer: "isso", hint: "this/that (thing)", tip: "'Isso' = this/that (abstract, no gender). Used when not referring to a specific gendered noun.", group: "demonstratives" },
+  { en: "**That** (over there) is my car", pt: "{Aquele} é o meu carro", answer: "Aquele", hint: "that (far, masc)", tip: "'Aquele' = that over there (masculine). For things far from both speaker and listener.", group: "demonstratives" },
+  { en: "**That** woman over there", pt: "{Aquela} mulher ali", answer: "Aquela", hint: "that (far, fem)", tip: "'Aquela' = that (feminine, far). Aquela mulher = that woman (over there).", group: "demonstratives" },
+  { en: "What is **that** over there?", pt: "O que é {aquilo}?", answer: "aquilo", hint: "that (far, abstract)", tip: "'Aquilo' = that thing over there (abstract). No gender, refers to something distant.", group: "demonstratives" },
+  { en: "I like **this** (thing)", pt: "Eu gosto {disso}", answer: "disso", hint: "of this", tip: "'Disso' = de + isso. When 'gostar de' combines with demonstratives: de + isso = disso.", group: "demonstratives" },
+  { en: "I am thinking **about that**", pt: "Eu estou pensando {nisso}", answer: "nisso", hint: "about that", tip: "'Nisso' = em + isso. 'Pensar em' + isso = nisso. Prepositions contract with demonstratives.", group: "demonstratives" },
+  { en: "Put it **on that** (thing)", pt: "Coloca {naquilo}", answer: "naquilo", hint: "on that (far)", tip: "'Naquilo' = em + aquilo. Preposition + demonstrative: em + aquele = naquele, em + aquilo = naquilo.", group: "demonstratives" },
+  { en: "I am tired **of this**", pt: "Eu estou cansado {disso}", answer: "disso", hint: "of this", tip: "'Disso' = de + isso. Contracted demonstrative used with 'cansado de' (tired of).", group: "demonstratives" },
+  { en: "At **that** moment", pt: "{Naquele} momento", answer: "Naquele", alts: ["naquele"], hint: "at that (far)", tip: "'Naquele' = em + aquele. Used for distant reference in time or space.", group: "demonstratives" },
+  { en: "In **this** case", pt: "{Neste} caso", answer: "Neste", alts: ["nesse", "neste"], hint: "in this", tip: "'Neste' = em + este. 'Nesse' = em + esse. Both are common for 'in this'.", group: "demonstratives" },
+
+  // ── Articles & small words ────────────────────────────────
+  { en: "I like **the** coffee here", pt: "Eu gosto {do} café daqui", answer: "do", hint: "the (after gostar)", tip: "'Gostar de' + o = do. 'Gostar' always requires 'de', which merges with the article.", group: "articles" },
+  { en: "I speak **—** Portuguese", pt: "Eu falo {—} português", answer: "—", hint: "(no article)", tip: "Languages after 'falar' don't take an article: 'Falo português', not 'Falo o português'.", group: "articles" },
+  { en: "**The** Brazil is beautiful", pt: "{O} Brasil é lindo", answer: "O", hint: "the (masc)", tip: "Country names often take articles in Portuguese: o Brasil, a França, os Estados Unidos. A few don't: Portugal, Cuba.", group: "articles" },
+  { en: "I have **a** question", pt: "Eu tenho {uma} pergunta", answer: "uma", hint: "a (fem)", tip: "'Uma' = a/an (feminine). 'Um' = a/an (masculine). Matches the noun's gender.", group: "articles" },
+  { en: "I need **a** moment", pt: "Eu preciso de {um} momento", answer: "um", hint: "a (masc)", tip: "'Um' = a/an (masculine). Portuguese articles always match the noun gender.", group: "articles" },
+  { en: "**The** children are playing", pt: "{As} crianças estão brincando", answer: "As", alts: ["as"], hint: "the (fem pl)", tip: "'As' = the (feminine plural). Definite articles: o, a, os, as.", group: "articles" },
+  { en: "I see **the** boys", pt: "Eu vejo {os} meninos", answer: "os", hint: "the (masc pl)", tip: "'Os' = the (masculine plural). Definite articles: o (m), a (f), os (m.pl), as (f.pl).", group: "articles" },
+  { en: "There are **some** books here", pt: "Tem {uns} livros aqui", answer: "uns", hint: "some (masc pl)", tip: "'Uns' = some (masculine plural). Indefinite articles: um, uma, uns, umas.", group: "articles" },
+  { en: "I bought **some** flowers", pt: "Eu comprei {umas} flores", answer: "umas", hint: "some (fem pl)", tip: "'Umas' = some (feminine plural). Used informally to mean 'a few' or 'some'.", group: "articles" },
+  { en: "I am going **there**", pt: "Eu vou {lá}", answer: "lá", hint: "there", tip: "'Lá' = there (far). 'Ali' = there (nearby, visible). 'Aqui' = here.", group: "articles" },
+  { en: "Come **here**", pt: "Vem {aqui}", answer: "aqui", hint: "here", tip: "'Aqui' = here. 'Cá' also means 'here' but is more common in European Portuguese.", group: "articles" },
+  { en: "The restaurant is right **there**", pt: "O restaurante é bem {ali}", answer: "ali", hint: "there (nearby)", tip: "'Ali' = there (nearby/visible). Different from 'lá' (farther/not visible).", group: "articles" },
+  { en: "I need **something**", pt: "Eu preciso de {algo}", answer: "algo", alts: ["alguma coisa"], hint: "something", tip: "'Algo' = something (formal). 'Alguma coisa' = something (more common in speech).", group: "articles" },
+  { en: "Is there **someone** here?", pt: "Tem {alguém} aqui?", answer: "alguém", alts: ["alguem"], hint: "someone", tip: "'Alguém' = someone/anybody. 'Ninguém' = nobody. Both are invariable (no gender).", group: "articles" },
+  { en: "I don't have **anything**", pt: "Eu não tenho {nada}", answer: "nada", hint: "anything/nothing", tip: "'Nada' = nothing/anything. In Portuguese, double negatives are standard: 'não tenho nada'.", group: "articles" },
+  { en: "**Each** person brings a dish", pt: "{Cada} pessoa traz um prato", answer: "Cada", alts: ["cada"], hint: "each", tip: "'Cada' = each/every. It's invariable — never changes form. 'Cada pessoa', 'cada dia'.", group: "articles" },
+  { en: "I know **everything**", pt: "Eu sei {tudo}", answer: "tudo", hint: "everything", tip: "'Tudo' = everything (abstract). 'Todo/toda' = all/every (before a noun): todo dia = every day.", group: "articles" },
+  { en: "**Nobody** knows", pt: "{Ninguém} sabe", answer: "Ninguém", alts: ["ninguem", "ninguém"], hint: "nobody", tip: "'Ninguém' = nobody. Can stand alone as subject: 'Ninguém sabe' = nobody knows.", group: "articles" },
+  { en: "We go there **every** day", pt: "Nós vamos lá {todo} dia", answer: "todo", hint: "every", tip: "'Todo dia' (no article) = every day. 'O dia todo' = the whole day. Word order changes meaning.", group: "articles" },
+  { en: "I already know **that**", pt: "Eu já sei {disso}", answer: "disso", hint: "that/about that", tip: "'Saber de' + isso = disso. Many Portuguese verbs require specific prepositions that merge with pronouns.", group: "articles" },
+  { en: "It is **very** hot today", pt: "Está {muito} quente hoje", answer: "muito", hint: "very", tip: "'Muito' = very/much. Before adjectives it's invariable: muito quente, muito bonita.", group: "articles" },
+];
+
+const GROUPS = ["prepositions", "contractions", "demonstratives", "articles"];
+let activeGroups = new Set(GROUPS);
+let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
+let stats = { errors: 0, firstTry: 0 };
+
+function normalize(str) {
+  return str.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function buildDeck() {
+  deck = shuffle(ALL_CARDS.filter(c => activeGroups.has(c.group)));
+  current = 0;
+  known = new Set();
+  answered = false;
+  perfect = true;
+  stats = { errors: 0, firstTry: 0 };
+  render();
+}
+
+function updateStats() {
+  const total = deck.length, knownCount = known.size;
+  const pct = total > 0 ? Math.round((knownCount / total) * 100) : 0;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statKnown').textContent = knownCount;
+  document.getElementById('statLeft').textContent = total - knownCount;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function renderSentence(card, reveal) {
+  const answer = card.answer;
+  const pt = card.pt;
+  const regex = /\{([^}]+)\}/g;
+  let result = '';
+  let lastIdx = 0;
+  let match;
+
+  while ((match = regex.exec(pt)) !== null) {
+    result += escapeHtml(pt.slice(lastIdx, match.index));
+    const word = match[1];
+
+    if (word === answer) {
+      if (word === '—') {
+        if (reveal === 'correct') {
+          result += '<span class="blank-slot revealed">(nothing)</span>';
+        } else if (reveal === 'wrong') {
+          result += '<span class="blank-slot revealed-wrong">(nothing)</span>';
+        } else {
+          result += '<span class="blank-slot">&nbsp;</span>';
+        }
+      } else if (reveal === 'correct') {
+        result += `<span class="blank-slot revealed">${escapeHtml(word)}</span>`;
+      } else if (reveal === 'wrong') {
+        result += `<span class="blank-slot revealed-wrong">${escapeHtml(word)}</span>`;
+      } else {
+        result += '<span class="blank-slot">&nbsp;</span>';
+      }
+    } else {
+      result += escapeHtml(word);
+    }
+    lastIdx = match.index + match[0].length;
+  }
+  result += escapeHtml(pt.slice(lastIdx));
+  return result;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderEnglish(card) {
+  return card.en.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+}
+
+function render() {
+  updateStats();
+  const area = document.getElementById('cardArea');
+  const remaining = deck.filter((_, i) => !known.has(i));
+
+  if (remaining.length === 0 && deck.length > 0) {
+    const title = perfect ? 'Perfeito!' : 'Deck complete!';
+    const subtitle = perfect
+      ? `You cleared all ${deck.length} cards without errors.`
+      : `You finished all ${deck.length} cards.`;
+    area.innerHTML = `
+      <div class="card done-screen">
+        <div class="trophy">${perfect ? '🎆' : '🏆'}</div>
+        <h2>${title}</h2>
+        <p>${subtitle}</p>
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="result-stat-num green">${stats.firstTry}</div>
+            <div class="result-stat-lbl">First try</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-num red">${stats.errors}</div>
+            <div class="result-stat-lbl">Errors made</div>
+          </div>
+        </div>
+        <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
+      </div>`;
+    if (perfect) launchFireworks();
+    return;
+  }
+
+  while (known.has(current)) current = (current + 1) % deck.length;
+  const card = deck[current];
+
+  area.innerHTML = `
+    <div class="card">
+      <div class="card-meta">${card.group}</div>
+      <div class="card-english">${renderEnglish(card)}</div>
+      <div class="card-portuguese">${renderSentence(card, null)}</div>
+      <div class="card-sub">Fill in the missing word${card.answer === '—' ? ' (or leave empty if none needed)' : ''}</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
+    </div>
+  `;
+
+  answered = false;
+  const input = document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAction();
+  });
+}
+
+function handleAction() {
+  if (answered) { nextCard(); return; }
+  checkAnswer();
+}
+
+function checkAnswer() {
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  const ptLine = document.querySelector('.card-portuguese');
+
+  const given = normalize(input.value);
+  const isEmptyAnswer = card.answer === '—';
+
+  if (!isEmptyAnswer && !input.value.trim()) return;
+
+  answered = true;
+  input.disabled = true;
+
+  const correctNorm = isEmptyAnswer ? '' : normalize(card.answer);
+  const altsNorm = (card.alts || []).map(normalize);
+  const isCorrect = isEmptyAnswer
+    ? given === ''
+    : (given === correctNorm || altsNorm.includes(given));
+
+  if (isCorrect) {
+    stats.firstTry++;
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    const displayAnswer = isEmptyAnswer ? '(no word needed)' : card.answer;
+    feedback.innerHTML = `✓ Correct — <strong>${displayAnswer}</strong>`;
+    ptLine.innerHTML = renderSentence(card, 'correct');
+    revealArea.innerHTML = `<div class="tip">${card.tip}</div>`;
+    known.add(current);
+    updateStats();
+  } else {
+    stats.errors++;
+    perfect = false;
+    input.classList.add('wrong');
+    btn.classList.add('go-red');
+    feedback.className = 'feedback err';
+    const displayAnswer = isEmptyAnswer ? '(no word needed)' : card.answer;
+    feedback.innerHTML = `✗ The answer is <strong>${displayAnswer}</strong>`;
+    ptLine.innerHTML = renderSentence(card, 'wrong');
+    revealArea.innerHTML = `<div class="tip">${card.tip}</div>`;
+  }
+
+  setTimeout(() => btn.focus(), 0);
+}
+
+function advanceToNextUnknown() {
+  if (deck.length === 0 || known.size === deck.length) {
+    answered = false;
+    render();
+    return;
+  }
+  current = (current + 1) % deck.length;
+  while (known.has(current)) current = (current + 1) % deck.length;
+  answered = false;
+  render();
+}
+
+function nextCard() { advanceToNextUnknown(); }
+
+function skipCard() {
+  known.add(current);
+  updateStats();
+  advanceToNextUnknown();
+}
+
+function renderFilters() {
+  document.getElementById('filterRow').innerHTML = GROUPS.map(g =>
+    `<div class="fc-tag active" onclick="toggleGroup(this,'${g}')">${g}</div>`
+  ).join('');
+}
+
+function toggleGroup(el, g) {
+  if (activeGroups.has(g)) {
+    if (activeGroups.size === 1) return;
+    activeGroups.delete(g); el.classList.remove('active');
+  } else {
+    activeGroups.add(g); el.classList.add('active');
+  }
+  buildDeck();
+}
+
+function launchFireworks() {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'fireworks-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = [];
+  const colors = ['#C4922A','#2D6A4F','#7D2B2B','#E8C97A','#B7E4C7','#FFCACA','#6B6456','#F5F0E8'];
+
+  function burst(x, y) {
+    const count = 50 + Math.random() * 30;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.012,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+
+  let bursts = 0, maxBursts = 6;
+  function scheduleBurst() {
+    if (bursts >= maxBursts) return;
+    burst(W * (0.2 + Math.random() * 0.6), H * (0.15 + Math.random() * 0.45));
+    bursts++;
+    setTimeout(scheduleBurst, 250 + Math.random() * 350);
+  }
+  scheduleBurst();
+
+  let raf;
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.vx *= 0.99;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (particles.length > 0 || bursts < maxBursts) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+  raf = requestAnimationFrame(frame);
+}
+
+renderFilters();
+buildDeck();
+</script>
+</body>
+</html>
