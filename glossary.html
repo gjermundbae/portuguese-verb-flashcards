@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portuguese Glossary Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F0E8;
+    --surface: #FFFDF7;
+    --surface2: #EDE8DC;
+    --border: #D4CCBA;
+    --border2: #BEB5A0;
+    --text: #1A1712;
+    --text2: #6B6456;
+    --text3: #9E9485;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --red: #7D2B2B;
+    --red-bg: #FFE8E8;
+    --accent: #C4922A;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header { text-align: center; margin-bottom: 2.5rem; }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 em { font-style: italic; color: var(--accent); }
+
+  header p {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  header p a {
+    color: var(--text3);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, color 0.15s;
+    padding-bottom: 1px;
+  }
+
+  header p a:hover { color: var(--text2); border-bottom-color: var(--border2); }
+  header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
+
+  .container { width: 100%; max-width: 520px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+
+  .stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.75rem; }
+
+  .progress-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 0.7rem;
+    color: var(--text3);
+    min-width: 32px;
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.75rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-meta {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-prompt {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-row { display: flex; gap: 8px; }
+
+  .answer-input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .answer-input:focus { border-color: var(--accent); background: var(--surface); }
+
+  .answer-input.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .answer-input.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .answer-input:disabled { opacity: 1; }
+
+  .check-btn {
+    font-size: 1.15rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn.go-green { background: var(--green); border-color: var(--green); }
+  .check-btn.go-red { background: var(--red); border-color: var(--red); }
+
+  .feedback {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    min-height: 18px;
+    line-height: 1.5;
+  }
+
+  .feedback.ok { color: var(--green); }
+  .feedback.err { color: var(--red); }
+
+  .tip {
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+    line-height: 1.5;
+  }
+
+  .tip strong { color: var(--text); font-weight: 500; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
+
+  .done-screen { text-align: center; padding: 3rem 1rem; }
+  .done-screen .trophy { font-size: 3rem; margin-bottom: 1rem; }
+
+  .done-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .done-screen p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+  }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  .result-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 0.75rem;
+  }
+
+  .result-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.55rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .result-stat-num.green { color: var(--green); }
+  .result-stat-num.red { color: var(--red); }
+
+  .result-stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.35rem;
+  }
+
+  .fireworks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .answer-input.shake { animation: shake 0.4s ease; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><em>Glossário</em> em Português</h1>
+  <p><a href="index.html">verbs</a> · <a href="connecting.html">connecting words</a> · <a class="active" href="glossary.html">glossary</a></p>
+</header>
+
+<div class="container">
+  <div id="practiceChrome">
+    <div class="stats" id="statsRow">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
+      <div class="stat"><div class="stat-num red" id="statLeft">0</div><div class="stat-lbl">Left</div></div>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bg"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+  </div>
+
+  <div id="cardArea"></div>
+</div>
+
+<script>
+const ALL_CARDS = [
+  { pt: "que saco", meaning: "how annoying", group: "reactions", note: "A common way to complain when something is irritating or a drag." },
+  { pt: "na moral", meaning: "seriously / for real", group: "emphasis", note: "A casual intensifier used to mean 'seriously' or 'honestly'." },
+  { pt: "poxa vida", meaning: "oh man / darn", group: "reactions", note: "A mild exclamation for disappointment, sympathy, or frustration." },
+  { pt: "de folga", meaning: "off (work) / day off", group: "social life", note: "Used with 'estar': 'tô de folga hoje' — I'm off today." },
+  { pt: "nem fudendo", meaning: "no fucking way", group: "reactions", note: "Very strong and vulgar. Use carefully." },
+  { pt: "dar um rolê", meaning: "hang out / go out", group: "social life", note: "An informal way to say 'go out' or 'hang out' — 'bora dar um rolê?'" },
+  { pt: "fechou", meaning: "deal! / done!", group: "social life", note: "Used to close a plan, like 'deal' or 'done' — confirms the agreement." },
+  { pt: "movimentado", meaning: "lively / busy", group: "descriptions", note: "Common for places, streets, or days that feel active and full of movement." },
+  { pt: "sabe?", meaning: "you know?", group: "conversation", note: "A filler often added at the end of a sentence, like 'you know?'" },
+  { pt: "tipo assim", meaning: "like / kinda like", group: "conversation", note: "A filler phrase people use when thinking out loud or softening what they say." },
+  { pt: "acho que sim", meaning: "I think so", group: "emphasis", note: "A soft, non-committal yes." },
+  { pt: "safadeza", meaning: "mischief / naughty stuff", group: "descriptions", note: "A noun for naughty or mischievous behavior; can be playful or flirty depending on context." },
+  { pt: "tá ligado?", meaning: "you get me? / you feel me?", group: "conversation", note: "Very colloquial. Used to check whether someone follows what you mean." },
+  { pt: "sei não", meaning: "I don't know about that", group: "emphasis", note: "A skeptical or doubtful response, closer to 'hmm, not sure'." },
+  { pt: "safado", meaning: "rascal / cheeky (person)", group: "descriptions", note: "An adjective/noun for someone naughty or sly — can be playful or insulting depending on tone." },
+  { pt: "tô zoando", meaning: "I'm kidding / joking", group: "conversation", note: "Used to walk something back: 'I'm joking' or 'just messing with you'." },
+  { pt: "demorou", meaning: "alright! / let's do it", group: "social life", note: "An enthusiastic 'I'm in' — agreeing to a plan or invitation." },
+  { pt: "brabo", meaning: "awesome / badass", group: "descriptions", note: "Slang praise for something impressive, tough, or really good." },
+  { pt: "é nós", meaning: "we're together / got your back", group: "social life", note: "A solidarity phrase, like 'we're good' or 'I've got you'." },
+  { pt: "opa", meaning: "hey / whoops / oh", group: "reactions", note: "A flexible little interjection for greeting, surprise, or a small mistake." },
+  { pt: "já era", meaning: "it's over / too late", group: "reactions", note: "Used when something is finished, gone, or beyond saving." },
+  { pt: "que pena", meaning: "what a shame", group: "reactions", note: "A common sympathetic reaction: 'what a shame' or 'that's too bad'." }
+];
+
+let deck = [];
+let current = 0;
+let known = new Set();
+let answered = false;
+let perfect = true;
+let stats = { errors: 0, firstTry: 0 };
+
+function normalize(str) {
+  return str.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[?!.,;:]+/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function buildDeck() {
+  deck = shuffle(ALL_CARDS);
+  current = 0;
+  known = new Set();
+  answered = false;
+  perfect = true;
+  stats = { errors: 0, firstTry: 0 };
+  render();
+}
+
+function updateStats() {
+  const total = deck.length;
+  const knownCount = known.size;
+  const pct = total > 0 ? Math.round((knownCount / total) * 100) : 0;
+
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statKnown").textContent = knownCount;
+  document.getElementById("statLeft").textContent = total - knownCount;
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressPct").textContent = pct + "%";
+}
+
+function render() {
+  updateStats();
+  const area = document.getElementById("cardArea");
+  const remaining = deck.filter((_, i) => !known.has(i));
+
+  if (remaining.length === 0 && deck.length > 0) {
+    const title = perfect ? "Perfeito!" : "Deck complete!";
+    const subtitle = perfect
+      ? `You cleared all ${deck.length} cards without errors.`
+      : `You finished all ${deck.length} cards.`;
+
+    area.innerHTML = `
+      <div class="card done-screen">
+        <div class="trophy">${perfect ? "🎆" : "🏆"}</div>
+        <h2>${title}</h2>
+        <p>${subtitle}</p>
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="result-stat-num green">${stats.firstTry}</div>
+            <div class="result-stat-lbl">First try</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-num red">${stats.errors}</div>
+            <div class="result-stat-lbl">Errors made</div>
+          </div>
+        </div>
+        <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
+      </div>`;
+
+    if (perfect) launchFireworks();
+    return;
+  }
+
+  while (known.has(current)) current = (current + 1) % deck.length;
+  const card = deck[current];
+
+  area.innerHTML = `
+    <div class="card">
+      <div class="card-meta">${escapeHtml(card.group)}</div>
+      <div class="card-prompt">${escapeHtml(card.meaning)}</div>
+      <div class="card-sub">Type the full Portuguese expression</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
+    </div>
+  `;
+
+  answered = false;
+  const input = document.getElementById("answerInput");
+  input.focus();
+  input.addEventListener("keydown", event => {
+    if (event.key === "Enter") handleAction();
+  });
+}
+
+function handleAction() {
+  if (answered) {
+    nextCard();
+    return;
+  }
+  checkAnswer();
+}
+
+function buildReveal(card) {
+  if (!card.note) return "";
+  return `<div class="tip"><strong>Usage:</strong> ${escapeHtml(card.note)}</div>`;
+}
+
+function checkAnswer() {
+  const card = deck[current];
+  const input = document.getElementById("answerInput");
+  const feedback = document.getElementById("feedback");
+  const revealArea = document.getElementById("revealArea");
+  const button = document.getElementById("actionBtn");
+
+  if (!input.value.trim()) return;
+
+  answered = true;
+  input.disabled = true;
+
+  const correct = normalize(card.pt);
+  const given = normalize(input.value);
+  const answerDisplay = escapeHtml(card.pt);
+
+  if (given === correct) {
+    stats.firstTry++;
+    input.classList.add("correct");
+    button.classList.add("go-green");
+    feedback.className = "feedback ok";
+    feedback.innerHTML = `✓ Correct — <strong>${answerDisplay}</strong>`;
+    revealArea.innerHTML = buildReveal(card);
+    known.add(current);
+    updateStats();
+  } else {
+    stats.errors++;
+    perfect = false;
+    input.classList.add("wrong", "shake");
+    button.classList.add("go-red");
+    feedback.className = "feedback err";
+    feedback.innerHTML = `✗ The answer is <strong>${answerDisplay}</strong>`;
+    revealArea.innerHTML = buildReveal(card);
+    setTimeout(() => input.classList.remove("shake"), 400);
+  }
+
+  setTimeout(() => button.focus(), 0);
+}
+
+function advanceToNextUnknown() {
+  if (deck.length === 0 || known.size === deck.length) {
+    answered = false;
+    render();
+    return;
+  }
+
+  current = (current + 1) % deck.length;
+  while (known.has(current)) current = (current + 1) % deck.length;
+  answered = false;
+  render();
+}
+
+function nextCard() {
+  advanceToNextUnknown();
+}
+
+function skipCard() {
+  known.add(current);
+  updateStats();
+  advanceToNextUnknown();
+}
+
+function launchFireworks() {
+  const canvas = document.createElement("canvas");
+  canvas.className = "fireworks-canvas";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  let width;
+  let height;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+
+  const particles = [];
+  const colors = ["#C4922A", "#2D6A4F", "#7D2B2B", "#E8C97A", "#6B6456", "#F5F0E8"];
+
+  function burst(x, y) {
+    const count = 50 + Math.random() * 30;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.012,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 3
+      });
+    }
+  }
+
+  let bursts = 0;
+  const maxBursts = 6;
+
+  function scheduleBurst() {
+    if (bursts >= maxBursts) return;
+    burst(width * (0.2 + Math.random() * 0.6), height * (0.15 + Math.random() * 0.45));
+    bursts++;
+    setTimeout(scheduleBurst, 250 + Math.random() * 350);
+  }
+
+  scheduleBurst();
+
+  function frame() {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const particle = particles[i];
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.vy += 0.06;
+      particle.vx *= 0.99;
+      particle.life -= particle.decay;
+
+      if (particle.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.globalAlpha = particle.life;
+      ctx.fillStyle = particle.color;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    if (particles.length > 0 || bursts < maxBursts) {
+      requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+buildDeck();
+</script>
+</body>
+</html>
