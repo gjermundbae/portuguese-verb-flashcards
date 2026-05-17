@@ -682,7 +682,7 @@
 
 <header>
   <h1>Verbos em <em>Português</em></h1>
-  <p><a class="active" href="index.html">verbs</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a></p>
+  <p><a class="active" href="index.html">verbs</a> · <a href="counting.html">counting</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
 </header>
 
 <div class="container">
@@ -845,10 +845,64 @@ const ALL_CARDS = [
   { verb:"dormir", conj:"você dorme", pron:"DOHR-mee", meaning:"you sleep", example:"Você dorme bem?", group:"irregular" },
   { verb:"dormir", conj:"nós dormimos", pron:"dohr-MEE-moosh", meaning:"we sleep", example:"Nós dormimos oito horas.", group:"irregular" },
   { verb:"dormir", conj:"vocês dormem", pron:"DOHR-meng", meaning:"you all sleep", example:"Vocês dormem tarde?", group:"irregular" },
+  { verb:"aprender", conj:"eu aprendo", pron:"ah-PREN-doo", meaning:"I learn", example:"Eu aprendo português todos os dias.", group:"-er verbs", batch:1 },
+  { verb:"aprender", conj:"você aprende", pron:"ah-PREN-djee", meaning:"you learn", example:"Você aprende rápido?", group:"-er verbs", batch:1 },
+  { verb:"aprender", conj:"nós aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learn", example:"Nós aprendemos juntos.", group:"-er verbs", batch:1 },
+  { verb:"aprender", conj:"vocês aprendem", pron:"ah-PREN-deng", meaning:"you all learn", example:"Vocês aprendem com a prática.", group:"-er verbs", batch:1 },
+  { verb:"entender", conj:"eu entendo", pron:"en-TEN-doo", meaning:"I understand", example:"Eu entendo a pergunta.", group:"-er verbs", batch:1 },
+  { verb:"entender", conj:"você entende", pron:"en-TEN-djee", meaning:"you understand", example:"Você entende português?", group:"-er verbs", batch:1 },
+  { verb:"entender", conj:"nós entendemos", pron:"en-ten-DEH-moosh", meaning:"we understand", example:"Nós entendemos a ideia.", group:"-er verbs", batch:1 },
+  { verb:"entender", conj:"vocês entendem", pron:"en-TEN-deng", meaning:"you all understand", example:"Vocês entendem o professor?", group:"-er verbs", batch:1 },
+  { verb:"comprar", conj:"eu compro", pron:"KOHM-proo", meaning:"I buy", example:"Eu compro pão.", group:"-ar verbs", batch:1 },
+  { verb:"comprar", conj:"você compra", pron:"KOHM-prah", meaning:"you buy", example:"Você compra fruta na feira?", group:"-ar verbs", batch:1 },
+  { verb:"comprar", conj:"nós compramos", pron:"kohm-PRAH-moosh", meaning:"we buy", example:"Nós compramos comida para a semana.", group:"-ar verbs", batch:1 },
+  { verb:"comprar", conj:"vocês compram", pron:"KOHM-prahng", meaning:"you all buy", example:"Vocês compram online?", group:"-ar verbs", batch:1 },
+  { verb:"ler", conj:"eu leio", pron:"LEH-yoo", meaning:"I read", example:"Eu leio o jornal.", group:"irregular", batch:1 },
+  { verb:"ler", conj:"você lê", pron:"LEH", meaning:"you read", example:"Você lê em português?", group:"irregular", batch:1 },
+  { verb:"ler", conj:"nós lemos", pron:"LEH-moosh", meaning:"we read", example:"Nós lemos antes de dormir.", group:"irregular", batch:1 },
+  { verb:"ler", conj:"vocês leem", pron:"LEH-eng", meaning:"you all read", example:"Vocês leem muito?", group:"irregular", batch:1 },
+  { verb:"escrever", conj:"eu escrevo", pron:"es-KREH-voo", meaning:"I write", example:"Eu escrevo mensagens em português.", group:"-er verbs", batch:1 },
+  { verb:"escrever", conj:"você escreve", pron:"es-KREH-vee", meaning:"you write", example:"Você escreve no caderno?", group:"-er verbs", batch:1 },
+  { verb:"escrever", conj:"nós escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we write", example:"Nós escrevemos e-mails no trabalho.", group:"-er verbs", batch:1 },
+  { verb:"escrever", conj:"vocês escrevem", pron:"es-KREH-veng", meaning:"you all write", example:"Vocês escrevem cartas?", group:"-er verbs", batch:1 },
+  { verb:"ouvir", conj:"eu ouço", pron:"oh-OO-soo", meaning:"I hear / listen", example:"Eu ouço música no carro.", group:"irregular", batch:1 },
+  { verb:"ouvir", conj:"você ouve", pron:"oh-OO-vee", meaning:"you hear / listen", example:"Você ouve esse barulho?", group:"irregular", batch:1 },
+  { verb:"ouvir", conj:"nós ouvimos", pron:"oh-oo-VEE-moosh", meaning:"we hear / listen", example:"Nós ouvimos o professor com atenção.", group:"irregular", batch:1 },
+  { verb:"ouvir", conj:"vocês ouvem", pron:"oh-OO-veng", meaning:"you all hear / listen", example:"Vocês ouvem podcasts em português?", group:"irregular", batch:1 },
+  { verb:"fechar", conj:"eu fecho", pron:"FEH-shoo", meaning:"I close", example:"Eu fecho a porta.", group:"-ar verbs", batch:1 },
+  { verb:"fechar", conj:"você fecha", pron:"FEH-shah", meaning:"you close", example:"Você fecha a janela?", group:"-ar verbs", batch:1 },
+  { verb:"fechar", conj:"nós fechamos", pron:"feh-SHAH-moosh", meaning:"we close", example:"Nós fechamos a loja às seis.", group:"-ar verbs", batch:1 },
+  { verb:"fechar", conj:"vocês fecham", pron:"FEH-shahng", meaning:"you all close", example:"Vocês fecham o restaurante tarde?", group:"-ar verbs", batch:1 },
+  { verb:"usar", conj:"eu uso", pron:"OO-zoo", meaning:"I use", example:"Eu uso o celular para estudar.", group:"-ar verbs", batch:1 },
+  { verb:"usar", conj:"você usa", pron:"OO-zah", meaning:"you use", example:"Você usa esse aplicativo?", group:"-ar verbs", batch:1 },
+  { verb:"usar", conj:"nós usamos", pron:"oo-ZAH-moosh", meaning:"we use", example:"Nós usamos o ônibus todos os dias.", group:"-ar verbs", batch:1 },
+  { verb:"usar", conj:"vocês usam", pron:"OO-zahng", meaning:"you all use", example:"Vocês usam dicionário?", group:"-ar verbs", batch:1 },
+  { verb:"dirigir", conj:"eu dirijo", pron:"djee-REE-zhoo", meaning:"I drive", example:"Eu dirijo para o trabalho.", group:"irregular", batch:1 },
+  { verb:"dirigir", conj:"você dirige", pron:"djee-REE-zhee", meaning:"you drive", example:"Você dirige bem?", group:"irregular", batch:1 },
+  { verb:"dirigir", conj:"nós dirigimos", pron:"djee-ree-JEE-moosh", meaning:"we drive", example:"Nós dirigimos até a praia.", group:"irregular", batch:1 },
+  { verb:"dirigir", conj:"vocês dirigem", pron:"djee-REE-zheng", meaning:"you all drive", example:"Vocês dirigem à noite?", group:"irregular", batch:1 },
+  { verb:"voltar", conj:"eu volto", pron:"VOHL-too", meaning:"I return / come back", example:"Eu volto amanhã.", group:"-ar verbs", batch:1 },
+  { verb:"voltar", conj:"você volta", pron:"VOHL-tah", meaning:"you return / come back", example:"Você volta cedo para casa?", group:"-ar verbs", batch:1 },
+  { verb:"voltar", conj:"nós voltamos", pron:"vohl-TAH-moosh", meaning:"we return / come back", example:"Nós voltamos depois do almoço.", group:"-ar verbs", batch:1 },
+  { verb:"voltar", conj:"vocês voltam", pron:"VOHL-tahng", meaning:"you all return / come back", example:"Vocês voltam na segunda-feira?", group:"-ar verbs", batch:1 },
+  { verb:"correr", conj:"eu corro", pron:"KOH-hoo", meaning:"I run", example:"Eu corro no parque.", group:"-er verbs", batch:1 },
+  { verb:"correr", conj:"você corre", pron:"KOH-hee", meaning:"you run", example:"Você corre de manhã?", group:"-er verbs", batch:1 },
+  { verb:"correr", conj:"nós corremos", pron:"koh-HEH-moosh", meaning:"we run", example:"Nós corremos na praia.", group:"-er verbs", batch:1 },
+  { verb:"correr", conj:"vocês correm", pron:"KOH-heng", meaning:"you all run", example:"Vocês correm juntos?", group:"-er verbs", batch:1 },
+  { verb:"andar", conj:"eu ando", pron:"AHN-doo", meaning:"I walk", example:"Eu ando até a estação.", group:"-ar verbs", batch:1 },
+  { verb:"andar", conj:"você anda", pron:"AHN-dah", meaning:"you walk", example:"Você anda muito no centro?", group:"-ar verbs", batch:1 },
+  { verb:"andar", conj:"nós andamos", pron:"ahn-DAH-moosh", meaning:"we walk", example:"Nós andamos pelo bairro à tarde.", group:"-ar verbs", batch:1 },
+  { verb:"andar", conj:"vocês andam", pron:"AHN-dahng", meaning:"you all walk", example:"Vocês andam até a escola?", group:"-ar verbs", batch:1 },
+  { verb:"curtir", conj:"eu curto", pron:"KOOR-too", meaning:"I enjoy / like", example:"Eu curto essa música.", group:"-ir verbs", batch:1 },
+  { verb:"curtir", conj:"você curte", pron:"KOOR-chee", meaning:"you enjoy / like", example:"Você curte praia?", group:"-ir verbs", batch:1 },
+  { verb:"curtir", conj:"nós curtimos", pron:"koor-CHEE-moosh", meaning:"we enjoy / like", example:"Nós curtimos o fim de semana na praia.", group:"-ir verbs", batch:1 },
+  { verb:"curtir", conj:"vocês curtem", pron:"KOOR-teng", meaning:"you all enjoy / like", example:"Vocês curtem viajar?", group:"-ir verbs", batch:1 },
 ];
 
 const GROUPS = ["ser / estar", "irregular", "-ar verbs", "-er verbs", "-ir verbs"];
+const LATEST_BATCH = 1;
 let activeGroups = new Set(GROUPS);
+let showOnlyLatestBatch = false;
 let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
 let hardMode = false;
 let practiceStats = createRunStats();
@@ -1219,8 +1273,14 @@ function normalize(str) {
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
+function getFilteredCards() {
+  return ALL_CARDS.filter(card =>
+    activeGroups.has(card.group) && (!showOnlyLatestBatch || card.batch === LATEST_BATCH)
+  );
+}
+
 function buildDeck() {
-  deck = shuffle(ALL_CARDS.filter(c => activeGroups.has(c.group)));
+  deck = shuffle(getFilteredCards());
   current = 0; known = new Set(); answered = false; perfect = true;
   practiceStats = createRunStats();
   render();
@@ -1240,6 +1300,19 @@ function render() {
   updateStats();
   const area = document.getElementById('cardArea');
   const remaining = deck.filter((_, i) => !known.has(i));
+
+  if (deck.length === 0) {
+    const subtitle = showOnlyLatestBatch
+      ? 'No cards match the current categories in the latest batch.'
+      : 'No cards match the current filters.';
+    area.innerHTML = `
+      <div class="card done-screen">
+        <h2>No matching cards</h2>
+        <p>${subtitle}</p>
+      </div>
+    `;
+    return;
+  }
 
   if (remaining.length === 0 && deck.length > 0) {
     const title = perfect ? 'Perfeito!' : 'Deck complete!';
@@ -1366,18 +1439,27 @@ function skipCard() {
 }
 
 function renderFilters() {
-  document.getElementById('filterRow').innerHTML = GROUPS.map(g =>
-    `<div class="fc-tag active" onclick="toggleGroup(this,'${g}')">${g}</div>`
+  const groupTags = GROUPS.map(g =>
+    `<div class="fc-tag${activeGroups.has(g) ? ' active' : ''}" onclick="toggleGroup('${g}')">${g}</div>`
   ).join('');
+  const latestTag = `<div class="fc-tag${showOnlyLatestBatch ? ' active' : ''}" onclick="toggleLatestBatch()">Only new verbs</div>`;
+  document.getElementById('filterRow').innerHTML = groupTags + latestTag;
 }
 
-function toggleGroup(el, g) {
+function toggleGroup(g) {
   if (activeGroups.has(g)) {
     if (activeGroups.size === 1) return;
-    activeGroups.delete(g); el.classList.remove('active');
+    activeGroups.delete(g);
   } else {
-    activeGroups.add(g); el.classList.add('active');
+    activeGroups.add(g);
   }
+  renderFilters();
+  buildDeck();
+}
+
+function toggleLatestBatch() {
+  showOnlyLatestBatch = !showOnlyLatestBatch;
+  renderFilters();
   buildDeck();
 }
 

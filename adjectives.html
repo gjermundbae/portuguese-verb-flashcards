@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portuguese Glossary Practice</title>
+<title>Portuguese Adjective Flashcards</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,6 +22,7 @@
     --red: #7D2B2B;
     --red-bg: #FFE8E8;
     --accent: #C4922A;
+    --accent-bg: #FFF3DC;
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -69,6 +70,30 @@
   header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
 
   .container { width: 100%; max-width: 520px; }
+
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+
+  .fc-tag {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .fc-tag:hover { border-color: var(--border2); }
+
+  .fc-tag.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
 
   .stats {
     display: grid;
@@ -227,16 +252,49 @@
   .feedback.ok { color: var(--green); }
   .feedback.err { color: var(--red); }
 
-  .tip {
+  .example {
     font-size: 0.78rem;
     color: var(--text2);
+    font-style: italic;
     margin-top: 0.5rem;
     padding-top: 0.75rem;
     border-top: 1px dashed var(--border);
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
-  .tip strong { color: var(--text); font-weight: 500; }
+  .example-head {
+    margin-bottom: 0.45rem;
+    font-style: normal;
+  }
+
+  .example-text {
+    display: block;
+  }
+
+  .agreement-chip {
+    display: inline-block;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 9px;
+    background: var(--surface);
+  }
+
+  .pron-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid #E8C97A;
+    border-radius: 999px;
+    padding: 2px 10px;
+    letter-spacing: 0.04em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
 
   .controls {
     display: flex;
@@ -262,7 +320,6 @@
   .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
 
   .done-screen { text-align: center; padding: 3rem 1rem; }
-  .done-screen .trophy { font-size: 3rem; margin-bottom: 1rem; }
 
   .done-screen h2 {
     font-family: 'DM Serif Display', serif;
@@ -310,16 +367,6 @@
     margin-top: 0.35rem;
   }
 
-  .fireworks-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-  }
-
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20% { transform: translateX(-6px); }
@@ -334,12 +381,14 @@
 <body>
 
 <header>
-  <h1><em>Glossário</em> em Português</h1>
-  <p><a href="index.html">verbs</a> · <a href="counting.html">counting</a> · <a href="connecting.html">connecting words</a> · <a class="active" href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
+  <h1>Adjetivos em <em>Português</em></h1>
+  <p><a href="index.html">verbs</a> · <a href="counting.html">counting</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a class="active" href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
 </header>
 
 <div class="container">
   <div id="practiceChrome">
+    <div class="filters" id="filterRow"></div>
+
     <div class="stats" id="statsRow">
       <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
       <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
@@ -357,43 +406,33 @@
 
 <script>
 const ALL_CARDS = [
-  { pt: "que saco", meaning: "how annoying", group: "reactions", note: "A common way to complain when something is irritating or a drag." },
-  { pt: "na moral", meaning: "seriously / for real", group: "emphasis", note: "A casual intensifier used to mean 'seriously' or 'honestly'." },
-  { pt: "poxa vida", meaning: "oh man / darn", group: "reactions", note: "A mild exclamation for disappointment, sympathy, or frustration." },
-  { pt: "de folga", meaning: "off (work) / day off", group: "social life", note: "Used with 'estar': 'tô de folga hoje' — I'm off today." },
-  { pt: "nem fudendo", meaning: "no fucking way", group: "reactions", note: "Very strong and vulgar. Use carefully." },
-  { pt: "dar um rolê", meaning: "hang out / go out", group: "social life", note: "An informal way to say 'go out' or 'hang out' — 'bora dar um rolê?'" },
-  { pt: "fechou", meaning: "deal! / done!", group: "social life", note: "Used to close a plan, like 'deal' or 'done' — confirms the agreement." },
-  { pt: "movimentado", meaning: "lively / busy", group: "descriptions", note: "Common for places, streets, or days that feel active and full of movement." },
-  { pt: "sabe?", meaning: "you know?", group: "conversation", note: "A filler often added at the end of a sentence, like 'you know?'" },
-  { pt: "tipo assim", meaning: "like / kinda like", group: "conversation", note: "A filler phrase people use when thinking out loud or softening what they say." },
-  { pt: "acho que sim", meaning: "I think so", group: "emphasis", note: "A soft, non-committal yes." },
-  { pt: "safadeza", meaning: "mischief / naughty stuff", group: "descriptions", note: "A noun for naughty or mischievous behavior; can be playful or flirty depending on context." },
-  { pt: "tá ligado?", meaning: "you get me? / you feel me?", group: "conversation", note: "Very colloquial. Used to check whether someone follows what you mean." },
-  { pt: "sei não", meaning: "I don't know about that", group: "emphasis", note: "A skeptical or doubtful response, closer to 'hmm, not sure'." },
-  { pt: "safado", meaning: "rascal / cheeky (person)", group: "descriptions", note: "An adjective/noun for someone naughty or sly — can be playful or insulting depending on tone." },
-  { pt: "tô zoando", meaning: "I'm kidding / joking", group: "conversation", note: "Used to walk something back: 'I'm joking' or 'just messing with you'." },
-  { pt: "tudo bem?", meaning: "how are you? / all good?", group: "greetings", note: "A standard everyday greeting across Brazil. It also works as a response: 'Tudo bem.'" },
-  { pt: "mais ou menos", meaning: "so-so / more or less", group: "conversation", note: "A very common answer when things are neither great nor terrible." },
-  { pt: "com licença", meaning: "excuse me / may I get by?", group: "social life", note: "Useful for getting past someone, entering a space, or politely interrupting." },
-  { pt: "fica à vontade", meaning: "make yourself comfortable / feel free", group: "social life", note: "A warm, common phrase when welcoming someone or giving permission." },
-  { pt: "quanto custa?", meaning: "how much is it?", group: "getting around", note: "Useful in shops, markets, and casual street buying situations." },
-  { pt: "aceita cartão?", meaning: "do you take cards?", group: "getting around", note: "Very useful in Brazil, where card payment is common even for small purchases." },
-  { pt: "onde fica...?", meaning: "where is ...?", group: "getting around", note: "A basic phrase for asking where a place is: 'Onde fica a praia?'" },
-  { pt: "pode ser", meaning: "that works / sure", group: "conversation", note: "A flexible way to accept a suggestion without sounding overly strong." },
-  { pt: "me vê...", meaning: "can I get... / I'll have...", group: "food & drink", note: "Colloquial and very common when ordering: 'Me vê um café'." },
-  { pt: "bora?", meaning: "shall we? / let's go?", group: "social life", note: "A very common casual prompt to leave, start, or get moving." },
-  { pt: "partiu", meaning: "let's go / off we go", group: "social life", note: "A colloquial way to say you're heading out or ready to go." },
-  { pt: "vou nessa", meaning: "I'm heading out / I'm off", group: "social life", note: "A natural casual way to leave a conversation or gathering." },
-  { pt: "sem problema", meaning: "no problem", group: "conversation", note: "A neutral, reliable phrase for 'no problem' or 'that's fine'." },
-  { pt: "demorou", meaning: "alright! / let's do it", group: "social life", note: "An enthusiastic 'I'm in' — agreeing to a plan or invitation." },
-  { pt: "brabo", meaning: "awesome / badass", group: "descriptions", note: "Slang praise for something impressive, tough, or really good." },
-  { pt: "é nós", meaning: "we're together / got your back", group: "social life", note: "A solidarity phrase, like 'we're good' or 'I've got you'." },
-  { pt: "opa", meaning: "hey / whoops / oh", group: "reactions", note: "A flexible little interjection for greeting, surprise, or a small mistake." },
-  { pt: "já era", meaning: "it's over / too late", group: "reactions", note: "Used when something is finished, gone, or beyond saving." },
-  { pt: "que pena", meaning: "what a shame", group: "reactions", note: "A common sympathetic reaction: 'what a shame' or 'that's too bad'." }
+  { en: "good", pt: "bom", alts: ["boa"], agreement: "fem.: boa", pronIpa: "[bõ]", pronHint: "BOHNG", example: "A comida aqui é boa.", group: "quality" },
+  { en: "bad", pt: "ruim", agreement: "same form", pronIpa: "[ʁu'ĩ]", pronHint: "hoo-EENG", example: "O tempo está ruim hoje.", group: "quality" },
+  { en: "beautiful", pt: "bonito", alts: ["bonita"], agreement: "fem.: bonita", pronIpa: "[bo'nitu]", pronHint: "boh-NEE-too", example: "Que cidade bonita!", group: "quality" },
+  { en: "cool / nice", pt: "legal", agreement: "same form", pronIpa: "[le'gaw]", pronHint: "leh-GAHL", example: "Seu professor é muito legal.", group: "quality" },
+  { en: "intelligent", pt: "inteligente", agreement: "same form", pronIpa: "[ĩteli'ʒẽtʃi]", pronHint: "een-teh-lee-ZHEN-chee", example: "Você é muito inteligente.", group: "quality" },
+
+  { en: "big", pt: "grande", agreement: "same form", pronIpa: "['gɾɐ̃dʒi]", pronHint: "GRAHN-jee", example: "A cidade é grande.", group: "size & age" },
+  { en: "small", pt: "pequeno", alts: ["pequena"], agreement: "fem.: pequena", pronIpa: "[pe'kenu]", pronHint: "peh-KEH-noo", example: "A casa é pequena, mas confortável.", group: "size & age" },
+  { en: "new", pt: "novo", alts: ["nova"], agreement: "fem.: nova", pronIpa: "['novu]", pronHint: "NOH-voo", example: "A casa é nova.", group: "size & age" },
+  { en: "old", pt: "velho", alts: ["velha"], agreement: "fem.: velha", pronIpa: "['vɛʎu]", pronHint: "VEH-lyoo", example: "Esse prédio é velho.", group: "size & age" },
+
+  { en: "tired", pt: "cansado", alts: ["cansada"], agreement: "fem.: cansada", pronIpa: "[kɐ̃'sadu]", pronHint: "kahn-SAH-doo", example: "Você está cansado hoje?", group: "state & feeling" },
+  { en: "ready", pt: "pronto", alts: ["pronta"], agreement: "fem.: pronta", pronIpa: "['pɾõtu]", pronHint: "PROHN-too", example: "A comida está pronta.", group: "state & feeling" },
+  { en: "happy", pt: "feliz", agreement: "same form", pronIpa: "[fe'lis]", pronHint: "feh-LEES", example: "Ela está feliz hoje.", group: "state & feeling" },
+  { en: "sad", pt: "triste", agreement: "same form", pronIpa: "['tɾistʃi]", pronHint: "TREES-chee", example: "Ela parece triste hoje.", group: "state & feeling" },
+
+  { en: "easy", pt: "fácil", agreement: "same form", pronIpa: "['fasiw]", pronHint: "FAH-seew", example: "Essa lição é fácil.", group: "practical" },
+  { en: "difficult", pt: "difícil", agreement: "same form", pronIpa: "[dʒi'fisiw]", pronHint: "jee-FEE-seew", example: "Essa palavra é difícil.", group: "practical" },
+  { en: "important", pt: "importante", agreement: "same form", pronIpa: "[ĩpoʁ'tɐ̃tʃi]", pronHint: "eem-por-TAHN-chee", example: "Dormir bem é importante.", group: "practical" },
+  { en: "hot / warm", pt: "quente", agreement: "same form", pronIpa: "['kẽtʃi]", pronHint: "KEHN-chee", example: "O café está quente.", group: "practical" },
+  { en: "cold", pt: "frio", alts: ["fria"], agreement: "fem.: fria", pronIpa: "['fɾiu]", pronHint: "FREE-oo", example: "A água está fria.", group: "practical" },
+  { en: "expensive", pt: "caro", alts: ["cara"], agreement: "fem.: cara", pronIpa: "['kaɾu]", pronHint: "KAH-roo", example: "O restaurante é caro.", group: "practical" },
+  { en: "cheap", pt: "barato", alts: ["barata"], agreement: "fem.: barata", pronIpa: "[ba'ɾatu]", pronHint: "bah-RAH-too", example: "A comida aqui é barata.", group: "practical" }
 ];
 
+const GROUPS = ["quality", "size & age", "state & feeling", "practical"];
+let activeGroups = new Set(GROUPS);
 let deck = [];
 let current = 0;
 let known = new Set();
@@ -420,13 +459,30 @@ function escapeHtml(str) {
 }
 
 function buildDeck() {
-  deck = shuffle(ALL_CARDS);
+  deck = shuffle(ALL_CARDS.filter(card => activeGroups.has(card.group)));
   current = 0;
   known = new Set();
   answered = false;
   perfect = true;
   stats = { errors: 0, firstTry: 0 };
   render();
+}
+
+function toggleGroup(group) {
+  if (activeGroups.has(group)) {
+    activeGroups.delete(group);
+  } else {
+    activeGroups.add(group);
+  }
+  renderFilters();
+  buildDeck();
+}
+
+function renderFilters() {
+  const row = document.getElementById("filterRow");
+  row.innerHTML = GROUPS.map(group => `
+    <button class="fc-tag ${activeGroups.has(group) ? "active" : ""}" onclick="toggleGroup(${JSON.stringify(group)})">${escapeHtml(group)}</button>
+  `).join("");
 }
 
 function updateStats() {
@@ -441,20 +497,38 @@ function updateStats() {
   document.getElementById("progressPct").textContent = pct + "%";
 }
 
+function buildReveal(card) {
+  return `
+    <div class="example">
+      <div class="example-head"><span class="agreement-chip">${escapeHtml(card.agreement)}</span></div>
+      <span class="example-text">"${escapeHtml(card.example)}"</span>
+    </div>
+  `;
+}
+
 function render() {
   updateStats();
   const area = document.getElementById("cardArea");
   const remaining = deck.filter((_, i) => !known.has(i));
 
-  if (remaining.length === 0 && deck.length > 0) {
+  if (deck.length === 0) {
+    area.innerHTML = `
+      <div class="card done-screen">
+        <h2>No matching cards</h2>
+        <p>Pick at least one adjective group to keep practicing.</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (remaining.length === 0) {
     const title = perfect ? "Perfeito!" : "Deck complete!";
     const subtitle = perfect
-      ? `You cleared all ${deck.length} cards without errors.`
-      : `You finished all ${deck.length} cards.`;
+      ? `You cleared all ${deck.length} adjective cards without errors.`
+      : `You finished all ${deck.length} adjective cards.`;
 
     area.innerHTML = `
       <div class="card done-screen">
-        <div class="trophy">${perfect ? "🎆" : "🏆"}</div>
         <h2>${title}</h2>
         <p>${subtitle}</p>
         <div class="result-stats">
@@ -468,9 +542,8 @@ function render() {
           </div>
         </div>
         <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
-      </div>`;
-
-    if (perfect) launchFireworks();
+      </div>
+    `;
     return;
   }
 
@@ -480,8 +553,8 @@ function render() {
   area.innerHTML = `
     <div class="card">
       <div class="card-meta">${escapeHtml(card.group)}</div>
-      <div class="card-prompt">${escapeHtml(card.meaning)}</div>
-      <div class="card-sub">Type the full Portuguese expression</div>
+      <div class="card-prompt">${escapeHtml(card.en)}</div>
+      <div class="card-sub">Type the Portuguese adjective</div>
       <div class="input-row">
         <input class="answer-input" id="answerInput" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
@@ -511,11 +584,6 @@ function handleAction() {
   checkAnswer();
 }
 
-function buildReveal(card) {
-  if (!card.note) return "";
-  return `<div class="tip"><strong>Usage:</strong> ${escapeHtml(card.note)}</div>`;
-}
-
 function checkAnswer() {
   const card = deck[current];
   const input = document.getElementById("answerInput");
@@ -528,16 +596,16 @@ function checkAnswer() {
   answered = true;
   input.disabled = true;
 
-  const correct = normalize(card.pt);
+  const acceptedAnswers = [card.pt, ...(card.alts || [])].map(normalize);
   const given = normalize(input.value);
-  const answerDisplay = escapeHtml(card.pt);
+  const answerDisplay = [card.pt, ...(card.alts || [])].map(escapeHtml).join(" / ");
 
-  if (given === correct) {
+  if (acceptedAnswers.includes(given)) {
     stats.firstTry++;
     input.classList.add("correct");
     button.classList.add("go-green");
     feedback.className = "feedback ok";
-    feedback.innerHTML = `✓ Correct — <strong>${answerDisplay}</strong>`;
+    feedback.innerHTML = `✓ Correct — <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
     revealArea.innerHTML = buildReveal(card);
     known.add(current);
     updateStats();
@@ -547,7 +615,7 @@ function checkAnswer() {
     input.classList.add("wrong", "shake");
     button.classList.add("go-red");
     feedback.className = "feedback err";
-    feedback.innerHTML = `✗ The answer is <strong>${answerDisplay}</strong>`;
+    feedback.innerHTML = `✗ The answer is <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
     revealArea.innerHTML = buildReveal(card);
     setTimeout(() => input.classList.remove("shake"), 400);
   }
@@ -578,88 +646,7 @@ function skipCard() {
   advanceToNextUnknown();
 }
 
-function launchFireworks() {
-  const canvas = document.createElement("canvas");
-  canvas.className = "fireworks-canvas";
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext("2d");
-  let width;
-  let height;
-
-  function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  }
-
-  resize();
-  window.addEventListener("resize", resize);
-
-  const particles = [];
-  const colors = ["#C4922A", "#2D6A4F", "#7D2B2B", "#E8C97A", "#6B6456", "#F5F0E8"];
-
-  function burst(x, y) {
-    const count = 50 + Math.random() * 30;
-    for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 2 + Math.random() * 5;
-      particles.push({
-        x,
-        y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: 1,
-        decay: 0.012 + Math.random() * 0.012,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        size: 2 + Math.random() * 3
-      });
-    }
-  }
-
-  let bursts = 0;
-  const maxBursts = 6;
-
-  function scheduleBurst() {
-    if (bursts >= maxBursts) return;
-    burst(width * (0.2 + Math.random() * 0.6), height * (0.15 + Math.random() * 0.45));
-    bursts++;
-    setTimeout(scheduleBurst, 250 + Math.random() * 350);
-  }
-
-  scheduleBurst();
-
-  function frame() {
-    ctx.clearRect(0, 0, width, height);
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const particle = particles[i];
-      particle.x += particle.vx;
-      particle.y += particle.vy;
-      particle.vy += 0.06;
-      particle.vx *= 0.99;
-      particle.life -= particle.decay;
-
-      if (particle.life <= 0) {
-        particles.splice(i, 1);
-        continue;
-      }
-
-      ctx.globalAlpha = particle.life;
-      ctx.fillStyle = particle.color;
-      ctx.beginPath();
-      ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.globalAlpha = 1;
-    if (particles.length > 0 || bursts < maxBursts) {
-      requestAnimationFrame(frame);
-    } else {
-      canvas.remove();
-    }
-  }
-
-  requestAnimationFrame(frame);
-}
-
+renderFilters();
 buildDeck();
 </script>
 </body>

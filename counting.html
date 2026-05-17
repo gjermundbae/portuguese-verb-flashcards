@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portuguese Glossary Practice</title>
+<title>Portuguese Counting Flashcards</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,6 +22,7 @@
     --red: #7D2B2B;
     --red-bg: #FFE8E8;
     --accent: #C4922A;
+    --accent-bg: #FFF3DC;
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -69,6 +70,30 @@
   header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
 
   .container { width: 100%; max-width: 520px; }
+
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+
+  .fc-tag {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .fc-tag:hover { border-color: var(--border2); }
+
+  .fc-tag.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
 
   .stats {
     display: grid;
@@ -227,12 +252,32 @@
   .feedback.ok { color: var(--green); }
   .feedback.err { color: var(--red); }
 
+  .pron-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid #E8C97A;
+    border-radius: 999px;
+    padding: 2px 10px;
+    letter-spacing: 0.04em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .example {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-style: italic;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+  }
+
   .tip {
     font-size: 0.78rem;
     color: var(--text2);
     margin-top: 0.5rem;
-    padding-top: 0.75rem;
-    border-top: 1px dashed var(--border);
     line-height: 1.5;
   }
 
@@ -334,12 +379,14 @@
 <body>
 
 <header>
-  <h1><em>Glossário</em> em Português</h1>
-  <p><a href="index.html">verbs</a> · <a href="counting.html">counting</a> · <a href="connecting.html">connecting words</a> · <a class="active" href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
+  <h1>Contagem em <em>Português</em></h1>
+  <p><a href="index.html">verbs</a> · <a class="active" href="counting.html">counting</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
 </header>
 
 <div class="container">
   <div id="practiceChrome">
+    <div class="filters" id="filterRow"></div>
+
     <div class="stats" id="statsRow">
       <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
       <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
@@ -357,43 +404,49 @@
 
 <script>
 const ALL_CARDS = [
-  { pt: "que saco", meaning: "how annoying", group: "reactions", note: "A common way to complain when something is irritating or a drag." },
-  { pt: "na moral", meaning: "seriously / for real", group: "emphasis", note: "A casual intensifier used to mean 'seriously' or 'honestly'." },
-  { pt: "poxa vida", meaning: "oh man / darn", group: "reactions", note: "A mild exclamation for disappointment, sympathy, or frustration." },
-  { pt: "de folga", meaning: "off (work) / day off", group: "social life", note: "Used with 'estar': 'tô de folga hoje' — I'm off today." },
-  { pt: "nem fudendo", meaning: "no fucking way", group: "reactions", note: "Very strong and vulgar. Use carefully." },
-  { pt: "dar um rolê", meaning: "hang out / go out", group: "social life", note: "An informal way to say 'go out' or 'hang out' — 'bora dar um rolê?'" },
-  { pt: "fechou", meaning: "deal! / done!", group: "social life", note: "Used to close a plan, like 'deal' or 'done' — confirms the agreement." },
-  { pt: "movimentado", meaning: "lively / busy", group: "descriptions", note: "Common for places, streets, or days that feel active and full of movement." },
-  { pt: "sabe?", meaning: "you know?", group: "conversation", note: "A filler often added at the end of a sentence, like 'you know?'" },
-  { pt: "tipo assim", meaning: "like / kinda like", group: "conversation", note: "A filler phrase people use when thinking out loud or softening what they say." },
-  { pt: "acho que sim", meaning: "I think so", group: "emphasis", note: "A soft, non-committal yes." },
-  { pt: "safadeza", meaning: "mischief / naughty stuff", group: "descriptions", note: "A noun for naughty or mischievous behavior; can be playful or flirty depending on context." },
-  { pt: "tá ligado?", meaning: "you get me? / you feel me?", group: "conversation", note: "Very colloquial. Used to check whether someone follows what you mean." },
-  { pt: "sei não", meaning: "I don't know about that", group: "emphasis", note: "A skeptical or doubtful response, closer to 'hmm, not sure'." },
-  { pt: "safado", meaning: "rascal / cheeky (person)", group: "descriptions", note: "An adjective/noun for someone naughty or sly — can be playful or insulting depending on tone." },
-  { pt: "tô zoando", meaning: "I'm kidding / joking", group: "conversation", note: "Used to walk something back: 'I'm joking' or 'just messing with you'." },
-  { pt: "tudo bem?", meaning: "how are you? / all good?", group: "greetings", note: "A standard everyday greeting across Brazil. It also works as a response: 'Tudo bem.'" },
-  { pt: "mais ou menos", meaning: "so-so / more or less", group: "conversation", note: "A very common answer when things are neither great nor terrible." },
-  { pt: "com licença", meaning: "excuse me / may I get by?", group: "social life", note: "Useful for getting past someone, entering a space, or politely interrupting." },
-  { pt: "fica à vontade", meaning: "make yourself comfortable / feel free", group: "social life", note: "A warm, common phrase when welcoming someone or giving permission." },
-  { pt: "quanto custa?", meaning: "how much is it?", group: "getting around", note: "Useful in shops, markets, and casual street buying situations." },
-  { pt: "aceita cartão?", meaning: "do you take cards?", group: "getting around", note: "Very useful in Brazil, where card payment is common even for small purchases." },
-  { pt: "onde fica...?", meaning: "where is ...?", group: "getting around", note: "A basic phrase for asking where a place is: 'Onde fica a praia?'" },
-  { pt: "pode ser", meaning: "that works / sure", group: "conversation", note: "A flexible way to accept a suggestion without sounding overly strong." },
-  { pt: "me vê...", meaning: "can I get... / I'll have...", group: "food & drink", note: "Colloquial and very common when ordering: 'Me vê um café'." },
-  { pt: "bora?", meaning: "shall we? / let's go?", group: "social life", note: "A very common casual prompt to leave, start, or get moving." },
-  { pt: "partiu", meaning: "let's go / off we go", group: "social life", note: "A colloquial way to say you're heading out or ready to go." },
-  { pt: "vou nessa", meaning: "I'm heading out / I'm off", group: "social life", note: "A natural casual way to leave a conversation or gathering." },
-  { pt: "sem problema", meaning: "no problem", group: "conversation", note: "A neutral, reliable phrase for 'no problem' or 'that's fine'." },
-  { pt: "demorou", meaning: "alright! / let's do it", group: "social life", note: "An enthusiastic 'I'm in' — agreeing to a plan or invitation." },
-  { pt: "brabo", meaning: "awesome / badass", group: "descriptions", note: "Slang praise for something impressive, tough, or really good." },
-  { pt: "é nós", meaning: "we're together / got your back", group: "social life", note: "A solidarity phrase, like 'we're good' or 'I've got you'." },
-  { pt: "opa", meaning: "hey / whoops / oh", group: "reactions", note: "A flexible little interjection for greeting, surprise, or a small mistake." },
-  { pt: "já era", meaning: "it's over / too late", group: "reactions", note: "Used when something is finished, gone, or beyond saving." },
-  { pt: "que pena", meaning: "what a shame", group: "reactions", note: "A common sympathetic reaction: 'what a shame' or 'that's too bad'." }
+  { prompt: "one", answer: "um", alts: ["uma"], pron: "OOM / OO-mah", example: "1 = um", tip: "Use <strong>uma</strong> before feminine nouns: <em>uma casa</em>. For straight counting, <strong>um</strong> is the base form.", group: "numbers" },
+  { prompt: "two", answer: "dois", alts: ["duas"], pron: "DOYSS / DOO-ahs", example: "2 = dois", tip: "<strong>Dois</strong> is the base form. Use <strong>duas</strong> before feminine nouns: <em>duas semanas</em>.", group: "numbers" },
+  { prompt: "three", answer: "três", pron: "TRAYSS", example: "3 = três", group: "numbers" },
+  { prompt: "four", answer: "quatro", pron: "KWAH-troo", example: "4 = quatro", group: "numbers" },
+  { prompt: "five", answer: "cinco", pron: "SEEN-koo", example: "5 = cinco", group: "numbers" },
+  { prompt: "six", answer: "seis", pron: "SAYSS", example: "6 = seis", group: "numbers" },
+  { prompt: "seven", answer: "sete", pron: "SEH-chee", example: "7 = sete", group: "numbers" },
+  { prompt: "eight", answer: "oito", pron: "OY-too", example: "8 = oito", group: "numbers" },
+  { prompt: "nine", answer: "nove", pron: "NOH-vee", example: "9 = nove", group: "numbers" },
+  { prompt: "ten", answer: "dez", pron: "DEZZ", example: "10 = dez", group: "numbers" },
+  { prompt: "eleven", answer: "onze", pron: "OHN-zee", example: "11 = onze", group: "numbers" },
+  { prompt: "twelve", answer: "doze", pron: "DOH-zee", example: "12 = doze", group: "numbers" },
+  { prompt: "thirteen", answer: "treze", pron: "TRAY-zee", example: "13 = treze", group: "numbers" },
+  { prompt: "fourteen", answer: "quatorze", alts: ["catorze"], pron: "kwa-TOHR-zee / kah-TOHR-zee", example: "14 = quatorze", tip: "Both <strong>quatorze</strong> and <strong>catorze</strong> are correct in Brazil.", group: "numbers" },
+  { prompt: "fifteen", answer: "quinze", pron: "KEEN-zee", example: "15 = quinze", group: "numbers" },
+  { prompt: "sixteen", answer: "dezesseis", pron: "deh-zeh-SAYSS", example: "16 = dezesseis", group: "numbers" },
+  { prompt: "seventeen", answer: "dezessete", pron: "deh-zeh-SEH-chee", example: "17 = dezessete", group: "numbers" },
+  { prompt: "eighteen", answer: "dezoito", pron: "deh-ZOY-too", example: "18 = dezoito", group: "numbers" },
+  { prompt: "nineteen", answer: "dezenove", pron: "deh-zeh-NOH-vee", example: "19 = dezenove", group: "numbers" },
+  { prompt: "twenty", answer: "vinte", pron: "VEEN-chee", example: "20 = vinte", group: "numbers" },
+  { prompt: "thirty", answer: "trinta", pron: "TREEN-tah", example: "30 = trinta", group: "numbers" },
+  { prompt: "forty", answer: "quarenta", pron: "kwah-REN-tah", example: "40 = quarenta", group: "numbers" },
+  { prompt: "fifty", answer: "cinquenta", pron: "seen-KWEN-tah", example: "50 = cinquenta", group: "numbers" },
+  { prompt: "sixty", answer: "sessenta", pron: "seh-SEN-tah", example: "60 = sessenta", group: "numbers" },
+  { prompt: "seventy", answer: "setenta", pron: "seh-TEN-tah", example: "70 = setenta", group: "numbers" },
+  { prompt: "eighty", answer: "oitenta", pron: "oy-TEN-tah", example: "80 = oitenta", group: "numbers" },
+  { prompt: "ninety", answer: "noventa", pron: "noh-VEN-tah", example: "90 = noventa", group: "numbers" },
+  { prompt: "one hundred", answer: "cem", pron: "SEHNG", example: "100 = cem", tip: "<strong>Cem</strong> is exactly 100. Before another number, use <strong>cento</strong>: <em>cento e um</em>.", group: "numbers" },
+
+  { prompt: "first", answer: "primeiro", alts: ["primeira"], pron: "pree-MAY-roo / pree-MAY-rah", example: "1º lugar / 1ª vez", tip: "Ordinals agree with gender: <strong>primeiro</strong> for masculine nouns, <strong>primeira</strong> for feminine nouns. In Brazilian dates, only the first day is usually ordinal: <em>primeiro de maio</em>.", group: "ordinal numbers" },
+  { prompt: "second", answer: "segundo", alts: ["segunda"], pron: "seh-GOON-doo / seh-GOON-dah", example: "2º andar / segunda-feira", tip: "Use <strong>segunda</strong> with feminine nouns, as in <em>segunda-feira</em>.", group: "ordinal numbers" },
+  { prompt: "third", answer: "terceiro", alts: ["terceira"], pron: "tehr-SAY-roo / tehr-SAY-rah", example: "3º lugar / 3ª tentativa", tip: "Like other ordinals, it changes for gender: <strong>terceiro</strong> / <strong>terceira</strong>.", group: "ordinal numbers" },
+  { prompt: "fourth", answer: "quarto", alts: ["quarta"], pron: "KWAHR-too / KWAHR-tah", example: "4º andar / 4ª aula", tip: "<strong>Quarta-feira</strong> literally means 'fourth day' in Portuguese weekday naming.", group: "ordinal numbers" },
+  { prompt: "fifth", answer: "quinto", alts: ["quinta"], pron: "KEEN-too / KEEN-tah", example: "5º capítulo / 5ª série", tip: "Use <strong>quinta</strong> with feminine nouns: <em>quinta avenida</em>, <em>quinta-feira</em>.", group: "ordinal numbers" },
+  { prompt: "sixth", answer: "sexto", alts: ["sexta"], pron: "SESS-too / SESS-tah", example: "6º item / 6ª rodada", tip: "<strong>Sexta-feira</strong> is literally 'sixth day'.", group: "ordinal numbers" },
+  { prompt: "seventh", answer: "sétimo", alts: ["sétima"], pron: "SEH-chee-moo / SEH-chee-mah", example: "7º dia / 7ª vez", tip: "Accent marks matter in writing, but the quiz accepts answers without accents too.", group: "ordinal numbers" },
+  { prompt: "eighth", answer: "oitavo", alts: ["oitava"], pron: "oy-TAH-voo / oy-TAH-vah", example: "8º andar / 8ª temporada", tip: "Use the masculine or feminine form to match the noun that follows.", group: "ordinal numbers" },
+  { prompt: "ninth", answer: "nono", alts: ["nona"], pron: "NOH-noo / NOH-nah", example: "9º mês / 9ª edição", tip: "<strong>Nono</strong> and <strong>nona</strong> are common in rankings and school years.", group: "ordinal numbers" },
+  { prompt: "tenth", answer: "décimo", alts: ["décima"], pron: "DEH-see-moo / DEH-see-mah", example: "10º andar / 10ª vez", tip: "Higher ordinals exist, but in everyday Brazilian Portuguese the first ten are the most useful by far.", group: "ordinal numbers" }
 ];
 
+const GROUPS = ["numbers", "ordinal numbers"];
+let activeGroups = new Set(GROUPS);
 let deck = [];
 let current = 0;
 let known = new Set();
@@ -404,8 +457,26 @@ let stats = { errors: 0, firstTry: 0 };
 function normalize(str) {
   return str.trim().toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[?!.,;:]+/g, "")
+    .replace(/[?!.,;:ºª]+/g, "")
     .replace(/\s+/g, " ");
+}
+
+function getAcceptedAnswers(card) {
+  return [card.answer, ...(card.alts || [])];
+}
+
+function getUniqueAcceptedAnswers(card) {
+  const seen = new Set();
+  return getAcceptedAnswers(card).filter(answer => {
+    const normalized = normalize(answer);
+    if (seen.has(normalized)) return false;
+    seen.add(normalized);
+    return true;
+  });
+}
+
+function formatAcceptedAnswers(card) {
+  return getUniqueAcceptedAnswers(card).join(" / ");
 }
 
 function shuffle(arr) {
@@ -420,7 +491,7 @@ function escapeHtml(str) {
 }
 
 function buildDeck() {
-  deck = shuffle(ALL_CARDS);
+  deck = shuffle(ALL_CARDS.filter(card => activeGroups.has(card.group)));
   current = 0;
   known = new Set();
   answered = false;
@@ -441,10 +512,16 @@ function updateStats() {
   document.getElementById("progressPct").textContent = pct + "%";
 }
 
+function buildReveal(card) {
+  const example = card.example ? `<div class="example">${escapeHtml(card.example)}</div>` : "";
+  const tip = card.tip ? `<div class="tip"><strong>Usage:</strong> ${card.tip}</div>` : "";
+  return example + tip;
+}
+
 function render() {
   updateStats();
   const area = document.getElementById("cardArea");
-  const remaining = deck.filter((_, i) => !known.has(i));
+  const remaining = deck.filter((_, index) => !known.has(index));
 
   if (remaining.length === 0 && deck.length > 0) {
     const title = perfect ? "Perfeito!" : "Deck complete!";
@@ -480,10 +557,10 @@ function render() {
   area.innerHTML = `
     <div class="card">
       <div class="card-meta">${escapeHtml(card.group)}</div>
-      <div class="card-prompt">${escapeHtml(card.meaning)}</div>
-      <div class="card-sub">Type the full Portuguese expression</div>
+      <div class="card-prompt">${escapeHtml(card.prompt)}</div>
+      <div class="card-sub">Type the Portuguese form</div>
       <div class="input-row">
-        <input class="answer-input" id="answerInput" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
       </div>
       <div class="feedback" id="feedback"></div>
@@ -511,11 +588,6 @@ function handleAction() {
   checkAnswer();
 }
 
-function buildReveal(card) {
-  if (!card.note) return "";
-  return `<div class="tip"><strong>Usage:</strong> ${escapeHtml(card.note)}</div>`;
-}
-
 function checkAnswer() {
   const card = deck[current];
   const input = document.getElementById("answerInput");
@@ -528,16 +600,17 @@ function checkAnswer() {
   answered = true;
   input.disabled = true;
 
-  const correct = normalize(card.pt);
+  const correctAnswers = getUniqueAcceptedAnswers(card);
+  const acceptedDisplay = formatAcceptedAnswers(card);
+  const acceptedNormalized = new Set(correctAnswers.map(normalize));
   const given = normalize(input.value);
-  const answerDisplay = escapeHtml(card.pt);
 
-  if (given === correct) {
+  if (acceptedNormalized.has(given)) {
     stats.firstTry++;
     input.classList.add("correct");
     button.classList.add("go-green");
     feedback.className = "feedback ok";
-    feedback.innerHTML = `✓ Correct — <strong>${answerDisplay}</strong>`;
+    feedback.innerHTML = `✓ Correct — <strong>${escapeHtml(acceptedDisplay)}</strong> <span class="pron-tag">${escapeHtml(card.pron)}</span>`;
     revealArea.innerHTML = buildReveal(card);
     known.add(current);
     updateStats();
@@ -547,7 +620,7 @@ function checkAnswer() {
     input.classList.add("wrong", "shake");
     button.classList.add("go-red");
     feedback.className = "feedback err";
-    feedback.innerHTML = `✗ The answer is <strong>${answerDisplay}</strong>`;
+    feedback.innerHTML = `✗ Accepted here: <strong>${escapeHtml(acceptedDisplay)}</strong> <span class="pron-tag">${escapeHtml(card.pron)}</span>`;
     revealArea.innerHTML = buildReveal(card);
     setTimeout(() => input.classList.remove("shake"), 400);
   }
@@ -576,6 +649,24 @@ function skipCard() {
   known.add(current);
   updateStats();
   advanceToNextUnknown();
+}
+
+function renderFilters() {
+  document.getElementById("filterRow").innerHTML = GROUPS.map(group =>
+    `<div class="fc-tag active" onclick="toggleGroup(this,'${group}')">${group}</div>`
+  ).join("");
+}
+
+function toggleGroup(el, group) {
+  if (activeGroups.has(group)) {
+    if (activeGroups.size === 1) return;
+    activeGroups.delete(group);
+    el.classList.remove("active");
+  } else {
+    activeGroups.add(group);
+    el.classList.add("active");
+  }
+  buildDeck();
 }
 
 function launchFireworks() {
@@ -660,6 +751,7 @@ function launchFireworks() {
   requestAnimationFrame(frame);
 }
 
+renderFilters();
 buildDeck();
 </script>
 </body>
