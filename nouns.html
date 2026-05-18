@@ -261,14 +261,16 @@
     border-top: 1px dashed var(--border);
   }
 
-  .example-head {
-    margin-bottom: 0.5rem;
-    font-style: normal;
-  }
-
   .example-text {
     line-height: 1.55;
     display: block;
+  }
+
+  .example-translation {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--text3);
+    font-style: normal;
   }
 
   .pron-tag {
@@ -282,17 +284,6 @@
     letter-spacing: 0.04em;
     margin-left: 8px;
     vertical-align: middle;
-  }
-
-  .gender-chip {
-    display: inline-block;
-    padding: 0.25rem 0.55rem;
-    border-radius: 999px;
-    background: var(--accent-bg);
-    color: var(--accent);
-    font-size: 0.68rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
   }
 
   .controls {
@@ -405,15 +396,61 @@
 
 <script>
 const ALL_CARDS = [
-  { en: "the house", pt: "a casa", article: "a", noun: "casa", gender: "feminine", pronIpa: "[a 'kazɐ]", pronHint: "ah KAH-zah", example: "A casa fica perto daqui.", exampleEn: "The house is near here.", group: "places", note: "Learn this as one chunk: a casa, not just casa." },
-  { en: "the city", pt: "a cidade", article: "a", noun: "cidade", gender: "feminine", pronIpa: "[a si'dadʒi]", pronHint: "ah see-DAH-jee", example: "A cidade é bem tranquila.", exampleEn: "The city is quite calm.", group: "places", note: "Many nouns ending in -dade are feminine, but keep learning the article too." },
-  { en: "the work / the job", pt: "o trabalho", article: "o", noun: "trabalho", gender: "masculine", pronIpa: "[u tɾa'baʎu]", pronHint: "oo trah-BAH-lyoo", example: "O trabalho começa às oito.", exampleEn: "Work starts at eight.", group: "daily life", note: "Useful both for work in general and for a specific job context." },
-  { en: "the food", pt: "a comida", article: "a", noun: "comida", gender: "feminine", pronIpa: "[a ko'midɐ]", pronHint: "ah koh-MEE-dah", example: "A comida aqui é muito boa.", exampleEn: "The food here is very good.", group: "daily life", note: "A very practical everyday noun for restaurants, home, and conversation." },
-  { en: "the time", pt: "o tempo", article: "o", noun: "tempo", gender: "masculine", pronIpa: "[u 'tẽpu]", pronHint: "oo TEHM-poo", example: "Eu não tenho tempo agora.", exampleEn: "I do not have time now.", group: "time & things", note: "Tempo can mean time in general; later you can also meet it in weather contexts." },
-  { en: "the money", pt: "o dinheiro", article: "o", noun: "dinheiro", gender: "masculine", pronIpa: "[u dʒi'ɲejɾu]", pronHint: "oo jee-NYEH-roo", example: "Eu preciso guardar dinheiro.", exampleEn: "I need to save money.", group: "time & things", note: "You will hear this constantly in daily life, shopping, and travel." }
+  { en: "the person", pt: "a pessoa", article: "a", noun: "pessoa", gender: "feminine", pronIpa: "[a pe'soɐ]", pronHint: "ah peh-SOH-ah", example: "A pessoa está esperando ali.", exampleEn: "The person is waiting over there.", group: "people", note: "Pessoa is feminine even when it refers to a man." },
+  { en: "the friend", pt: "o amigo", article: "o", noun: "amigo", gender: "masculine", pronIpa: "[u a'migu]", pronHint: "oo ah-MEE-goo", example: "O amigo mora perto daqui.", exampleEn: "The friend lives near here.", group: "people", note: "Pair it with a amiga when you want the feminine form." },
+  { en: "the woman", pt: "a mulher", article: "a", noun: "mulher", gender: "feminine", pronIpa: "[a mu'ʎɛʁ]", pronHint: "ah moo-LYEHR", example: "A mulher trabalha no centro.", exampleEn: "The woman works downtown.", group: "people", note: "The lh sound is like the ly in million." },
+  { en: "the child", pt: "a criança", article: "a", noun: "criança", gender: "feminine", pronIpa: "[a kɾi'ɐ̃sɐ]", pronHint: "ah kree-AHN-sah", example: "A criança está brincando.", exampleEn: "The child is playing.", group: "people", note: "Criança is grammatically feminine no matter the child's gender." },
+
+  { en: "the house", pt: "a casa", article: "a", noun: "casa", gender: "feminine", pronIpa: "[a 'kazɐ]", pronHint: "ah KAH-zah", example: "A casa fica perto daqui.", exampleEn: "The house is near here.", group: "home & food", note: "Learn this as one chunk: a casa, not just casa." },
+  { en: "the water", pt: "a água", article: "a", noun: "água", gender: "feminine", pronIpa: "[a 'agwɐ]", pronHint: "ah AH-gwah", example: "A água está bem gelada.", exampleEn: "The water is very cold.", group: "home & food", note: "Common and essential; keep the written accent in mind." },
+  { en: "the coffee", pt: "o café", article: "o", noun: "café", gender: "masculine", pronIpa: "[u ka'fɛ]", pronHint: "oo kah-FEH", example: "O café está na mesa.", exampleEn: "The coffee is on the table.", group: "home & food", note: "A classic high-frequency noun in Brazil and Portugal alike." },
+  { en: "the bread", pt: "o pão", article: "o", noun: "pão", gender: "masculine", pronIpa: "[u 'pɐ̃w]", pronHint: "oo POWng", example: "O pão está quentinho.", exampleEn: "The bread is still warm.", group: "home & food", note: "The ão nasal sound shows up in many useful Portuguese words." },
+  { en: "the rice", pt: "o arroz", article: "o", noun: "arroz", gender: "masculine", pronIpa: "[u a'ʁos]", pronHint: "oo ah-HOHSS", example: "O arroz ficou ótimo.", exampleEn: "The rice turned out great.", group: "home & food", note: "Very common in everyday meal vocabulary." },
+  { en: "the food", pt: "a comida", article: "a", noun: "comida", gender: "feminine", pronIpa: "[a ko'midɐ]", pronHint: "ah koh-MEE-dah", example: "A comida aqui é muito boa.", exampleEn: "The food here is very good.", group: "home & food", note: "A very practical everyday noun for restaurants, home, and conversation." },
+  { en: "the book", pt: "o livro", article: "o", noun: "livro", gender: "masculine", pronIpa: "[u 'livɾu]", pronHint: "oo LEE-vroo", example: "O livro está na mochila.", exampleEn: "The book is in the backpack.", group: "home & food", note: "A useful noun for study talk and simple descriptions." },
+  { en: "the table", pt: "a mesa", article: "a", noun: "mesa", gender: "feminine", pronIpa: "[a 'mezɐ]", pronHint: "ah MEH-zah", example: "A mesa é de madeira.", exampleEn: "The table is made of wood.", group: "home & food", note: "The s here sounds like z in Brazilian Portuguese." },
+  { en: "the door", pt: "a porta", article: "a", noun: "porta", gender: "feminine", pronIpa: "[a 'pɔʁtɐ]", pronHint: "ah POHR-tah", example: "A porta está aberta.", exampleEn: "The door is open.", group: "home & food", note: "A great noun to pair with abrir and fechar." },
+  { en: "the window", pt: "a janela", article: "a", noun: "janela", gender: "feminine", pronIpa: "[a ʒa'nɛlɐ]", pronHint: "ah zhah-NEH-lah", example: "A janela dá para a rua.", exampleEn: "The window faces the street.", group: "home & food", note: "The initial j sounds like the s in measure." },
+  { en: "the key", pt: "a chave", article: "a", noun: "chave", gender: "feminine", pronIpa: "[a 'ʃavi]", pronHint: "ah SHAH-vee", example: "A chave está na bolsa.", exampleEn: "The key is in the bag.", group: "home & food", note: "The initial ch is a strong sh sound." },
+  { en: "the bed", pt: "a cama", article: "a", noun: "cama", gender: "feminine", pronIpa: "[a 'kɐ̃mɐ]", pronHint: "ah KAHN-mah", example: "A cama é muito confortável.", exampleEn: "The bed is very comfortable.", group: "home & food", note: "Listen for the nasal vowel in the first syllable." },
+  { en: "the room / bedroom", pt: "o quarto", article: "o", noun: "quarto", gender: "masculine", pronIpa: "[u 'kwaʁtu]", pronHint: "oo KWAHR-too", example: "O quarto fica no segundo andar.", exampleEn: "The bedroom is on the second floor.", group: "home & food", note: "Quarto can mean room in general or bedroom depending on context." },
+  { en: "the bathroom", pt: "o banheiro", article: "o", noun: "banheiro", gender: "masculine", pronIpa: "[u bɐ'ɲejɾu]", pronHint: "oo bah-NYEH-roo", example: "O banheiro fica à esquerda.", exampleEn: "The bathroom is on the left.", group: "home & food", note: "The nh sound is like the ny in canyon." },
+
+  { en: "the city", pt: "a cidade", article: "a", noun: "cidade", gender: "feminine", pronIpa: "[a si'dadʒi]", pronHint: "ah see-DAH-jee", example: "A cidade é bem tranquila.", exampleEn: "The city is quite calm.", group: "city & travel", note: "Many nouns ending in -dade are feminine, but keep learning the article too." },
+  { en: "the street", pt: "a rua", article: "a", noun: "rua", gender: "feminine", pronIpa: "[a 'ʁuɐ]", pronHint: "ah HOO-ah", example: "A rua está vazia agora.", exampleEn: "The street is empty now.", group: "city & travel", note: "This one is everywhere in directions and addresses." },
+  { en: "the car", pt: "o carro", article: "o", noun: "carro", gender: "masculine", pronIpa: "[u 'kaʁu]", pronHint: "oo KAH-hoo", example: "O carro está na garagem.", exampleEn: "The car is in the garage.", group: "city & travel", note: "Brazilian Portuguese often uses a throaty r sound here." },
+  { en: "the store", pt: "a loja", article: "a", noun: "loja", gender: "feminine", pronIpa: "[a 'lɔʒɐ]", pronHint: "ah LOH-zhah", example: "A loja abre às dez.", exampleEn: "The store opens at ten.", group: "city & travel", note: "Another word where j sounds like the s in measure." },
+  { en: "the market", pt: "o mercado", article: "o", noun: "mercado", gender: "masculine", pronIpa: "[u meʁ'kadu]", pronHint: "oo mehr-KAH-doo", example: "O mercado fecha às nove.", exampleEn: "The market closes at nine.", group: "city & travel", note: "Useful for errands, shopping, and daily routines." },
+  { en: "the beach", pt: "a praia", article: "a", noun: "praia", gender: "feminine", pronIpa: "[a 'pɾajɐ]", pronHint: "ah PRAH-yah", example: "A praia está linda hoje.", exampleEn: "The beach is beautiful today.", group: "city & travel", note: "One of the most useful travel nouns in Brazilian Portuguese." },
+  { en: "the school", pt: "a escola", article: "a", noun: "escola", gender: "feminine", pronIpa: "[a is'kɔlɐ]", pronHint: "ah ees-KOH-lah", example: "A escola fica no bairro vizinho.", exampleEn: "The school is in the neighboring district.", group: "city & travel", note: "The initial e is usually pronounced like ees in Brazil." },
+  { en: "the restaurant", pt: "o restaurante", article: "o", noun: "restaurante", gender: "masculine", pronIpa: "[u ʁes.taw'ɾɐ̃.tʃi]", pronHint: "oo hess-tow-RAHN-chee", example: "O restaurante está cheio hoje.", exampleEn: "The restaurant is full today.", group: "city & travel", note: "The final te in Brazil often sounds like chee." },
+  { en: "the station", pt: "a estação", article: "a", noun: "estação", gender: "feminine", pronIpa: "[a is.ta'sɐ̃w]", pronHint: "ah ees-tah-SOWng", example: "A estação fica bem perto.", exampleEn: "The station is very close.", group: "city & travel", note: "A very handy word for metro, train, and bus travel." },
+  { en: "the airplane", pt: "o avião", article: "o", noun: "avião", gender: "masculine", pronIpa: "[u avi'ɐ̃w]", pronHint: "oo ah-vee-OWng", example: "O avião sai às sete.", exampleEn: "The airplane leaves at seven.", group: "city & travel", note: "Another important nasal ão ending to get into your ear." },
+
+  { en: "the work / the job", pt: "o trabalho", article: "o", noun: "trabalho", gender: "masculine", pronIpa: "[u tɾa'baʎu]", pronHint: "oo trah-BAH-lyoo", example: "O trabalho começa às oito.", exampleEn: "Work starts at eight.", group: "work & study", note: "Useful both for work in general and for a specific job context." },
+  { en: "the class / lesson", pt: "a aula", article: "a", noun: "aula", gender: "feminine", pronIpa: "[a 'awlɐ]", pronHint: "ah OW-lah", example: "A aula começa em cinco minutos.", exampleEn: "The class starts in five minutes.", group: "work & study", note: "Aula is used for classes, lessons, and lectures." },
+  { en: "the question", pt: "a pergunta", article: "a", noun: "pergunta", gender: "feminine", pronIpa: "[a peʁ'gũtɐ]", pronHint: "ah pehr-GOON-tah", example: "A pergunta é muito boa.", exampleEn: "The question is very good.", group: "work & study", note: "The ng sound here comes from the nasal vowel, not a separate g." },
+  { en: "the answer", pt: "a resposta", article: "a", noun: "resposta", gender: "feminine", pronIpa: "[a ʁes'pɔstɐ]", pronHint: "ah hess-POHS-tah", example: "A resposta está certa.", exampleEn: "The answer is correct.", group: "work & study", note: "A strong high-frequency noun for classroom and conversation practice." },
+  { en: "the problem", pt: "o problema", article: "o", noun: "problema", gender: "masculine", pronIpa: "[u pɾo'blemɐ]", pronHint: "oo proh-BLEH-mah", example: "O problema é pequeno.", exampleEn: "The problem is small.", group: "work & study", note: "Words ending in -ma are often masculine in Portuguese." },
+  { en: "the number", pt: "o número", article: "o", noun: "número", gender: "masculine", pronIpa: "[u 'numeɾu]", pronHint: "oo NOO-meh-roo", example: "O número está errado.", exampleEn: "The number is wrong.", group: "work & study", note: "Useful for phone numbers, addresses, and practice drills." },
+  { en: "the word", pt: "a palavra", article: "a", noun: "palavra", gender: "feminine", pronIpa: "[a pa'lavɾɐ]", pronHint: "ah pah-LAH-vrah", example: "A palavra é fácil de lembrar.", exampleEn: "The word is easy to remember.", group: "work & study", note: "A core classroom noun worth learning early." },
+  { en: "the teacher", pt: "o professor", article: "o", noun: "professor", gender: "masculine", pronIpa: "[u pɾofe'soʁ]", pronHint: "oo proh-feh-SOHR", example: "O professor fala devagar.", exampleEn: "The teacher speaks slowly.", group: "work & study", note: "Useful for classroom and workplace contexts." },
+  { en: "the teacher", pt: "a professora", article: "a", noun: "professora", gender: "feminine", pronIpa: "[a pɾofe'soɾɐ]", pronHint: "ah proh-feh-SOH-rah", example: "A professora explica muito bem.", exampleEn: "The teacher explains very well.", group: "work & study", note: "A good contrast pair with o professor." },
+  { en: "the pen", pt: "a caneta", article: "a", noun: "caneta", gender: "feminine", pronIpa: "[a ka'netɐ]", pronHint: "ah kah-NEH-tah", example: "A caneta está na mochila.", exampleEn: "The pen is in the backpack.", group: "work & study", note: "A beginner staple for school and office vocabulary." },
+  { en: "the cell phone", pt: "o celular", article: "o", noun: "celular", gender: "masculine", pronIpa: "[u selu'laʁ]", pronHint: "oo seh-loo-LAHR", example: "O celular está sem bateria.", exampleEn: "The cell phone is out of battery.", group: "work & study", note: "In Brazil, celular is the usual word for mobile phone." },
+
+  { en: "the time", pt: "o tempo", article: "o", noun: "tempo", gender: "masculine", pronIpa: "[u 'tẽpu]", pronHint: "oo TEHM-poo", example: "Eu não tenho tempo agora.", exampleEn: "I do not have time now.", group: "time & nature", note: "Tempo can mean time in general; later you can also meet it in weather contexts." },
+  { en: "the money", pt: "o dinheiro", article: "o", noun: "dinheiro", gender: "masculine", pronIpa: "[u dʒi'ɲejɾu]", pronHint: "oo jee-NYEH-roo", example: "Eu preciso guardar dinheiro.", exampleEn: "I need to save money.", group: "time & nature", note: "You will hear this constantly in daily life, shopping, and travel." },
+  { en: "the day", pt: "o dia", article: "o", noun: "dia", gender: "masculine", pronIpa: "[u 'dʒiɐ]", pronHint: "oo JEE-ah", example: "O dia está lindo.", exampleEn: "The day is beautiful.", group: "time & nature", note: "Short, frequent, and useful in many set expressions." },
+  { en: "the night", pt: "a noite", article: "a", noun: "noite", gender: "feminine", pronIpa: "[a 'nojtʃi]", pronHint: "ah NOY-chee", example: "A noite está fresca.", exampleEn: "The night is cool.", group: "time & nature", note: "The final te often becomes chee in Brazilian pronunciation." },
+  { en: "the week", pt: "a semana", article: "a", noun: "semana", gender: "feminine", pronIpa: "[a se'mɐnɐ]", pronHint: "ah seh-MAH-nah", example: "A semana foi longa.", exampleEn: "The week was long.", group: "time & nature", note: "Useful for routines, plans, and scheduling." },
+  { en: "the year", pt: "o ano", article: "o", noun: "ano", gender: "masculine", pronIpa: "[u 'ɐ̃nu]", pronHint: "oo AHN-noo", example: "O ano passou rápido.", exampleEn: "The year went by quickly.", group: "time & nature", note: "Notice the nasal first vowel." },
+  { en: "the sun", pt: "o sol", article: "o", noun: "sol", gender: "masculine", pronIpa: "[u 'sɔw]", pronHint: "oo SAWL", example: "O sol está forte hoje.", exampleEn: "The sun is strong today.", group: "time & nature", note: "Very common in weather talk and everyday small talk." },
+  { en: "the rain", pt: "a chuva", article: "a", noun: "chuva", gender: "feminine", pronIpa: "[a 'ʃuvɐ]", pronHint: "ah SHOO-vah", example: "A chuva começou cedo.", exampleEn: "The rain started early.", group: "time & nature", note: "The initial ch is another clear sh sound." },
+  { en: "the world", pt: "o mundo", article: "o", noun: "mundo", gender: "masculine", pronIpa: "[u 'mũdu]", pronHint: "oo MOON-doo", example: "O mundo é muito grande.", exampleEn: "The world is very big.", group: "time & nature", note: "A useful noun for broad conversation and expressions." }
 ];
 
-const GROUPS = ["places", "daily life", "time & things"];
+const GROUPS = ["people", "home & food", "city & travel", "work & study", "time & nature"];
 let activeGroups = new Set(GROUPS);
 let deck = [];
 let current = 0;
@@ -482,8 +519,8 @@ function updateStats() {
 function buildReveal(card) {
   return `
     <div class="example">
-      <div class="example-head"><span class="gender-chip">${escapeHtml(card.gender)}</span></div>
-      <span class="example-text">"${escapeHtml(card.example)}"</span>
+      <span class="example-text">${escapeHtml(card.example)}</span>
+      <span class="example-translation">${escapeHtml(card.exampleEn)}</span>
     </div>
   `;
 }
@@ -538,7 +575,7 @@ function render() {
       <div class="card-prompt">${escapeHtml(card.en)}</div>
       <div class="card-sub">Type the full noun with its article</div>
       <div class="input-row">
-        <input class="answer-input" id="answerInput" type="text" placeholder="example: a casa" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
       </div>
       <div class="feedback" id="feedback"></div>
