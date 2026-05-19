@@ -573,6 +573,14 @@
     margin: 1.25rem 0 1.5rem;
   }
 
+  .result-context {
+    font-size: 0.64rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: -0.9rem 0 1rem;
+  }
+
   .result-stat {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -1149,7 +1157,7 @@ function skipDailyCard() {
 function buildShareString() {
   const num = getDailyNumber();
   const date = formatDailyDate();
-  let lines = [`Portuguese passado! Daily #${num}`, date, ''];
+  let lines = [`Portuguese passado! Daily #${num}`, date, 'Perfect past', ''];
 
   dailyDeck.forEach((card, i) => {
     const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
@@ -1216,6 +1224,7 @@ function renderDailyComplete() {
       <div class="trophy">${trophy}</div>
       <h2>${title}</h2>
       <p>${subtitle}</p>
+      <div class="result-context">Perfect past</div>
       ${buildDailyHardModeBadge(dailyStats)}
       <div class="daily-results">${rows}</div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
