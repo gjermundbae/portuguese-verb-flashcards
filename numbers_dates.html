@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portuguese Counting Flashcards</title>
+<title>Portuguese Numbers and Dates Flashcards</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -379,8 +379,8 @@
 <body>
 
 <header>
-  <h1>Contagem em <em>Português</em></h1>
-  <p><a href="index.html">verbs</a> · <a href="passado.html">passado</a> · <a class="active" href="counting.html">counting</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
+  <h1>Números e Datas em <em>Português</em></h1>
+  <p><a href="index.html">verbs</a> · <a href="passado.html">passado</a> · <a class="active" href="numbers_dates.html">numbers &amp; dates</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a></p>
 </header>
 
 <div class="container">
@@ -404,34 +404,34 @@
 
 <script>
 const ALL_CARDS = [
-  { prompt: "one", answer: "um", alts: ["uma"], pron: "OOM / OO-mah", example: "1 = um", tip: "Use <strong>uma</strong> before feminine nouns: <em>uma casa</em>. For straight counting, <strong>um</strong> is the base form.", group: "numbers" },
-  { prompt: "two", answer: "dois", alts: ["duas"], pron: "DOYSS / DOO-ahs", example: "2 = dois", tip: "<strong>Dois</strong> is the base form. Use <strong>duas</strong> before feminine nouns: <em>duas semanas</em>.", group: "numbers" },
-  { prompt: "three", answer: "três", pron: "TRAYSS", example: "3 = três", group: "numbers" },
-  { prompt: "four", answer: "quatro", pron: "KWAH-troo", example: "4 = quatro", group: "numbers" },
-  { prompt: "five", answer: "cinco", pron: "SEEN-koo", example: "5 = cinco", group: "numbers" },
-  { prompt: "six", answer: "seis", pron: "SAYSS", example: "6 = seis", group: "numbers" },
-  { prompt: "seven", answer: "sete", pron: "SEH-chee", example: "7 = sete", group: "numbers" },
-  { prompt: "eight", answer: "oito", pron: "OY-too", example: "8 = oito", group: "numbers" },
-  { prompt: "nine", answer: "nove", pron: "NOH-vee", example: "9 = nove", group: "numbers" },
-  { prompt: "ten", answer: "dez", pron: "DEZZ", example: "10 = dez", group: "numbers" },
-  { prompt: "eleven", answer: "onze", pron: "OHN-zee", example: "11 = onze", group: "numbers" },
-  { prompt: "twelve", answer: "doze", pron: "DOH-zee", example: "12 = doze", group: "numbers" },
-  { prompt: "thirteen", answer: "treze", pron: "TRAY-zee", example: "13 = treze", group: "numbers" },
-  { prompt: "fourteen", answer: "quatorze", alts: ["catorze"], pron: "kwa-TOHR-zee / kah-TOHR-zee", example: "14 = quatorze", tip: "Both <strong>quatorze</strong> and <strong>catorze</strong> are correct in Brazil.", group: "numbers" },
-  { prompt: "fifteen", answer: "quinze", pron: "KEEN-zee", example: "15 = quinze", group: "numbers" },
-  { prompt: "sixteen", answer: "dezesseis", pron: "deh-zeh-SAYSS", example: "16 = dezesseis", group: "numbers" },
-  { prompt: "seventeen", answer: "dezessete", pron: "deh-zeh-SEH-chee", example: "17 = dezessete", group: "numbers" },
-  { prompt: "eighteen", answer: "dezoito", pron: "deh-ZOY-too", example: "18 = dezoito", group: "numbers" },
-  { prompt: "nineteen", answer: "dezenove", pron: "deh-zeh-NOH-vee", example: "19 = dezenove", group: "numbers" },
-  { prompt: "twenty", answer: "vinte", pron: "VEEN-chee", example: "20 = vinte", group: "numbers" },
-  { prompt: "thirty", answer: "trinta", pron: "TREEN-tah", example: "30 = trinta", group: "numbers" },
-  { prompt: "forty", answer: "quarenta", pron: "kwah-REN-tah", example: "40 = quarenta", group: "numbers" },
-  { prompt: "fifty", answer: "cinquenta", pron: "seen-KWEN-tah", example: "50 = cinquenta", group: "numbers" },
-  { prompt: "sixty", answer: "sessenta", pron: "seh-SEN-tah", example: "60 = sessenta", group: "numbers" },
-  { prompt: "seventy", answer: "setenta", pron: "seh-TEN-tah", example: "70 = setenta", group: "numbers" },
-  { prompt: "eighty", answer: "oitenta", pron: "oy-TEN-tah", example: "80 = oitenta", group: "numbers" },
-  { prompt: "ninety", answer: "noventa", pron: "noh-VEN-tah", example: "90 = noventa", group: "numbers" },
-  { prompt: "one hundred", answer: "cem", pron: "SEHNG", example: "100 = cem", tip: "<strong>Cem</strong> is exactly 100. Before another number, use <strong>cento</strong>: <em>cento e um</em>.", group: "numbers" },
+  { prompt: "one", answer: "um", alts: ["uma"], pron: "OOM / OO-mah", example: "1 = um", tip: "Use <strong>uma</strong> before feminine nouns: <em>uma casa</em>. For straight counting, <strong>um</strong> is the base form.", group: "cardinal numbers" },
+  { prompt: "two", answer: "dois", alts: ["duas"], pron: "DOYSS / DOO-ahs", example: "2 = dois", tip: "<strong>Dois</strong> is the base form. Use <strong>duas</strong> before feminine nouns: <em>duas semanas</em>.", group: "cardinal numbers" },
+  { prompt: "three", answer: "três", pron: "TRAYSS", example: "3 = três", group: "cardinal numbers" },
+  { prompt: "four", answer: "quatro", pron: "KWAH-troo", example: "4 = quatro", group: "cardinal numbers" },
+  { prompt: "five", answer: "cinco", pron: "SEEN-koo", example: "5 = cinco", group: "cardinal numbers" },
+  { prompt: "six", answer: "seis", pron: "SAYSS", example: "6 = seis", group: "cardinal numbers" },
+  { prompt: "seven", answer: "sete", pron: "SEH-chee", example: "7 = sete", group: "cardinal numbers" },
+  { prompt: "eight", answer: "oito", pron: "OY-too", example: "8 = oito", group: "cardinal numbers" },
+  { prompt: "nine", answer: "nove", pron: "NOH-vee", example: "9 = nove", group: "cardinal numbers" },
+  { prompt: "ten", answer: "dez", pron: "DEZZ", example: "10 = dez", group: "cardinal numbers" },
+  { prompt: "eleven", answer: "onze", pron: "OHN-zee", example: "11 = onze", group: "cardinal numbers" },
+  { prompt: "twelve", answer: "doze", pron: "DOH-zee", example: "12 = doze", group: "cardinal numbers" },
+  { prompt: "thirteen", answer: "treze", pron: "TRAY-zee", example: "13 = treze", group: "cardinal numbers" },
+  { prompt: "fourteen", answer: "quatorze", alts: ["catorze"], pron: "kwa-TOHR-zee / kah-TOHR-zee", example: "14 = quatorze", tip: "Both <strong>quatorze</strong> and <strong>catorze</strong> are correct in Brazil.", group: "cardinal numbers" },
+  { prompt: "fifteen", answer: "quinze", pron: "KEEN-zee", example: "15 = quinze", group: "cardinal numbers" },
+  { prompt: "sixteen", answer: "dezesseis", pron: "deh-zeh-SAYSS", example: "16 = dezesseis", group: "cardinal numbers" },
+  { prompt: "seventeen", answer: "dezessete", pron: "deh-zeh-SEH-chee", example: "17 = dezessete", group: "cardinal numbers" },
+  { prompt: "eighteen", answer: "dezoito", pron: "deh-ZOY-too", example: "18 = dezoito", group: "cardinal numbers" },
+  { prompt: "nineteen", answer: "dezenove", pron: "deh-zeh-NOH-vee", example: "19 = dezenove", group: "cardinal numbers" },
+  { prompt: "twenty", answer: "vinte", pron: "VEEN-chee", example: "20 = vinte", group: "cardinal numbers" },
+  { prompt: "thirty", answer: "trinta", pron: "TREEN-tah", example: "30 = trinta", group: "cardinal numbers" },
+  { prompt: "forty", answer: "quarenta", pron: "kwah-REN-tah", example: "40 = quarenta", group: "cardinal numbers" },
+  { prompt: "fifty", answer: "cinquenta", pron: "seen-KWEN-tah", example: "50 = cinquenta", group: "cardinal numbers" },
+  { prompt: "sixty", answer: "sessenta", pron: "seh-SEN-tah", example: "60 = sessenta", group: "cardinal numbers" },
+  { prompt: "seventy", answer: "setenta", pron: "seh-TEN-tah", example: "70 = setenta", group: "cardinal numbers" },
+  { prompt: "eighty", answer: "oitenta", pron: "oy-TEN-tah", example: "80 = oitenta", group: "cardinal numbers" },
+  { prompt: "ninety", answer: "noventa", pron: "noh-VEN-tah", example: "90 = noventa", group: "cardinal numbers" },
+  { prompt: "one hundred", answer: "cem", pron: "SEHNG", example: "100 = cem", tip: "<strong>Cem</strong> is exactly 100. Before another number, use <strong>cento</strong>: <em>cento e um</em>.", group: "cardinal numbers" },
 
   { prompt: "first", answer: "primeiro", alts: ["primeira"], pron: "pree-MAY-roo / pree-MAY-rah", example: "1º lugar / 1ª vez", tip: "Ordinals agree with gender: <strong>primeiro</strong> for masculine nouns, <strong>primeira</strong> for feminine nouns. In Brazilian dates, only the first day is usually ordinal: <em>primeiro de maio</em>.", group: "ordinal numbers" },
   { prompt: "second", answer: "segundo", alts: ["segunda"], pron: "seh-GOON-doo / seh-GOON-dah", example: "2º andar / segunda-feira", tip: "Use <strong>segunda</strong> with feminine nouns, as in <em>segunda-feira</em>.", group: "ordinal numbers" },
@@ -442,10 +442,37 @@ const ALL_CARDS = [
   { prompt: "seventh", answer: "sétimo", alts: ["sétima"], pron: "SEH-chee-moo / SEH-chee-mah", example: "7º dia / 7ª vez", tip: "Accent marks matter in writing, but the quiz accepts answers without accents too.", group: "ordinal numbers" },
   { prompt: "eighth", answer: "oitavo", alts: ["oitava"], pron: "oy-TAH-voo / oy-TAH-vah", example: "8º andar / 8ª temporada", tip: "Use the masculine or feminine form to match the noun that follows.", group: "ordinal numbers" },
   { prompt: "ninth", answer: "nono", alts: ["nona"], pron: "NOH-noo / NOH-nah", example: "9º mês / 9ª edição", tip: "<strong>Nono</strong> and <strong>nona</strong> are common in rankings and school years.", group: "ordinal numbers" },
-  { prompt: "tenth", answer: "décimo", alts: ["décima"], pron: "DEH-see-moo / DEH-see-mah", example: "10º andar / 10ª vez", tip: "Higher ordinals exist, but in everyday Brazilian Portuguese the first ten are the most useful by far.", group: "ordinal numbers" }
+  { prompt: "tenth", answer: "décimo", alts: ["décima"], pron: "DEH-see-moo / DEH-see-mah", example: "10º andar / 10ª vez", tip: "Higher ordinals exist, but in everyday Brazilian Portuguese the first ten are the most useful by far.", group: "ordinal numbers" },
+
+  { prompt: "Monday", answer: "segunda-feira", alts: ["segunda"], pron: "seh-GOON-dah FAY-rah", example: "Hoje é segunda-feira.", tip: "In Brazil, people often shorten it to <strong>segunda</strong> in conversation, but <strong>segunda-feira</strong> is the full form.", group: "weekdays" },
+  { prompt: "Tuesday", answer: "terça-feira", alts: ["terça", "terca-feira", "terca"], pron: "TEHR-sah FAY-rah", example: "A aula é na terça-feira.", tip: "The cedilla matters in writing: <strong>terça</strong>. The quiz also accepts answers without diacritics.", group: "weekdays" },
+  { prompt: "Wednesday", answer: "quarta-feira", alts: ["quarta"], pron: "KWAHR-tah FAY-rah", example: "Trabalho na quarta-feira.", tip: "Like <strong>segunda</strong> and <strong>terça</strong>, the shorter form <strong>quarta</strong> is very common in speech.", group: "weekdays" },
+  { prompt: "Thursday", answer: "quinta-feira", alts: ["quinta"], pron: "KEEN-tah FAY-rah", example: "Nos vemos na quinta-feira.", tip: "You will often hear just <strong>quinta</strong> in everyday Brazilian Portuguese.", group: "weekdays" },
+  { prompt: "Friday", answer: "sexta-feira", alts: ["sexta"], pron: "SESS-tah FAY-rah", example: "Sexta-feira é meu dia favorito.", tip: "<strong>Sexta</strong> alone is natural in speech, but <strong>sexta-feira</strong> is the full weekday name.", group: "weekdays" },
+  { prompt: "Saturday", answer: "sábado", pron: "SAH-bah-doo", example: "Vamos viajar no sábado.", tip: "Unlike Monday through Friday, <strong>sábado</strong> does not use <strong>-feira</strong>.", group: "weekdays" },
+  { prompt: "Sunday", answer: "domingo", pron: "doh-MEEN-goo", example: "No domingo eu descanso.", tip: "<strong>Domingo</strong> also stands alone, without <strong>-feira</strong>.", group: "weekdays" },
+
+  { prompt: "January", answer: "janeiro", pron: "zhah-NAY-roo", example: "Meu aniversário é em janeiro.", tip: "Month names stay lowercase in Portuguese: <strong>janeiro</strong>, not <strong>Janeiro</strong>.", group: "months" },
+  { prompt: "February", answer: "fevereiro", pron: "feh-veh-RAY-roo", example: "O carnaval costuma cair em fevereiro.", group: "months" },
+  { prompt: "March", answer: "março", pron: "MAHR-soo", example: "As aulas começam em março.", tip: "Write it with <strong>ç</strong>: <strong>março</strong>.", group: "months" },
+  { prompt: "April", answer: "abril", pron: "ah-BREEL", example: "Em abril faz mais frio.", group: "months" },
+  { prompt: "May", answer: "maio", pron: "MY-yoo", example: "Primeiro de maio é feriado.", group: "months" },
+  { prompt: "June", answer: "junho", pron: "ZHOON-yoo", example: "As festas juninas são em junho.", group: "months" },
+  { prompt: "July", answer: "julho", pron: "ZHOO-lyoo", example: "Viajo em julho.", tip: "<strong>Junho</strong> and <strong>julho</strong> are easy to mix up, so it helps to learn them together.", group: "months" },
+  { prompt: "August", answer: "agosto", pron: "ah-GOHS-too", example: "Agosto tem muito vento.", group: "months" },
+  { prompt: "September", answer: "setembro", pron: "seh-TEM-broo", example: "Setembro vem depois de agosto.", group: "months" },
+  { prompt: "October", answer: "outubro", pron: "ow-TOO-broo", example: "Meu curso termina em outubro.", group: "months" },
+  { prompt: "November", answer: "novembro", pron: "noh-VEM-broo", example: "Novembro antecede dezembro.", group: "months" },
+  { prompt: "December", answer: "dezembro", pron: "deh-ZEM-broo", example: "O Natal é em dezembro.", group: "months" }
 ];
 
-const GROUPS = ["numbers", "ordinal numbers"];
+const GROUPS = ["cardinal numbers", "ordinal numbers", "weekdays", "months"];
+const GROUP_LABELS = {
+  "cardinal numbers": "cardinal numbers",
+  "ordinal numbers": "ordinal numbers",
+  "weekdays": "days of the week",
+  "months": "months"
+};
 let activeGroups = new Set(GROUPS);
 let deck = [];
 let current = 0;
@@ -457,6 +484,7 @@ let stats = { errors: 0, firstTry: 0 };
 function normalize(str) {
   return str.trim().toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/-/g, " ")
     .replace(/[?!.,;:ºª]+/g, "")
     .replace(/\s+/g, " ");
 }
@@ -556,7 +584,7 @@ function render() {
 
   area.innerHTML = `
     <div class="card">
-      <div class="card-meta">${escapeHtml(card.group)}</div>
+      <div class="card-meta">${escapeHtml(GROUP_LABELS[card.group] || card.group)}</div>
       <div class="card-prompt">${escapeHtml(card.prompt)}</div>
       <div class="card-sub">Type the Portuguese form</div>
       <div class="input-row">
@@ -653,7 +681,7 @@ function skipCard() {
 
 function renderFilters() {
   document.getElementById("filterRow").innerHTML = GROUPS.map(group =>
-    `<div class="fc-tag active" onclick="toggleGroup(this,'${group}')">${group}</div>`
+    `<div class="fc-tag active" onclick="toggleGroup(this,'${group}')">${escapeHtml(GROUP_LABELS[group] || group)}</div>`
   ).join("");
 }
 
