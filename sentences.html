@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portuguese Adverb Flashcards</title>
+<title>Portuguese Sentence Flashcards</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -69,7 +69,7 @@
   header p a:hover { color: var(--text2); border-bottom-color: var(--border2); }
   header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
 
-  .container { width: 100%; max-width: 520px; }
+  .container { width: 100%; max-width: 560px; }
 
   .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
 
@@ -175,12 +175,29 @@
     margin-bottom: 0.6rem;
   }
 
-  .card-prompt {
+  .card-english {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.9rem;
+    font-size: 1.5rem;
     color: var(--text);
-    line-height: 1.2;
+    line-height: 1.3;
     margin-bottom: 0.35rem;
+  }
+
+  .card-portuguese {
+    font-size: 1.05rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.01em;
+    min-height: 1.5em;
+  }
+
+  .card-portuguese.revealed { color: var(--green); }
+  .card-portuguese.revealed-wrong { color: var(--red); }
+
+  .card-portuguese .slot-variant {
+    border-bottom: 1px dashed var(--border2);
+    padding-bottom: 1px;
   }
 
   .card-sub {
@@ -252,17 +269,18 @@
   .feedback.ok { color: var(--green); }
   .feedback.err { color: var(--red); }
 
-  .example {
+  .tip {
     font-size: 0.78rem;
     color: var(--text2);
-    font-style: italic;
     margin-top: 0.5rem;
     padding-top: 0.75rem;
     border-top: 1px dashed var(--border);
     line-height: 1.55;
   }
 
-  .pron-tag {
+  .tip strong { color: var(--text); font-weight: 500; }
+
+  .variant-tag {
     display: inline-block;
     font-size: 0.7rem;
     background: var(--accent-bg);
@@ -271,7 +289,8 @@
     border-radius: 999px;
     padding: 2px 10px;
     letter-spacing: 0.04em;
-    margin-left: 8px;
+    margin-left: 6px;
+    margin-top: 4px;
     vertical-align: middle;
   }
 
@@ -360,8 +379,8 @@
 <body>
 
 <header>
-  <h1>Advérbios em <em>Português</em></h1>
-  <p><a href="index.html">verbs</a> · <a href="passado.html">passado</a> · <a href="numbers_dates.html">numbers &amp; dates</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a class="active" href="adverbs.html">adverbs</a> · <a href="sentences.html">sentences</a></p>
+  <h1>Frases em <em>Português</em></h1>
+  <p><a href="index.html">verbs</a> · <a href="passado.html">passado</a> · <a href="numbers_dates.html">numbers &amp; dates</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a> · <a class="active" href="sentences.html">sentences</a></p>
 </header>
 
 <div class="container">
@@ -384,43 +403,75 @@
 </div>
 
 <script>
+// Sentence cards. Conventions:
+//   - Always use explicit subject pronouns (eu, voce, nos, ele, ela, eles, elas).
+//   - Canonical form = neutral spoken BR (no a gente / ta / to in v1).
+//   - {slotId} placeholders in pt are resolved against `slots`; first variant per
+//     slot is the displayed canonical. All cartesian combinations are accepted.
 const ALL_CARDS = [
-  { en: "now", pt: "agora", pronIpa: "[a'gɔɾɐ]", pronHint: "ah-GOH-rah", example: "Eu preciso sair agora.", exampleEn: "I need to leave now.", group: "time", note: "One of the most useful time words in everyday speech." },
-  { en: "already", pt: "já", pronIpa: "[ʒa]", pronHint: "ZHAH", example: "Eu já sei.", exampleEn: "I already know.", group: "time", note: "Short, frequent, and essential for everyday conversation." },
-  { en: "still / yet", pt: "ainda", pronIpa: "[a'ĩdɐ]", pronHint: "ah-EEN-dah", example: "Eu ainda estou em casa.", exampleEn: "I am still at home.", group: "time", note: "Very common in both positive and negative sentences: ainda não = not yet." },
-  { en: "later / afterwards", pt: "depois", pronIpa: "[de'pojs]", pronHint: "deh-POYSS", example: "A gente conversa depois.", exampleEn: "We will talk later.", group: "time", note: "A core word for postponing something or sequencing events." },
-  { en: "today", pt: "hoje", pronIpa: "['oʒi]", pronHint: "OH-zhee", example: "Eu trabalho hoje.", exampleEn: "I work today.", group: "time", note: "A very basic everyday time word." },
-  { en: "tomorrow", pt: "amanhã", pronIpa: "[amɐ'ɲɐ̃]", pronHint: "ah-mah-NYAHNG", example: "Eu volto amanhã.", exampleEn: "I will come back tomorrow.", group: "time", note: "One of the first time words learners need for making plans." },
-  { en: "yesterday", pt: "ontem", pronIpa: "['õtẽj̃]", pronHint: "OHN-teng", example: "Ontem eu cheguei tarde.", exampleEn: "Yesterday I arrived late.", group: "time", note: "Very useful for basic past-time reference." },
-  { en: "soon", pt: "logo", pronIpa: "['lɔgu]", pronHint: "LOH-goo", example: "Eu volto logo.", exampleEn: "I will be back soon.", group: "time", note: "In Brazil, logo often means soon rather than immediately." },
+  // Present basics
+  { en: "I drink water.", pt: "Eu bebo água.", group: "Present basics",
+    note: "Beber (to drink) is a regular -er verb: eu bebo, você bebe, nós bebemos, eles bebem." },
+  { en: "You speak Portuguese.", pt: "Você fala português.", group: "Present basics",
+    note: "Você is the default 2nd person in BR Portuguese and conjugates like ele/ela: você fala." },
+  { en: "We live in São Paulo.", pt: "Nós moramos em São Paulo.", group: "Present basics",
+    note: "Morar em = to live in. With a city that takes an article you'd contract: em + o Rio = no Rio." },
+  { en: "She works a lot.", pt: "Ela trabalha muito.", group: "Present basics",
+    note: "Trabalhar is a regular -ar verb: eu trabalho, ela trabalha, nós trabalhamos. Muito here is an adverb modifying the verb." },
+  { en: "They (m.) eat bread.", pt: "Eles comem pão.", group: "Present basics",
+    note: "Eles = masculine or mixed plural; elas = all feminine. Generic 'bread' takes no article here." },
+  { en: "I have two brothers.", pt: "Eu tenho dois irmãos.", group: "Present basics",
+    note: "Ter is irregular: eu tenho, você tem, nós temos, eles têm. Irmãos covers brothers or mixed-gender siblings." },
 
-  { en: "always", pt: "sempre", pronIpa: "['sẽpɾi]", pronHint: "SEHM-pree", example: "Ela sempre estuda de manhã.", exampleEn: "She always studies in the morning.", group: "frequency", note: "Great for habits and routines." },
-  { en: "never", pt: "nunca", pronIpa: "['nũkɐ]", pronHint: "NOON-kah", example: "Eu nunca bebo café à noite.", exampleEn: "I never drink coffee at night.", group: "frequency", note: "Often pairs naturally with não in full sentences: eu nunca faço isso." },
-  { en: "sometimes", pt: "às vezes", pronIpa: "[az 'vezis]", pronHint: "ahz VEH-zees", example: "Às vezes eu tomo café de manhã.", exampleEn: "Sometimes I drink coffee in the morning.", group: "frequency", note: "A high-value frequency phrase that learners need early." },
-  { en: "usually / generally", pt: "geralmente", pronIpa: "[ʒeɾaw'mẽtʃi]", pronHint: "zheh-row-MEN-chee", example: "Eu geralmente almoço em casa.", exampleEn: "I usually have lunch at home.", group: "frequency", note: "A little more formal than sempre or às vezes, but very common." },
+  // Ser vs Estar
+  { en: "I am Brazilian.", pt: "Eu sou {gender_br}.",
+    slots: { gender_br: ["brasileiro", "brasileira"] },
+    group: "Ser vs Estar",
+    note: "Nationality is an essential trait → ser. The adjective agrees with the speaker's gender: brasileiro (m.) / brasileira (f.)." },
+  { en: "She is tired.", pt: "Ela está cansada.", group: "Ser vs Estar",
+    note: "Being tired is a temporary state → estar. Cansada agrees with the feminine subject; for a man: cansado." },
+  { en: "The coffee is hot.", pt: "O café está quente.", group: "Ser vs Estar",
+    note: "Temperature is a current state → estar. Quente is invariable for gender (ends in -e)." },
+  { en: "We are students.", pt: "Nós somos estudantes.", group: "Ser vs Estar",
+    note: "Profession/identity → ser. Estudante is invariable for gender; only the plural -s changes." },
+  { en: "He is at home.", pt: "Ele está em casa.", group: "Ser vs Estar",
+    note: "Location → estar. The idiom 'em casa' (at home) takes no article; with someone's house: 'na casa de João'." },
 
-  { en: "here", pt: "aqui", pronIpa: "[a'ki]", pronHint: "ah-KEE", example: "Pode sentar aqui.", exampleEn: "You can sit here.", group: "place", note: "Aqui points to where you are." },
-  { en: "there / over there", pt: "lá", pronIpa: "[la]", pronHint: "LAH", example: "O mercado fica lá.", exampleEn: "The market is over there.", group: "place", note: "Lá usually feels farther away than ali." },
-  { en: "there, nearby", pt: "ali", pronIpa: "[a'li]", pronHint: "ah-LEE", example: "O banco fica ali.", exampleEn: "The bank is right there.", group: "place", note: "Ali usually feels closer or more visible than lá." },
-  { en: "far away", pt: "longe", pronIpa: "['lõʒi]", pronHint: "LOHN-zhee", example: "O aeroporto fica longe.", exampleEn: "The airport is far away.", group: "place", note: "A useful word for distance, places, and relationships." },
-  { en: "near / nearby", pt: "perto", pronIpa: "['pɛʁtu]", pronHint: "PEHR-too", example: "O mercado fica perto daqui.", exampleEn: "The market is near here.", group: "place", note: "Often appears with de: perto de casa, perto daqui." },
+  // Past (pretérito perfeito)
+  { en: "I ate bread yesterday.", pt: "Eu comi pão ontem.", group: "Past",
+    note: "Pretérito perfeito of comer: eu comi, você comeu, nós comemos, eles comeram. Used for completed past actions." },
+  { en: "She went to the market.", pt: "Ela foi ao mercado.", group: "Past",
+    note: "Foi is the past of both ir and ser — context tells you which. a + o contracts to ao (never write 'a o')." },
+  { en: "We watched a movie yesterday.", pt: "Nós {assistimos_filme} ontem.",
+    slots: { assistimos_filme: ["assistimos um filme", "assistimos a um filme"] },
+    group: "Past",
+    note: "Formal grammar requires 'assistir a' (with preposition). Spoken BR very commonly drops the 'a'. Both accepted." },
+  { en: "You drank coffee this morning.", pt: "Você bebeu café hoje de manhã.", group: "Past",
+    note: "Pretérito perfeito of beber: você bebeu. 'Hoje de manhã' literally 'today in the morning' = this morning." },
+  { en: "They (m.) arrived late.", pt: "Eles chegaram tarde.", group: "Past",
+    note: "Pretérito perfeito of chegar: eles chegaram. Here tarde is the adverb 'late', not the noun 'afternoon'." },
 
-  { en: "well", pt: "bem", pronIpa: "[bẽj̃]", pronHint: "BEHNG", example: "Você fala bem português.", exampleEn: "You speak Portuguese well.", group: "manner", note: "Use bem to say someone does something well." },
-  { en: "fast / quickly", pt: "rápido", pronIpa: "['ʁapidu]", pronHint: "HAH-pee-doo", example: "Fala mais rápido, por favor.", exampleEn: "Speak faster, please.", group: "manner", note: "Rápido is also an adjective, but in Brazilian speech it is very commonly used adverbially like this." },
-  { en: "slowly", pt: "devagar", pronIpa: "[deva'gaʁ]", pronHint: "deh-vah-GAHR", example: "Vai devagar.", exampleEn: "Go slowly.", group: "manner", note: "A very natural everyday adverb for movement, speaking, and pace." },
-  { en: "like this / this way", pt: "assim", pronIpa: "[a'sĩ]", pronHint: "ah-SEENG", example: "Não fala assim comigo.", exampleEn: "Do not talk to me like that.", group: "manner", note: "Very common for showing manner, attitude, or way of doing something." },
-  { en: "better", pt: "melhor", pronIpa: "[me'ʎɔʁ]", pronHint: "meh-LYOHR", example: "Agora eu entendo melhor.", exampleEn: "Now I understand better.", group: "manner", note: "The comparative adverb form of bem." },
-  { en: "worse", pt: "pior", pronIpa: "[pi'oʁ]", pronHint: "pee-OHR", example: "Sem café, eu trabalho pior.", exampleEn: "Without coffee, I perform worse.", group: "manner", note: "The comparative adverb form of mal." },
-
-  { en: "very / a lot", pt: "muito", pronIpa: "['mũjtu]", pronHint: "MOOY-too", example: "Hoje está muito quente.", exampleEn: "Today it is very hot.", group: "degree", note: "Muito works as very before adjectives and adverbs, and as a lot in other contexts." },
-  { en: "almost", pt: "quase", pronIpa: "['kwazi]", pronHint: "KWAH-zee", example: "Eu quase perdi o ônibus.", exampleEn: "I almost missed the bus.", group: "degree", note: "A very useful word for near-events and near-misses." },
-  { en: "too much / excessively", pt: "demais", pronIpa: "[dʒi'majs]", pronHint: "jee-MYSS", example: "Ele fala demais.", exampleEn: "He talks too much.", group: "degree", note: "Often follows the word it modifies: caro demais, fala demais." },
-
-  { en: "maybe / perhaps", pt: "talvez", pronIpa: "[taw'ves]", pronHint: "tahl-VEZ", example: "Talvez eu vá amanhã.", exampleEn: "Maybe I will go tomorrow.", group: "stance & sequence", note: "A core word for uncertainty and softening statements." },
-  { en: "then / so", pt: "então", pronIpa: "[ẽ'tɐ̃w̃]", pronHint: "ehn-TOWNG", example: "Então vamos começar.", exampleEn: "So let us begin.", group: "stance & sequence", note: "Então often works like then in sequence and like so in conversation." }
+  // Prepositions & contractions
+  { en: "I go to the school.", pt: "Eu vou {para_a} escola.",
+    slots: { para_a: ["para a", "pra"] },
+    group: "Prepositions",
+    note: "Para a (to the, fem.) routinely contracts to 'pra' in spoken BR. Both are accepted; 'pra' is informal but extremely common." },
+  { en: "She is at the office.", pt: "Ela está no escritório.", group: "Prepositions",
+    note: "em + o = no. Always contract — never write 'em o'. Location with estar." },
+  { en: "We came from the beach.", pt: "Nós viemos da praia.", group: "Prepositions",
+    note: "de + a = da. Viemos is past of vir (to come): eu vim, você veio, nós viemos, eles vieram." },
+  { en: "The book is on the table.", pt: "O livro está na mesa.", group: "Prepositions",
+    note: "em + a = na. 'Na mesa' covers both 'on the table' and 'at the table' depending on context." },
+  { en: "I think about you.", pt: "Eu penso em você.", group: "Prepositions",
+    note: "Pensar em = to think about. The preposition matters: pensar de means 'to have an opinion of'." },
+  { en: "I spoke with João.", pt: "Eu falei com o João.", group: "Prepositions",
+    note: "BR Portuguese commonly uses definite articles before personal names: 'o João', 'a Maria'. Falar com = to speak with." }
 ];
 
-const GROUPS = ["time", "frequency", "place", "manner", "degree", "stance & sequence"];
+const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions"];
+
+const MAX_CARTESIAN = 32;
+
 let activeGroups = new Set(GROUPS);
 let deck = [];
 let current = 0;
@@ -436,16 +487,84 @@ function normalize(str) {
     .replace(/\s+/g, " ");
 }
 
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
-}
-
 function escapeHtml(str) {
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+// ---- Slot template engine ---------------------------------------------------
+
+const SLOT_RE = /\{([A-Za-z0-9_]+)\}/g;
+
+function getSlotIds(card) {
+  const ids = [];
+  let match;
+  SLOT_RE.lastIndex = 0;
+  while ((match = SLOT_RE.exec(card.pt)) !== null) ids.push(match[1]);
+  return ids;
+}
+
+function substitute(template, mapping) {
+  return template.replace(SLOT_RE, (_, id) => mapping[id]);
+}
+
+// Canonical = first variant of each slot.
+function getCanonical(card) {
+  const mapping = {};
+  for (const id of getSlotIds(card)) {
+    const variants = card.slots && card.slots[id];
+    mapping[id] = variants && variants.length ? variants[0] : `{${id}}`;
+  }
+  return substitute(card.pt, mapping);
+}
+
+// All accepted full sentences (cartesian product of slot variants).
+function expandCandidates(card) {
+  const ids = getSlotIds(card);
+  if (ids.length === 0) return [card.pt];
+
+  let size = 1;
+  for (const id of ids) {
+    const variants = (card.slots && card.slots[id]) || [];
+    if (variants.length === 0) {
+      throw new Error(`Card "${card.en}" references slot "${id}" with no variants.`);
+    }
+    size *= variants.length;
+    if (size > MAX_CARTESIAN) {
+      throw new Error(`Card "${card.en}" expands to >${MAX_CARTESIAN} variants; tighten the slots.`);
+    }
+  }
+
+  let mappings = [{}];
+  for (const id of ids) {
+    const variants = card.slots[id];
+    const next = [];
+    for (const m of mappings) {
+      for (const v of variants) next.push({ ...m, [id]: v });
+    }
+    mappings = next;
+  }
+  return mappings.map(m => substitute(card.pt, m));
+}
+
+function getAcceptedSet(card) {
+  return new Set(expandCandidates(card).map(normalize));
+}
+
+function isCorrect(card, input) {
+  return getAcceptedSet(card).has(normalize(input));
+}
+
+// Validate every card at load — fail loudly on authoring mistakes.
+for (const card of ALL_CARDS) expandCandidates(card);
+
+// ---- Deck management --------------------------------------------------------
 
 function buildDeck() {
   deck = shuffle(ALL_CARDS.filter(card => activeGroups.has(card.group)));
@@ -487,9 +606,18 @@ function updateStats() {
 }
 
 function buildReveal(card) {
-  return `
-    <div class="example">"${escapeHtml(card.example)}"</div>
-  `;
+  const ids = getSlotIds(card);
+  const variantNotes = ids
+    .filter(id => card.slots[id].length > 1)
+    .map(id => {
+      const variants = card.slots[id].map(escapeHtml).join(" / ");
+      return `<span class="variant-tag">also: ${variants}</span>`;
+    })
+    .join("");
+
+  const tip = card.note ? `<div class="tip">${escapeHtml(card.note)}</div>` : "";
+  const variants = variantNotes ? `<div>${variantNotes}</div>` : "";
+  return variants + tip;
 }
 
 function render() {
@@ -501,7 +629,7 @@ function render() {
     area.innerHTML = `
       <div class="card done-screen">
         <h2>No matching cards</h2>
-        <p>Pick at least one adverb group to keep practicing.</p>
+        <p>Pick at least one sentence group to keep practicing.</p>
       </div>
     `;
     return;
@@ -510,8 +638,8 @@ function render() {
   if (remaining.length === 0) {
     const title = perfect ? "Perfeito!" : "Deck complete!";
     const subtitle = perfect
-      ? `You cleared all ${deck.length} adverb cards without errors.`
-      : `You finished all ${deck.length} adverb cards.`;
+      ? `You cleared all ${deck.length} sentence cards without errors.`
+      : `You finished all ${deck.length} sentence cards.`;
 
     area.innerHTML = `
       <div class="card done-screen">
@@ -539,10 +667,11 @@ function render() {
   area.innerHTML = `
     <div class="card">
       <div class="card-meta">${escapeHtml(card.group)}</div>
-      <div class="card-prompt">${escapeHtml(card.en)}</div>
-      <div class="card-sub">Type the Portuguese adverb</div>
+      <div class="card-english">${escapeHtml(card.en)}</div>
+      <div class="card-portuguese" id="ptLine"></div>
+      <div class="card-sub">Translate to Portuguese · use explicit subject (eu, você, nós…)</div>
       <div class="input-row">
-        <input class="answer-input" id="answerInput" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <input class="answer-input" id="answerInput" type="text" placeholder="type the full sentence..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
       </div>
       <div class="feedback" id="feedback"></div>
@@ -576,23 +705,25 @@ function checkAnswer() {
   const feedback = document.getElementById("feedback");
   const revealArea = document.getElementById("revealArea");
   const button = document.getElementById("actionBtn");
+  const ptLine = document.getElementById("ptLine");
 
   if (!input.value.trim()) return;
 
   answered = true;
   input.disabled = true;
 
-  const correct = normalize(card.pt);
-  const given = normalize(input.value);
-  const answerDisplay = escapeHtml(card.pt);
+  const canonical = getCanonical(card);
+  const correct = isCorrect(card, input.value);
 
-  if (given === correct) {
+  ptLine.textContent = canonical;
+  ptLine.className = `card-portuguese ${correct ? "revealed" : "revealed-wrong"}`;
+
+  if (correct) {
     stats.firstTry++;
     input.classList.add("correct");
     button.classList.add("go-green");
     feedback.className = "feedback ok";
-    feedback.innerHTML = `✓ Correct — <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
-    revealArea.innerHTML = buildReveal(card);
+    feedback.innerHTML = `✓ Correct`;
     known.add(current);
     updateStats();
   } else {
@@ -601,11 +732,11 @@ function checkAnswer() {
     input.classList.add("wrong", "shake");
     button.classList.add("go-red");
     feedback.className = "feedback err";
-    feedback.innerHTML = `✗ The answer is <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
-    revealArea.innerHTML = buildReveal(card);
+    feedback.innerHTML = `✗ Canonical answer above`;
     setTimeout(() => input.classList.remove("shake"), 400);
   }
 
+  revealArea.innerHTML = buildReveal(card);
   setTimeout(() => button.focus(), 0);
 }
 
