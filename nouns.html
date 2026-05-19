@@ -434,8 +434,7 @@ const ALL_CARDS = [
   { en: "the problem", pt: "o problema", article: "o", noun: "problema", gender: "masculine", pronIpa: "[u pɾo'blemɐ]", pronHint: "oo proh-BLEH-mah", example: "O problema é pequeno.", exampleEn: "The problem is small.", group: "work & study", note: "Words ending in -ma are often masculine in Portuguese." },
   { en: "the number", pt: "o número", article: "o", noun: "número", gender: "masculine", pronIpa: "[u 'numeɾu]", pronHint: "oo NOO-meh-roo", example: "O número está errado.", exampleEn: "The number is wrong.", group: "work & study", note: "Useful for phone numbers, addresses, and practice drills." },
   { en: "the word", pt: "a palavra", article: "a", noun: "palavra", gender: "feminine", pronIpa: "[a pa'lavɾɐ]", pronHint: "ah pah-LAH-vrah", example: "A palavra é fácil de lembrar.", exampleEn: "The word is easy to remember.", group: "work & study", note: "A core classroom noun worth learning early." },
-  { en: "the teacher", pt: "o professor", article: "o", noun: "professor", gender: "masculine", pronIpa: "[u pɾofe'soʁ]", pronHint: "oo proh-feh-SOHR", example: "O professor fala devagar.", exampleEn: "The teacher speaks slowly.", group: "work & study", note: "Useful for classroom and workplace contexts." },
-  { en: "the teacher", pt: "a professora", article: "a", noun: "professora", gender: "feminine", pronIpa: "[a pɾofe'soɾɐ]", pronHint: "ah proh-feh-SOH-rah", example: "A professora explica muito bem.", exampleEn: "The teacher explains very well.", group: "work & study", note: "A good contrast pair with o professor." },
+  { en: "the teacher", pt: "o professor", alts: ["a professora"], article: "o", noun: "professor", gender: "masculine", pronIpa: "[u pɾofe'soʁ]", pronHint: "oo proh-feh-SOHR", example: "O professor fala devagar.", exampleEn: "The teacher speaks slowly.", group: "work & study", note: "Both o professor and a professora are accepted here." },
   { en: "the pen", pt: "a caneta", article: "a", noun: "caneta", gender: "feminine", pronIpa: "[a ka'netɐ]", pronHint: "ah kah-NEH-tah", example: "A caneta está na mochila.", exampleEn: "The pen is in the backpack.", group: "work & study", note: "A beginner staple for school and office vocabulary." },
   { en: "the cell phone", pt: "o celular", article: "o", noun: "celular", gender: "masculine", pronIpa: "[u selu'laʁ]", pronHint: "oo seh-loo-LAHR", example: "O celular está sem bateria.", exampleEn: "The cell phone is out of battery.", group: "work & study", note: "In Brazil, celular is the usual word for mobile phone." },
 
@@ -464,6 +463,24 @@ function normalize(str) {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[?!.,;:]+/g, "")
     .replace(/\s+/g, " ");
+}
+
+function getAcceptedAnswers(card) {
+  return [card.pt, ...(card.alts || [])];
+}
+
+function getUniqueAcceptedAnswers(card) {
+  const seen = new Set();
+  return getAcceptedAnswers(card).filter(answer => {
+    const normalized = normalize(answer);
+    if (seen.has(normalized)) return false;
+    seen.add(normalized);
+    return true;
+  });
+}
+
+function formatAcceptedAnswers(card) {
+  return getUniqueAcceptedAnswers(card).map(escapeHtml).join(" / ");
 }
 
 function shuffle(arr) {
@@ -615,16 +632,19 @@ function checkAnswer() {
   answered = true;
   input.disabled = true;
 
-  const correct = normalize(card.pt);
   const given = normalize(input.value);
-  const answerDisplay = escapeHtml(card.pt);
+  const acceptedAnswers = getUniqueAcceptedAnswers(card);
+  const acceptedNorms = new Set(acceptedAnswers.map(normalize));
+  const answerDisplay = formatAcceptedAnswers(card);
 
-  if (given === correct) {
+  if (acceptedNorms.has(given)) {
     stats.firstTry++;
     input.classList.add("correct");
     button.classList.add("go-green");
     feedback.className = "feedback ok";
-    feedback.innerHTML = `✓ Correct — <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
+    feedback.innerHTML = acceptedAnswers.length > 1
+      ? `✓ Correct — accepted here: <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`
+      : `✓ Correct — <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
     revealArea.innerHTML = buildReveal(card);
     known.add(current);
     updateStats();
@@ -634,7 +654,9 @@ function checkAnswer() {
     input.classList.add("wrong", "shake");
     button.classList.add("go-red");
     feedback.className = "feedback err";
-    feedback.innerHTML = `✗ The answer is <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
+    feedback.innerHTML = acceptedAnswers.length > 1
+      ? `✗ Accepted here: <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`
+      : `✗ The answer is <strong>${answerDisplay}</strong> <span class="pron-tag">${escapeHtml(card.pronHint)}</span>`;
     revealArea.innerHTML = buildReveal(card);
     setTimeout(() => input.classList.remove("shake"), 400);
   }
