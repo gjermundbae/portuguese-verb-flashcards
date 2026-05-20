@@ -459,6 +459,7 @@ function buildDeck() {
 
 function toggleGroup(group) {
   if (activeGroups.has(group)) {
+    if (activeGroups.size === 1) return;
     activeGroups.delete(group);
   } else {
     activeGroups.add(group);
@@ -469,9 +470,10 @@ function toggleGroup(group) {
 
 function renderFilters() {
   const row = document.getElementById("filterRow");
-  row.innerHTML = GROUPS.map(group => `
-    <button class="fc-tag ${activeGroups.has(group) ? "active" : ""}" onclick="toggleGroup(${JSON.stringify(group)})">${escapeHtml(group)}</button>
-  `).join("");
+  row.innerHTML = GROUPS.map(group => {
+    const safeGroup = group.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    return `<button class="fc-tag ${activeGroups.has(group) ? "active" : ""}" onclick="toggleGroup('${safeGroup}')">${escapeHtml(group)}</button>`;
+  }).join("");
 }
 
 function updateStats() {
