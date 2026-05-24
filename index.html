@@ -725,188 +725,326 @@
 
 <script src="drill-common.js"></script>
 <script>
-const ALL_CARDS = [
-  { verb:"ser", conj:"eu sou", pron:"SOH", meaning:"I am (permanent)", example:"Eu sou brasileiro.", group:"ser / estar" },
-  { verb:"ser", conj:"você é", pron:"EH", meaning:"you are (permanent)", example:"Você é inteligente.", group:"ser / estar" },
-  { verb:"ser", conj:"nós somos", pron:"SOH-moosh", meaning:"we are (permanent)", example:"Nós somos amigos.", group:"ser / estar" },
-  { verb:"ser", conj:"vocês são", pron:"SOWng", meaning:"you all are (permanent)", example:"Vocês são muito gentis.", group:"ser / estar" },
-  { verb:"estar", conj:"eu estou", pron:"ish-TOH", meaning:"I am (temporary)", example:"Eu estou bem.", group:"ser / estar" },
-  { verb:"estar", conj:"você está", pron:"ish-TAH", meaning:"you are (temporary)", example:"Você está cansado?", group:"ser / estar" },
-  { verb:"estar", conj:"nós estamos", pron:"ish-TAH-moosh", meaning:"we are (temporary)", example:"Nós estamos em casa.", group:"ser / estar" },
-  { verb:"estar", conj:"vocês estão", pron:"ish-TOWng", meaning:"you all are (temporary)", example:"Vocês estão prontos?", group:"ser / estar" },
-  { verb:"ter", conj:"eu tenho", pron:"TEN-yoo", meaning:"I have", example:"Eu tenho fome.", group:"irregular" },
-  { verb:"ter", conj:"você tem", pron:"TAYNG", meaning:"you have", example:"Você tem tempo?", group:"irregular" },
-  { verb:"ter", conj:"nós temos", pron:"TEH-moosh", meaning:"we have", example:"Nós temos aula.", group:"irregular" },
-  { verb:"ter", conj:"vocês têm", pron:"TAYNG", meaning:"you all have", example:"Vocês têm uma reserva?", group:"irregular" },
-  { verb:"fazer", conj:"eu faço", pron:"FAH-soo", meaning:"I do / make", example:"Eu faço o jantar.", group:"irregular" },
-  { verb:"fazer", conj:"você faz", pron:"FAHSH", meaning:"you do / make", example:"Você faz exercício?", group:"irregular" },
-  { verb:"fazer", conj:"nós fazemos", pron:"fah-ZEH-moosh", meaning:"we do / make", example:"Nós fazemos café em casa.", group:"irregular" },
-  { verb:"fazer", conj:"vocês fazem", pron:"FAH-zeng", meaning:"you all do / make", example:"Vocês fazem isso todo dia?", group:"irregular" },
-  { verb:"ir", conj:"eu vou", pron:"VOH", meaning:"I go", example:"Eu vou ao mercado.", group:"irregular" },
-  { verb:"ir", conj:"você vai", pron:"VY", meaning:"you go", example:"Você vai ao trabalho?", group:"irregular" },
-  { verb:"ir", conj:"nós vamos", pron:"VAH-moosh", meaning:"we go / let's go", example:"Nós vamos à praia.", group:"irregular" },
-  { verb:"ir", conj:"vocês vão", pron:"VOWng", meaning:"you all go", example:"Vocês vão de carro?", group:"irregular" },
-  { verb:"poder", conj:"eu posso", pron:"POH-soo", meaning:"I can", example:"Eu posso ajudar.", group:"irregular" },
-  { verb:"poder", conj:"você pode", pron:"POH-djee", meaning:"you can", example:"Você pode falar devagar?", group:"irregular" },
-  { verb:"poder", conj:"nós podemos", pron:"poh-DEH-moosh", meaning:"we can", example:"Nós podemos tentar de novo.", group:"irregular" },
-  { verb:"poder", conj:"vocês podem", pron:"POH-deng", meaning:"you all can", example:"Vocês podem entrar agora.", group:"irregular" },
-  { verb:"querer", conj:"eu quero", pron:"KEH-roo", meaning:"I want", example:"Eu quero água.", group:"irregular" },
-  { verb:"querer", conj:"você quer", pron:"KEHR", meaning:"you want", example:"Você quer café?", group:"irregular" },
-  { verb:"querer", conj:"nós queremos", pron:"keh-REH-moosh", meaning:"we want", example:"Nós queremos aprender mais.", group:"irregular" },
-  { verb:"querer", conj:"vocês querem", pron:"KEH-reng", meaning:"you all want", example:"Vocês querem sobremesa?", group:"irregular" },
-  { verb:"saber", conj:"eu sei", pron:"SAY", meaning:"I know (a fact)", example:"Eu sei a resposta.", group:"irregular" },
-  { verb:"saber", conj:"você sabe", pron:"SAH-bee", meaning:"you know", example:"Você sabe onde fica?", group:"irregular" },
-  { verb:"saber", conj:"nós sabemos", pron:"sah-BEH-moosh", meaning:"we know", example:"Nós sabemos a verdade.", group:"irregular" },
-  { verb:"saber", conj:"vocês sabem", pron:"SAH-beng", meaning:"you all know", example:"Vocês sabem a resposta?", group:"irregular" },
-  { verb:"falar", conj:"eu falo", pron:"FAH-loo", meaning:"I speak / talk", example:"Eu falo português.", group:"-ar verbs" },
-  { verb:"falar", conj:"você fala", pron:"FAH-lah", meaning:"you speak", example:"Você fala inglês?", group:"-ar verbs" },
-  { verb:"falar", conj:"nós falamos", pron:"fah-LAH-moosh", meaning:"we speak / talk", example:"Nós falamos no telefone.", group:"-ar verbs" },
-  { verb:"falar", conj:"vocês falam", pron:"FAH-lahng", meaning:"you all speak / talk", example:"Vocês falam muito rápido.", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"eu trabalho", pron:"trah-BAH-lyoo", meaning:"I work", example:"Eu trabalho muito.", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"você trabalha", pron:"trah-BAH-lyah", meaning:"you work", example:"Você trabalha aqui?", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"nós trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we work", example:"Nós trabalhamos juntos.", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"vocês trabalham", pron:"trah-BAH-lyahng", meaning:"you all work", example:"Vocês trabalham aos sábados?", group:"-ar verbs" },
-  { verb:"gostar", conj:"eu gosto", pron:"GOH-stoo", meaning:"I like", example:"Eu gosto de música.", group:"-ar verbs" },
-  { verb:"gostar", conj:"você gosta", pron:"GOH-stah", meaning:"you like", example:"Você gosta de café?", group:"-ar verbs" },
-  { verb:"gostar", conj:"nós gostamos", pron:"goh-STAH-moosh", meaning:"we like", example:"Nós gostamos deste lugar.", group:"-ar verbs" },
-  { verb:"gostar", conj:"vocês gostam", pron:"GOH-stahng", meaning:"you all like", example:"Vocês gostam de viajar?", group:"-ar verbs" },
-  { verb:"morar", conj:"eu moro", pron:"MOH-roo", meaning:"I live (reside)", example:"Eu moro no Rio.", group:"-ar verbs" },
-  { verb:"morar", conj:"você mora", pron:"MOH-rah", meaning:"you live (reside)", example:"Você mora perto daqui?", group:"-ar verbs" },
-  { verb:"morar", conj:"nós moramos", pron:"moh-RAH-moosh", meaning:"we live (reside)", example:"Nós moramos no centro.", group:"-ar verbs" },
-  { verb:"morar", conj:"vocês moram", pron:"MOH-rahng", meaning:"you all live (reside)", example:"Vocês moram no Brasil?", group:"-ar verbs" },
-  { verb:"comer", conj:"eu como", pron:"KOH-moo", meaning:"I eat", example:"Eu como arroz.", group:"-er verbs" },
-  { verb:"comer", conj:"você come", pron:"KOH-mee", meaning:"you eat", example:"Você come carne?", group:"-er verbs" },
-  { verb:"comer", conj:"nós comemos", pron:"koh-MEH-moosh", meaning:"we eat", example:"Nós comemos cedo.", group:"-er verbs" },
-  { verb:"comer", conj:"vocês comem", pron:"KOH-meng", meaning:"you all eat", example:"Vocês comem aqui?", group:"-er verbs" },
-  { verb:"beber", conj:"eu bebo", pron:"BEH-boo", meaning:"I drink", example:"Eu bebo suco.", group:"-er verbs" },
-  { verb:"beber", conj:"você bebe", pron:"BEH-bee", meaning:"you drink", example:"Você bebe café?", group:"-er verbs" },
-  { verb:"beber", conj:"nós bebemos", pron:"beh-BEH-moosh", meaning:"we drink", example:"Nós bebemos muita água.", group:"-er verbs" },
-  { verb:"beber", conj:"vocês bebem", pron:"BEH-beng", meaning:"you all drink", example:"Vocês bebem chá?", group:"-er verbs" },
-  { verb:"conhecer", conj:"eu conheço", pron:"koo-NEH-soo", meaning:"I know (a person/place)", example:"Eu conheço esse lugar.", group:"-er verbs" },
-  { verb:"conhecer", conj:"você conhece", pron:"koo-NEH-see", meaning:"you know (a person/place)", example:"Você conhece a Ana?", group:"-er verbs" },
-  { verb:"conhecer", conj:"nós conhecemos", pron:"koh-nyeh-SEH-moosh", meaning:"we know (a person/place)", example:"Nós conhecemos bem a cidade.", group:"-er verbs" },
-  { verb:"conhecer", conj:"vocês conhecem", pron:"koo-NEH-seng", meaning:"you all know (a person/place)", example:"Vocês conhecem este restaurante?", group:"-er verbs" },
-  { verb:"abrir", conj:"eu abro", pron:"AH-broo", meaning:"I open", example:"Eu abro a porta.", group:"-ir verbs" },
-  { verb:"abrir", conj:"você abre", pron:"AH-bree", meaning:"you open", example:"Você abre a janela?", group:"-ir verbs" },
-  { verb:"abrir", conj:"nós abrimos", pron:"ah-BREE-moosh", meaning:"we open", example:"Nós abrimos a loja às nove.", group:"-ir verbs" },
-  { verb:"abrir", conj:"vocês abrem", pron:"AH-breng", meaning:"you all open", example:"Vocês abrem os livros na página dez.", group:"-ir verbs" },
-  { verb:"partir", conj:"eu parto", pron:"PAHR-too", meaning:"I leave / depart", example:"Eu parto amanhã cedo.", group:"-ir verbs" },
-  { verb:"partir", conj:"você parte", pron:"PAHR-chee", meaning:"you leave / depart", example:"Você parte hoje à noite?", group:"-ir verbs" },
-  { verb:"partir", conj:"nós partimos", pron:"pahr-CHEE-moosh", meaning:"we leave / depart", example:"Nós partimos às oito.", group:"-ir verbs" },
-  { verb:"partir", conj:"vocês partem", pron:"PAHR-teng", meaning:"you all leave / depart", example:"Vocês partem juntos?", group:"-ir verbs" },
-  { verb:"decidir", conj:"eu decido", pron:"deh-SEE-doo", meaning:"I decide", example:"Eu decido depois.", group:"-ir verbs" },
-  { verb:"decidir", conj:"você decide", pron:"deh-SEE-djee", meaning:"you decide", example:"Você decide o que comer?", group:"-ir verbs" },
-  { verb:"decidir", conj:"nós decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decide", example:"Nós decidimos juntos.", group:"-ir verbs" },
-  { verb:"decidir", conj:"vocês decidem", pron:"deh-SEE-deng", meaning:"you all decide", example:"Vocês decidem aonde ir?", group:"-ir verbs" },
-  { verb:"assistir", conj:"eu assisto", pron:"ah-SEES-too", meaning:"I watch", example:"Eu assisto televisão.", group:"-ir verbs" },
-  { verb:"assistir", conj:"você assiste", pron:"ah-SEES-chee", meaning:"you watch", example:"Você assiste futebol?", group:"-ir verbs" },
-  { verb:"assistir", conj:"nós assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watch", example:"Nós assistimos ao filme.", group:"-ir verbs" },
-  { verb:"assistir", conj:"vocês assistem", pron:"ah-SEES-teng", meaning:"you all watch", example:"Vocês assistem à novela?", group:"-ir verbs" },
-  { verb:"vir", conj:"eu venho", pron:"VEN-yoo", meaning:"I come", example:"Eu venho de São Paulo.", group:"irregular" },
-  { verb:"vir", conj:"você vem", pron:"VAYNG", meaning:"you come", example:"Você vem comigo?", group:"irregular" },
-  { verb:"vir", conj:"nós vimos", pron:"VEE-moosh", meaning:"we come", example:"Nós vimos cedo hoje.", group:"irregular" },
-  { verb:"vir", conj:"vocês vêm", pron:"VAYNG", meaning:"you all come", example:"Vocês vêm amanhã?", group:"irregular" },
-  { verb:"ver", conj:"eu vejo", pron:"VEH-zhoo", meaning:"I see", example:"Eu vejo um táxi.", group:"irregular" },
-  { verb:"ver", conj:"você vê", pron:"VEH", meaning:"you see", example:"Você vê a montanha?", group:"irregular" },
-  { verb:"ver", conj:"nós vemos", pron:"VEH-moosh", meaning:"we see", example:"Nós vemos tudo daqui.", group:"irregular" },
-  { verb:"ver", conj:"vocês veem", pron:"VEH-eng", meaning:"you all see", example:"Vocês veem aquele prédio?", group:"irregular" },
-  { verb:"dar", conj:"eu dou", pron:"DOH", meaning:"I give", example:"Eu dou um presente.", group:"irregular" },
-  { verb:"dar", conj:"você dá", pron:"DAH", meaning:"you give", example:"Você dá gorjeta?", group:"irregular" },
-  { verb:"dar", conj:"nós damos", pron:"DAH-moosh", meaning:"we give", example:"Nós damos aula de inglês.", group:"irregular" },
-  { verb:"dar", conj:"vocês dão", pron:"DOWng", meaning:"you all give", example:"Vocês dão conta?", group:"irregular" },
-  { verb:"dizer", conj:"eu digo", pron:"DJEE-goo", meaning:"I say / tell", example:"Eu digo a verdade.", group:"irregular" },
-  { verb:"dizer", conj:"você diz", pron:"DJEESS", meaning:"you say / tell", example:"Você diz que sim?", group:"irregular" },
-  { verb:"dizer", conj:"nós dizemos", pron:"djee-ZEH-moosh", meaning:"we say / tell", example:"Nós dizemos obrigado.", group:"irregular" },
-  { verb:"dizer", conj:"vocês dizem", pron:"DJEE-zeng", meaning:"you all say / tell", example:"Vocês dizem isso sempre?", group:"irregular" },
-  { verb:"precisar", conj:"eu preciso", pron:"preh-SEE-zoo", meaning:"I need", example:"Eu preciso de ajuda.", group:"-ar verbs" },
-  { verb:"precisar", conj:"você precisa", pron:"preh-SEE-zah", meaning:"you need", example:"Você precisa sair agora?", group:"-ar verbs" },
-  { verb:"precisar", conj:"nós precisamos", pron:"preh-see-ZAH-moosh", meaning:"we need", example:"Nós precisamos comprar comida.", group:"-ar verbs" },
-  { verb:"precisar", conj:"vocês precisam", pron:"preh-SEE-zahng", meaning:"you all need", example:"Vocês precisam de mais tempo?", group:"-ar verbs" },
-  { verb:"ficar", conj:"eu fico", pron:"FEE-koo", meaning:"I stay / become", example:"Eu fico em casa hoje.", group:"-ar verbs" },
-  { verb:"ficar", conj:"você fica", pron:"FEE-kah", meaning:"you stay / become", example:"Você fica aqui comigo?", group:"-ar verbs" },
-  { verb:"ficar", conj:"nós ficamos", pron:"fee-KAH-moosh", meaning:"we stay / become", example:"Nós ficamos até o fim.", group:"-ar verbs" },
-  { verb:"ficar", conj:"vocês ficam", pron:"FEE-kahng", meaning:"you all stay / become", example:"Vocês ficam para o jantar?", group:"-ar verbs" },
-  { verb:"achar", conj:"eu acho", pron:"AH-shoo", meaning:"I think / find", example:"Eu acho que sim.", group:"-ar verbs" },
-  { verb:"achar", conj:"você acha", pron:"AH-shah", meaning:"you think / find", example:"Você acha isso normal?", group:"-ar verbs" },
-  { verb:"achar", conj:"nós achamos", pron:"ah-SHAH-moosh", meaning:"we think / find", example:"Nós achamos a ideia boa.", group:"-ar verbs" },
-  { verb:"achar", conj:"vocês acham", pron:"AH-shahng", meaning:"you all think / find", example:"Vocês acham esse lugar bonito?", group:"-ar verbs" },
-  { verb:"chegar", conj:"eu chego", pron:"SHEH-goo", meaning:"I arrive", example:"Eu chego às oito.", group:"-ar verbs" },
-  { verb:"chegar", conj:"você chega", pron:"SHEH-gah", meaning:"you arrive", example:"Você chega cedo ao trabalho?", group:"-ar verbs" },
-  { verb:"chegar", conj:"nós chegamos", pron:"sheh-GAH-moosh", meaning:"we arrive", example:"Nós chegamos amanhã de manhã.", group:"-ar verbs" },
-  { verb:"chegar", conj:"vocês chegam", pron:"SHEH-gahng", meaning:"you all arrive", example:"Vocês chegam juntos?", group:"-ar verbs" },
-  { verb:"sair", conj:"eu saio", pron:"SAH-yoo", meaning:"I leave / go out", example:"Eu saio do trabalho às seis.", group:"irregular" },
-  { verb:"sair", conj:"você sai", pron:"sah-EE", meaning:"you leave / go out", example:"Você sai hoje à noite?", group:"irregular" },
-  { verb:"sair", conj:"nós saímos", pron:"sah-EE-moosh", meaning:"we leave / go out", example:"Nós saímos cedo de casa.", group:"irregular" },
-  { verb:"sair", conj:"vocês saem", pron:"SAH-eng", meaning:"you all leave / go out", example:"Vocês saem agora ou depois?", group:"irregular" },
-  { verb:"levar", conj:"eu levo", pron:"LEH-voo", meaning:"I take / carry", example:"Eu levo meu filho à escola.", group:"-ar verbs" },
-  { verb:"levar", conj:"você leva", pron:"LEH-vah", meaning:"you take / carry", example:"Você leva carteira com você?", group:"-ar verbs" },
-  { verb:"levar", conj:"nós levamos", pron:"leh-VAH-moosh", meaning:"we take / carry", example:"Nós levamos água para a praia.", group:"-ar verbs" },
-  { verb:"levar", conj:"vocês levam", pron:"LEH-vahng", meaning:"you all take / carry", example:"Vocês levam as crianças à escola?", group:"-ar verbs" },
-  { verb:"chamar", conj:"eu chamo", pron:"SHAH-moo", meaning:"I call / am called", example:"Eu chamo um táxi.", group:"-ar verbs" },
-  { verb:"chamar", conj:"você chama", pron:"SHAH-mah", meaning:"you call / are called", example:"Como você se chama?", group:"-ar verbs" },
-  { verb:"chamar", conj:"nós chamamos", pron:"shah-MAH-moosh", meaning:"we call", example:"Nós chamamos o garçom.", group:"-ar verbs" },
-  { verb:"chamar", conj:"vocês chamam", pron:"SHAH-mahng", meaning:"you all call", example:"Vocês chamam um médico?", group:"-ar verbs" },
-  { verb:"pedir", conj:"eu peço", pron:"PEH-soo", meaning:"I ask for / order", example:"Eu peço um café.", group:"irregular" },
-  { verb:"pedir", conj:"você pede", pron:"PEH-djee", meaning:"you ask for / order", example:"Você pede a conta?", group:"irregular" },
-  { verb:"pedir", conj:"nós pedimos", pron:"peh-DJEE-moosh", meaning:"we ask for / order", example:"Nós pedimos pizza.", group:"irregular" },
-  { verb:"pedir", conj:"vocês pedem", pron:"PEH-deng", meaning:"you all ask for / order", example:"Vocês pedem desconto?", group:"irregular" },
-  { verb:"dormir", conj:"eu durmo", pron:"DOOR-moo", meaning:"I sleep", example:"Eu durmo cedo.", group:"irregular" },
-  { verb:"dormir", conj:"você dorme", pron:"DOHR-mee", meaning:"you sleep", example:"Você dorme bem?", group:"irregular" },
-  { verb:"dormir", conj:"nós dormimos", pron:"dohr-MEE-moosh", meaning:"we sleep", example:"Nós dormimos oito horas.", group:"irregular" },
-  { verb:"dormir", conj:"vocês dormem", pron:"DOHR-meng", meaning:"you all sleep", example:"Vocês dormem tarde?", group:"irregular" },
-  { verb:"aprender", conj:"eu aprendo", pron:"ah-PREN-doo", meaning:"I learn", example:"Eu aprendo português todos os dias.", group:"-er verbs", batch:1 },
-  { verb:"aprender", conj:"você aprende", pron:"ah-PREN-djee", meaning:"you learn", example:"Você aprende rápido?", group:"-er verbs", batch:1 },
-  { verb:"aprender", conj:"nós aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learn", example:"Nós aprendemos juntos.", group:"-er verbs", batch:1 },
-  { verb:"aprender", conj:"vocês aprendem", pron:"ah-PREN-deng", meaning:"you all learn", example:"Vocês aprendem com a prática.", group:"-er verbs", batch:1 },
-  { verb:"entender", conj:"eu entendo", pron:"en-TEN-doo", meaning:"I understand", example:"Eu entendo a pergunta.", group:"-er verbs", batch:1 },
-  { verb:"entender", conj:"você entende", pron:"en-TEN-djee", meaning:"you understand", example:"Você entende português?", group:"-er verbs", batch:1 },
-  { verb:"entender", conj:"nós entendemos", pron:"en-ten-DEH-moosh", meaning:"we understand", example:"Nós entendemos a ideia.", group:"-er verbs", batch:1 },
-  { verb:"entender", conj:"vocês entendem", pron:"en-TEN-deng", meaning:"you all understand", example:"Vocês entendem o professor?", group:"-er verbs", batch:1 },
-  { verb:"comprar", conj:"eu compro", pron:"KOHM-proo", meaning:"I buy", example:"Eu compro pão.", group:"-ar verbs", batch:1 },
-  { verb:"comprar", conj:"você compra", pron:"KOHM-prah", meaning:"you buy", example:"Você compra fruta na feira?", group:"-ar verbs", batch:1 },
-  { verb:"comprar", conj:"nós compramos", pron:"kohm-PRAH-moosh", meaning:"we buy", example:"Nós compramos comida para a semana.", group:"-ar verbs", batch:1 },
-  { verb:"comprar", conj:"vocês compram", pron:"KOHM-prahng", meaning:"you all buy", example:"Vocês compram online?", group:"-ar verbs", batch:1 },
-  { verb:"ler", conj:"eu leio", pron:"LEH-yoo", meaning:"I read", example:"Eu leio o jornal.", group:"irregular", batch:1 },
-  { verb:"ler", conj:"você lê", pron:"LEH", meaning:"you read", example:"Você lê em português?", group:"irregular", batch:1 },
-  { verb:"ler", conj:"nós lemos", pron:"LEH-moosh", meaning:"we read", example:"Nós lemos antes de dormir.", group:"irregular", batch:1 },
-  { verb:"ler", conj:"vocês leem", pron:"LEH-eng", meaning:"you all read", example:"Vocês leem muito?", group:"irregular", batch:1 },
-  { verb:"escrever", conj:"eu escrevo", pron:"es-KREH-voo", meaning:"I write", example:"Eu escrevo mensagens em português.", group:"-er verbs", batch:1 },
-  { verb:"escrever", conj:"você escreve", pron:"es-KREH-vee", meaning:"you write", example:"Você escreve no caderno?", group:"-er verbs", batch:1 },
-  { verb:"escrever", conj:"nós escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we write", example:"Nós escrevemos e-mails no trabalho.", group:"-er verbs", batch:1 },
-  { verb:"escrever", conj:"vocês escrevem", pron:"es-KREH-veng", meaning:"you all write", example:"Vocês escrevem cartas?", group:"-er verbs", batch:1 },
-  { verb:"ouvir", conj:"eu ouço", pron:"oh-OO-soo", meaning:"I hear / listen", example:"Eu ouço música no carro.", group:"irregular", batch:1 },
-  { verb:"ouvir", conj:"você ouve", pron:"oh-OO-vee", meaning:"you hear / listen", example:"Você ouve esse barulho?", group:"irregular", batch:1 },
-  { verb:"ouvir", conj:"nós ouvimos", pron:"oh-oo-VEE-moosh", meaning:"we hear / listen", example:"Nós ouvimos o professor com atenção.", group:"irregular", batch:1 },
-  { verb:"ouvir", conj:"vocês ouvem", pron:"oh-OO-veng", meaning:"you all hear / listen", example:"Vocês ouvem podcasts em português?", group:"irregular", batch:1 },
-  { verb:"fechar", conj:"eu fecho", pron:"FEH-shoo", meaning:"I close", example:"Eu fecho a porta.", group:"-ar verbs", batch:1 },
-  { verb:"fechar", conj:"você fecha", pron:"FEH-shah", meaning:"you close", example:"Você fecha a janela?", group:"-ar verbs", batch:1 },
-  { verb:"fechar", conj:"nós fechamos", pron:"feh-SHAH-moosh", meaning:"we close", example:"Nós fechamos a loja às seis.", group:"-ar verbs", batch:1 },
-  { verb:"fechar", conj:"vocês fecham", pron:"FEH-shahng", meaning:"you all close", example:"Vocês fecham o restaurante tarde?", group:"-ar verbs", batch:1 },
-  { verb:"usar", conj:"eu uso", pron:"OO-zoo", meaning:"I use", example:"Eu uso o celular para estudar.", group:"-ar verbs", batch:1 },
-  { verb:"usar", conj:"você usa", pron:"OO-zah", meaning:"you use", example:"Você usa esse aplicativo?", group:"-ar verbs", batch:1 },
-  { verb:"usar", conj:"nós usamos", pron:"oo-ZAH-moosh", meaning:"we use", example:"Nós usamos o ônibus todos os dias.", group:"-ar verbs", batch:1 },
-  { verb:"usar", conj:"vocês usam", pron:"OO-zahng", meaning:"you all use", example:"Vocês usam dicionário?", group:"-ar verbs", batch:1 },
-  { verb:"dirigir", conj:"eu dirijo", pron:"djee-REE-zhoo", meaning:"I drive", example:"Eu dirijo para o trabalho.", group:"irregular", batch:1 },
-  { verb:"dirigir", conj:"você dirige", pron:"djee-REE-zhee", meaning:"you drive", example:"Você dirige bem?", group:"irregular", batch:1 },
-  { verb:"dirigir", conj:"nós dirigimos", pron:"djee-ree-JEE-moosh", meaning:"we drive", example:"Nós dirigimos até a praia.", group:"irregular", batch:1 },
-  { verb:"dirigir", conj:"vocês dirigem", pron:"djee-REE-zheng", meaning:"you all drive", example:"Vocês dirigem à noite?", group:"irregular", batch:1 },
-  { verb:"voltar", conj:"eu volto", pron:"VOHL-too", meaning:"I return / come back", example:"Eu volto amanhã.", group:"-ar verbs", batch:1 },
-  { verb:"voltar", conj:"você volta", pron:"VOHL-tah", meaning:"you return / come back", example:"Você volta cedo para casa?", group:"-ar verbs", batch:1 },
-  { verb:"voltar", conj:"nós voltamos", pron:"vohl-TAH-moosh", meaning:"we return / come back", example:"Nós voltamos depois do almoço.", group:"-ar verbs", batch:1 },
-  { verb:"voltar", conj:"vocês voltam", pron:"VOHL-tahng", meaning:"you all return / come back", example:"Vocês voltam na segunda-feira?", group:"-ar verbs", batch:1 },
-  { verb:"correr", conj:"eu corro", pron:"KOH-hoo", meaning:"I run", example:"Eu corro no parque.", group:"-er verbs", batch:1 },
-  { verb:"correr", conj:"você corre", pron:"KOH-hee", meaning:"you run", example:"Você corre de manhã?", group:"-er verbs", batch:1 },
-  { verb:"correr", conj:"nós corremos", pron:"koh-HEH-moosh", meaning:"we run", example:"Nós corremos na praia.", group:"-er verbs", batch:1 },
-  { verb:"correr", conj:"vocês correm", pron:"KOH-heng", meaning:"you all run", example:"Vocês correm juntos?", group:"-er verbs", batch:1 },
-  { verb:"andar", conj:"eu ando", pron:"AHN-doo", meaning:"I walk", example:"Eu ando até a estação.", group:"-ar verbs", batch:1 },
-  { verb:"andar", conj:"você anda", pron:"AHN-dah", meaning:"you walk", example:"Você anda muito no centro?", group:"-ar verbs", batch:1 },
-  { verb:"andar", conj:"nós andamos", pron:"ahn-DAH-moosh", meaning:"we walk", example:"Nós andamos pelo bairro à tarde.", group:"-ar verbs", batch:1 },
-  { verb:"andar", conj:"vocês andam", pron:"AHN-dahng", meaning:"you all walk", example:"Vocês andam até a escola?", group:"-ar verbs", batch:1 },
-  { verb:"curtir", conj:"eu curto", pron:"KOOR-too", meaning:"I enjoy / like", example:"Eu curto essa música.", group:"-ir verbs", batch:1 },
-  { verb:"curtir", conj:"você curte", pron:"KOOR-chee", meaning:"you enjoy / like", example:"Você curte praia?", group:"-ir verbs", batch:1 },
-  { verb:"curtir", conj:"nós curtimos", pron:"koor-CHEE-moosh", meaning:"we enjoy / like", example:"Nós curtimos o fim de semana na praia.", group:"-ir verbs", batch:1 },
-  { verb:"curtir", conj:"vocês curtem", pron:"KOOR-teng", meaning:"you all enjoy / like", example:"Vocês curtem viajar?", group:"-ir verbs", batch:1 },
+// One block per verb; forms are eu → você → nós → vocês (expanded to ALL_CARDS at load).
+const VERB_ENTRIES = [
+  { verb:"ser", group:"ser / estar",
+    forms:[
+      { form:"sou", pron:"SOH", meaning:"I am (permanent)", example:"Eu sou brasileiro." },
+      { form:"é", pron:"EH", meaning:"you are (permanent)", example:"Você é inteligente." },
+      { form:"somos", pron:"SOH-moosh", meaning:"we are (permanent)", example:"Nós somos amigos." },
+      { form:"são", pron:"SOWng", meaning:"you all are (permanent)", example:"Vocês são muito gentis." }
+    ] },
+  { verb:"estar", group:"ser / estar",
+    forms:[
+      { form:"estou", pron:"ish-TOH", meaning:"I am (temporary)", example:"Eu estou bem." },
+      { form:"está", pron:"ish-TAH", meaning:"you are (temporary)", example:"Você está cansado?" },
+      { form:"estamos", pron:"ish-TAH-moosh", meaning:"we are (temporary)", example:"Nós estamos em casa." },
+      { form:"estão", pron:"ish-TOWng", meaning:"you all are (temporary)", example:"Vocês estão prontos?" }
+    ] },
+  { verb:"ter", group:"irregular",
+    forms:[
+      { form:"tenho", pron:"TEN-yoo", meaning:"I have", example:"Eu tenho fome." },
+      { form:"tem", pron:"TAYNG", meaning:"you have", example:"Você tem tempo?" },
+      { form:"temos", pron:"TEH-moosh", meaning:"we have", example:"Nós temos aula." },
+      { form:"têm", pron:"TAYNG", meaning:"you all have", example:"Vocês têm uma reserva?" }
+    ] },
+  { verb:"fazer", group:"irregular",
+    forms:[
+      { form:"faço", pron:"FAH-soo", meaning:"I do / make", example:"Eu faço o jantar." },
+      { form:"faz", pron:"FAHSH", meaning:"you do / make", example:"Você faz exercício?" },
+      { form:"fazemos", pron:"fah-ZEH-moosh", meaning:"we do / make", example:"Nós fazemos café em casa." },
+      { form:"fazem", pron:"FAH-zeng", meaning:"you all do / make", example:"Vocês fazem isso todo dia?" }
+    ] },
+  { verb:"ir", group:"irregular",
+    forms:[
+      { form:"vou", pron:"VOH", meaning:"I go", example:"Eu vou ao mercado." },
+      { form:"vai", pron:"VY", meaning:"you go", example:"Você vai ao trabalho?" },
+      { form:"vamos", pron:"VAH-moosh", meaning:"we go / let's go", example:"Nós vamos à praia." },
+      { form:"vão", pron:"VOWng", meaning:"you all go", example:"Vocês vão de carro?" }
+    ] },
+  { verb:"poder", group:"irregular",
+    forms:[
+      { form:"posso", pron:"POH-soo", meaning:"I can", example:"Eu posso ajudar." },
+      { form:"pode", pron:"POH-djee", meaning:"you can", example:"Você pode falar devagar?" },
+      { form:"podemos", pron:"poh-DEH-moosh", meaning:"we can", example:"Nós podemos tentar de novo." },
+      { form:"podem", pron:"POH-deng", meaning:"you all can", example:"Vocês podem entrar agora." }
+    ] },
+  { verb:"querer", group:"irregular",
+    forms:[
+      { form:"quero", pron:"KEH-roo", meaning:"I want", example:"Eu quero água." },
+      { form:"quer", pron:"KEHR", meaning:"you want", example:"Você quer café?" },
+      { form:"queremos", pron:"keh-REH-moosh", meaning:"we want", example:"Nós queremos aprender mais." },
+      { form:"querem", pron:"KEH-reng", meaning:"you all want", example:"Vocês querem sobremesa?" }
+    ] },
+  { verb:"saber", group:"irregular",
+    forms:[
+      { form:"sei", pron:"SAY", meaning:"I know (a fact)", example:"Eu sei a resposta." },
+      { form:"sabe", pron:"SAH-bee", meaning:"you know", example:"Você sabe onde fica?" },
+      { form:"sabemos", pron:"sah-BEH-moosh", meaning:"we know", example:"Nós sabemos a verdade." },
+      { form:"sabem", pron:"SAH-beng", meaning:"you all know", example:"Vocês sabem a resposta?" }
+    ] },
+  { verb:"falar", group:"-ar verbs",
+    forms:[
+      { form:"falo", pron:"FAH-loo", meaning:"I speak / talk", example:"Eu falo português." },
+      { form:"fala", pron:"FAH-lah", meaning:"you speak", example:"Você fala inglês?" },
+      { form:"falamos", pron:"fah-LAH-moosh", meaning:"we speak / talk", example:"Nós falamos no telefone." },
+      { form:"falam", pron:"FAH-lahng", meaning:"you all speak / talk", example:"Vocês falam muito rápido." }
+    ] },
+  { verb:"trabalhar", group:"-ar verbs",
+    forms:[
+      { form:"trabalho", pron:"trah-BAH-lyoo", meaning:"I work", example:"Eu trabalho muito." },
+      { form:"trabalha", pron:"trah-BAH-lyah", meaning:"you work", example:"Você trabalha aqui?" },
+      { form:"trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we work", example:"Nós trabalhamos juntos." },
+      { form:"trabalham", pron:"trah-BAH-lyahng", meaning:"you all work", example:"Vocês trabalham aos sábados?" }
+    ] },
+  { verb:"gostar", group:"-ar verbs",
+    forms:[
+      { form:"gosto", pron:"GOH-stoo", meaning:"I like", example:"Eu gosto de música." },
+      { form:"gosta", pron:"GOH-stah", meaning:"you like", example:"Você gosta de café?" },
+      { form:"gostamos", pron:"goh-STAH-moosh", meaning:"we like", example:"Nós gostamos deste lugar." },
+      { form:"gostam", pron:"GOH-stahng", meaning:"you all like", example:"Vocês gostam de viajar?" }
+    ] },
+  { verb:"morar", group:"-ar verbs",
+    forms:[
+      { form:"moro", pron:"MOH-roo", meaning:"I live (reside)", example:"Eu moro no Rio." },
+      { form:"mora", pron:"MOH-rah", meaning:"you live (reside)", example:"Você mora perto daqui?" },
+      { form:"moramos", pron:"moh-RAH-moosh", meaning:"we live (reside)", example:"Nós moramos no centro." },
+      { form:"moram", pron:"MOH-rahng", meaning:"you all live (reside)", example:"Vocês moram no Brasil?" }
+    ] },
+  { verb:"comer", group:"-er verbs",
+    forms:[
+      { form:"como", pron:"KOH-moo", meaning:"I eat", example:"Eu como arroz." },
+      { form:"come", pron:"KOH-mee", meaning:"you eat", example:"Você come carne?" },
+      { form:"comemos", pron:"koh-MEH-moosh", meaning:"we eat", example:"Nós comemos cedo." },
+      { form:"comem", pron:"KOH-meng", meaning:"you all eat", example:"Vocês comem aqui?" }
+    ] },
+  { verb:"beber", group:"-er verbs",
+    forms:[
+      { form:"bebo", pron:"BEH-boo", meaning:"I drink", example:"Eu bebo suco." },
+      { form:"bebe", pron:"BEH-bee", meaning:"you drink", example:"Você bebe café?" },
+      { form:"bebemos", pron:"beh-BEH-moosh", meaning:"we drink", example:"Nós bebemos muita água." },
+      { form:"bebem", pron:"BEH-beng", meaning:"you all drink", example:"Vocês bebem chá?" }
+    ] },
+  { verb:"conhecer", group:"-er verbs",
+    forms:[
+      { form:"conheço", pron:"koo-NEH-soo", meaning:"I know (a person/place)", example:"Eu conheço esse lugar." },
+      { form:"conhece", pron:"koo-NEH-see", meaning:"you know (a person/place)", example:"Você conhece a Ana?" },
+      { form:"conhecemos", pron:"koh-nyeh-SEH-moosh", meaning:"we know (a person/place)", example:"Nós conhecemos bem a cidade." },
+      { form:"conhecem", pron:"koo-NEH-seng", meaning:"you all know (a person/place)", example:"Vocês conhecem este restaurante?" }
+    ] },
+  { verb:"abrir", group:"-ir verbs",
+    forms:[
+      { form:"abro", pron:"AH-broo", meaning:"I open", example:"Eu abro a porta." },
+      { form:"abre", pron:"AH-bree", meaning:"you open", example:"Você abre a janela?" },
+      { form:"abrimos", pron:"ah-BREE-moosh", meaning:"we open", example:"Nós abrimos a loja às nove." },
+      { form:"abrem", pron:"AH-breng", meaning:"you all open", example:"Vocês abrem os livros na página dez." }
+    ] },
+  { verb:"partir", group:"-ir verbs",
+    forms:[
+      { form:"parto", pron:"PAHR-too", meaning:"I leave / depart", example:"Eu parto amanhã cedo." },
+      { form:"parte", pron:"PAHR-chee", meaning:"you leave / depart", example:"Você parte hoje à noite?" },
+      { form:"partimos", pron:"pahr-CHEE-moosh", meaning:"we leave / depart", example:"Nós partimos às oito." },
+      { form:"partem", pron:"PAHR-teng", meaning:"you all leave / depart", example:"Vocês partem juntos?" }
+    ] },
+  { verb:"decidir", group:"-ir verbs",
+    forms:[
+      { form:"decido", pron:"deh-SEE-doo", meaning:"I decide", example:"Eu decido depois." },
+      { form:"decide", pron:"deh-SEE-djee", meaning:"you decide", example:"Você decide o que comer?" },
+      { form:"decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decide", example:"Nós decidimos juntos." },
+      { form:"decidem", pron:"deh-SEE-deng", meaning:"you all decide", example:"Vocês decidem aonde ir?" }
+    ] },
+  { verb:"assistir", group:"-ir verbs",
+    forms:[
+      { form:"assisto", pron:"ah-SEES-too", meaning:"I watch", example:"Eu assisto televisão." },
+      { form:"assiste", pron:"ah-SEES-chee", meaning:"you watch", example:"Você assiste futebol?" },
+      { form:"assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watch", example:"Nós assistimos ao filme." },
+      { form:"assistem", pron:"ah-SEES-teng", meaning:"you all watch", example:"Vocês assistem à novela?" }
+    ] },
+  { verb:"vir", group:"irregular",
+    forms:[
+      { form:"venho", pron:"VEN-yoo", meaning:"I come", example:"Eu venho de São Paulo." },
+      { form:"vem", pron:"VAYNG", meaning:"you come", example:"Você vem comigo?" },
+      { form:"vimos", pron:"VEE-moosh", meaning:"we come", example:"Nós vimos cedo hoje." },
+      { form:"vêm", pron:"VAYNG", meaning:"you all come", example:"Vocês vêm amanhã?" }
+    ] },
+  { verb:"ver", group:"irregular",
+    forms:[
+      { form:"vejo", pron:"VEH-zhoo", meaning:"I see", example:"Eu vejo um táxi." },
+      { form:"vê", pron:"VEH", meaning:"you see", example:"Você vê a montanha?" },
+      { form:"vemos", pron:"VEH-moosh", meaning:"we see", example:"Nós vemos tudo daqui." },
+      { form:"veem", pron:"VEH-eng", meaning:"you all see", example:"Vocês veem aquele prédio?" }
+    ] },
+  { verb:"dar", group:"irregular",
+    forms:[
+      { form:"dou", pron:"DOH", meaning:"I give", example:"Eu dou um presente." },
+      { form:"dá", pron:"DAH", meaning:"you give", example:"Você dá gorjeta?" },
+      { form:"damos", pron:"DAH-moosh", meaning:"we give", example:"Nós damos aula de inglês." },
+      { form:"dão", pron:"DOWng", meaning:"you all give", example:"Vocês dão conta?" }
+    ] },
+  { verb:"dizer", group:"irregular",
+    forms:[
+      { form:"digo", pron:"DJEE-goo", meaning:"I say / tell", example:"Eu digo a verdade." },
+      { form:"diz", pron:"DJEESS", meaning:"you say / tell", example:"Você diz que sim?" },
+      { form:"dizemos", pron:"djee-ZEH-moosh", meaning:"we say / tell", example:"Nós dizemos obrigado." },
+      { form:"dizem", pron:"DJEE-zeng", meaning:"you all say / tell", example:"Vocês dizem isso sempre?" }
+    ] },
+  { verb:"precisar", group:"-ar verbs",
+    forms:[
+      { form:"preciso", pron:"preh-SEE-zoo", meaning:"I need", example:"Eu preciso de ajuda." },
+      { form:"precisa", pron:"preh-SEE-zah", meaning:"you need", example:"Você precisa sair agora?" },
+      { form:"precisamos", pron:"preh-see-ZAH-moosh", meaning:"we need", example:"Nós precisamos comprar comida." },
+      { form:"precisam", pron:"preh-SEE-zahng", meaning:"you all need", example:"Vocês precisam de mais tempo?" }
+    ] },
+  { verb:"ficar", group:"-ar verbs",
+    forms:[
+      { form:"fico", pron:"FEE-koo", meaning:"I stay / become", example:"Eu fico em casa hoje." },
+      { form:"fica", pron:"FEE-kah", meaning:"you stay / become", example:"Você fica aqui comigo?" },
+      { form:"ficamos", pron:"fee-KAH-moosh", meaning:"we stay / become", example:"Nós ficamos até o fim." },
+      { form:"ficam", pron:"FEE-kahng", meaning:"you all stay / become", example:"Vocês ficam para o jantar?" }
+    ] },
+  { verb:"achar", group:"-ar verbs",
+    forms:[
+      { form:"acho", pron:"AH-shoo", meaning:"I think / find", example:"Eu acho que sim." },
+      { form:"acha", pron:"AH-shah", meaning:"you think / find", example:"Você acha isso normal?" },
+      { form:"achamos", pron:"ah-SHAH-moosh", meaning:"we think / find", example:"Nós achamos a ideia boa." },
+      { form:"acham", pron:"AH-shahng", meaning:"you all think / find", example:"Vocês acham esse lugar bonito?" }
+    ] },
+  { verb:"chegar", group:"-ar verbs",
+    forms:[
+      { form:"chego", pron:"SHEH-goo", meaning:"I arrive", example:"Eu chego às oito." },
+      { form:"chega", pron:"SHEH-gah", meaning:"you arrive", example:"Você chega cedo ao trabalho?" },
+      { form:"chegamos", pron:"sheh-GAH-moosh", meaning:"we arrive", example:"Nós chegamos amanhã de manhã." },
+      { form:"chegam", pron:"SHEH-gahng", meaning:"you all arrive", example:"Vocês chegam juntos?" }
+    ] },
+  { verb:"sair", group:"irregular",
+    forms:[
+      { form:"saio", pron:"SAH-yoo", meaning:"I leave / go out", example:"Eu saio do trabalho às seis." },
+      { form:"sai", pron:"sah-EE", meaning:"you leave / go out", example:"Você sai hoje à noite?" },
+      { form:"saímos", pron:"sah-EE-moosh", meaning:"we leave / go out", example:"Nós saímos cedo de casa." },
+      { form:"saem", pron:"SAH-eng", meaning:"you all leave / go out", example:"Vocês saem agora ou depois?" }
+    ] },
+  { verb:"levar", group:"-ar verbs",
+    forms:[
+      { form:"levo", pron:"LEH-voo", meaning:"I take / carry", example:"Eu levo meu filho à escola." },
+      { form:"leva", pron:"LEH-vah", meaning:"you take / carry", example:"Você leva carteira com você?" },
+      { form:"levamos", pron:"leh-VAH-moosh", meaning:"we take / carry", example:"Nós levamos água para a praia." },
+      { form:"levam", pron:"LEH-vahng", meaning:"you all take / carry", example:"Vocês levam as crianças à escola?" }
+    ] },
+  { verb:"chamar", group:"-ar verbs",
+    forms:[
+      { form:"chamo", pron:"SHAH-moo", meaning:"I call / am called", example:"Eu chamo um táxi." },
+      { form:"chama", pron:"SHAH-mah", meaning:"you call / are called", example:"Como você se chama?" },
+      { form:"chamamos", pron:"shah-MAH-moosh", meaning:"we call", example:"Nós chamamos o garçom." },
+      { form:"chamam", pron:"SHAH-mahng", meaning:"you all call", example:"Vocês chamam um médico?" }
+    ] },
+  { verb:"pedir", group:"irregular",
+    forms:[
+      { form:"peço", pron:"PEH-soo", meaning:"I ask for / order", example:"Eu peço um café." },
+      { form:"pede", pron:"PEH-djee", meaning:"you ask for / order", example:"Você pede a conta?" },
+      { form:"pedimos", pron:"peh-DJEE-moosh", meaning:"we ask for / order", example:"Nós pedimos pizza." },
+      { form:"pedem", pron:"PEH-deng", meaning:"you all ask for / order", example:"Vocês pedem desconto?" }
+    ] },
+  { verb:"dormir", group:"irregular",
+    forms:[
+      { form:"durmo", pron:"DOOR-moo", meaning:"I sleep", example:"Eu durmo cedo." },
+      { form:"dorme", pron:"DOHR-mee", meaning:"you sleep", example:"Você dorme bem?" },
+      { form:"dormimos", pron:"dohr-MEE-moosh", meaning:"we sleep", example:"Nós dormimos oito horas." },
+      { form:"dormem", pron:"DOHR-meng", meaning:"you all sleep", example:"Vocês dormem tarde?" }
+    ] },
+  { verb:"aprender", group:"-er verbs", batch:1,
+    forms:[
+      { form:"aprendo", pron:"ah-PREN-doo", meaning:"I learn", example:"Eu aprendo português todos os dias." },
+      { form:"aprende", pron:"ah-PREN-djee", meaning:"you learn", example:"Você aprende rápido?" },
+      { form:"aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learn", example:"Nós aprendemos juntos." },
+      { form:"aprendem", pron:"ah-PREN-deng", meaning:"you all learn", example:"Vocês aprendem com a prática." }
+    ] },
+  { verb:"entender", group:"-er verbs", batch:1,
+    forms:[
+      { form:"entendo", pron:"en-TEN-doo", meaning:"I understand", example:"Eu entendo a pergunta." },
+      { form:"entende", pron:"en-TEN-djee", meaning:"you understand", example:"Você entende português?" },
+      { form:"entendemos", pron:"en-ten-DEH-moosh", meaning:"we understand", example:"Nós entendemos a ideia." },
+      { form:"entendem", pron:"en-TEN-deng", meaning:"you all understand", example:"Vocês entendem o professor?" }
+    ] },
+  { verb:"comprar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"compro", pron:"KOHM-proo", meaning:"I buy", example:"Eu compro pão." },
+      { form:"compra", pron:"KOHM-prah", meaning:"you buy", example:"Você compra fruta na feira?" },
+      { form:"compramos", pron:"kohm-PRAH-moosh", meaning:"we buy", example:"Nós compramos comida para a semana." },
+      { form:"compram", pron:"KOHM-prahng", meaning:"you all buy", example:"Vocês compram online?" }
+    ] },
+  { verb:"ler", group:"irregular", batch:1,
+    forms:[
+      { form:"leio", pron:"LEH-yoo", meaning:"I read", example:"Eu leio o jornal." },
+      { form:"lê", pron:"LEH", meaning:"you read", example:"Você lê em português?" },
+      { form:"lemos", pron:"LEH-moosh", meaning:"we read", example:"Nós lemos antes de dormir." },
+      { form:"leem", pron:"LEH-eng", meaning:"you all read", example:"Vocês leem muito?" }
+    ] },
+  { verb:"escrever", group:"-er verbs", batch:1,
+    forms:[
+      { form:"escrevo", pron:"es-KREH-voo", meaning:"I write", example:"Eu escrevo mensagens em português." },
+      { form:"escreve", pron:"es-KREH-vee", meaning:"you write", example:"Você escreve no caderno?" },
+      { form:"escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we write", example:"Nós escrevemos e-mails no trabalho." },
+      { form:"escrevem", pron:"es-KREH-veng", meaning:"you all write", example:"Vocês escrevem cartas?" }
+    ] },
+  { verb:"ouvir", group:"irregular", batch:1,
+    forms:[
+      { form:"ouço", pron:"oh-OO-soo", meaning:"I hear / listen", example:"Eu ouço música no carro." },
+      { form:"ouve", pron:"oh-OO-vee", meaning:"you hear / listen", example:"Você ouve esse barulho?" },
+      { form:"ouvimos", pron:"oh-oo-VEE-moosh", meaning:"we hear / listen", example:"Nós ouvimos o professor com atenção." },
+      { form:"ouvem", pron:"oh-OO-veng", meaning:"you all hear / listen", example:"Vocês ouvem podcasts em português?" }
+    ] },
+  { verb:"fechar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"fecho", pron:"FEH-shoo", meaning:"I close", example:"Eu fecho a porta." },
+      { form:"fecha", pron:"FEH-shah", meaning:"you close", example:"Você fecha a janela?" },
+      { form:"fechamos", pron:"feh-SHAH-moosh", meaning:"we close", example:"Nós fechamos a loja às seis." },
+      { form:"fecham", pron:"FEH-shahng", meaning:"you all close", example:"Vocês fecham o restaurante tarde?" }
+    ] },
+  { verb:"usar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"uso", pron:"OO-zoo", meaning:"I use", example:"Eu uso o celular para estudar." },
+      { form:"usa", pron:"OO-zah", meaning:"you use", example:"Você usa esse aplicativo?" },
+      { form:"usamos", pron:"oo-ZAH-moosh", meaning:"we use", example:"Nós usamos o ônibus todos os dias." },
+      { form:"usam", pron:"OO-zahng", meaning:"you all use", example:"Vocês usam dicionário?" }
+    ] },
+  { verb:"dirigir", group:"irregular", batch:1,
+    forms:[
+      { form:"dirijo", pron:"djee-REE-zhoo", meaning:"I drive", example:"Eu dirijo para o trabalho." },
+      { form:"dirige", pron:"djee-REE-zhee", meaning:"you drive", example:"Você dirige bem?" },
+      { form:"dirigimos", pron:"djee-ree-JEE-moosh", meaning:"we drive", example:"Nós dirigimos até a praia." },
+      { form:"dirigem", pron:"djee-REE-zheng", meaning:"you all drive", example:"Vocês dirigem à noite?" }
+    ] },
+  { verb:"voltar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"volto", pron:"VOHL-too", meaning:"I return / come back", example:"Eu volto amanhã." },
+      { form:"volta", pron:"VOHL-tah", meaning:"you return / come back", example:"Você volta cedo para casa?" },
+      { form:"voltamos", pron:"vohl-TAH-moosh", meaning:"we return / come back", example:"Nós voltamos depois do almoço." },
+      { form:"voltam", pron:"VOHL-tahng", meaning:"you all return / come back", example:"Vocês voltam na segunda-feira?" }
+    ] },
+  { verb:"correr", group:"-er verbs", batch:1,
+    forms:[
+      { form:"corro", pron:"KOH-hoo", meaning:"I run", example:"Eu corro no parque." },
+      { form:"corre", pron:"KOH-hee", meaning:"you run", example:"Você corre de manhã?" },
+      { form:"corremos", pron:"koh-HEH-moosh", meaning:"we run", example:"Nós corremos na praia." },
+      { form:"correm", pron:"KOH-heng", meaning:"you all run", example:"Vocês correm juntos?" }
+    ] },
+  { verb:"andar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"ando", pron:"AHN-doo", meaning:"I walk", example:"Eu ando até a estação." },
+      { form:"anda", pron:"AHN-dah", meaning:"you walk", example:"Você anda muito no centro?" },
+      { form:"andamos", pron:"ahn-DAH-moosh", meaning:"we walk", example:"Nós andamos pelo bairro à tarde." },
+      { form:"andam", pron:"AHN-dahng", meaning:"you all walk", example:"Vocês andam até a escola?" }
+    ] },
+  { verb:"curtir", group:"-ir verbs", batch:1,
+    forms:[
+      { form:"curto", pron:"KOOR-too", meaning:"I enjoy / like", example:"Eu curto essa música." },
+      { form:"curte", pron:"KOOR-chee", meaning:"you enjoy / like", example:"Você curte praia?" },
+      { form:"curtimos", pron:"koor-CHEE-moosh", meaning:"we enjoy / like", example:"Nós curtimos o fim de semana na praia." },
+      { form:"curtem", pron:"KOOR-teng", meaning:"you all enjoy / like", example:"Vocês curtem viajar?" }
+    ] },
 ];
+
+const ALL_CARDS = expandVerbEntries(VERB_ENTRIES);
 
 const GROUPS = ["ser / estar", "irregular", "-ar verbs", "-er verbs", "-ir verbs"];
 const LATEST_BATCH = 1;
@@ -1071,7 +1209,7 @@ function renderDailyCard() {
     <div class="card">
       <div class="card-meta">${getCardMeta(card)}</div>
       <div class="card-prompt">${card.meaning}</div>
-      <div class="card-sub">Type the Portuguese conjugation</div>
+      <div class="card-sub">Type the conjugation (e.g. eu falo or falo)</div>
       <div class="input-row">
         <input class="answer-input" id="answerInput" type="text" placeholder="type here\u2026" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleDailyAction()">→</button>
@@ -1113,10 +1251,8 @@ function checkDailyAnswer() {
   if (!input.value.trim()) return;
 
   dailyAttempts[dailyCurrent]++;
-  const correct = normalize(card.conj);
-  const given = normalize(input.value);
 
-  if (given === correct) {
+  if (isVerbConjugationCorrect(card, input.value, normalize)) {
     if (hardMode) dailyStats.hardModeSolved++;
     dailyAnswered = true;
     input.disabled = true;
@@ -1348,7 +1484,7 @@ function render() {
     <div class="card">
       <div class="card-meta">${getCardMeta(card)}</div>
       <div class="card-prompt">${card.meaning}</div>
-      <div class="card-sub">Type the Portuguese conjugation</div>
+      <div class="card-sub">Type the conjugation (e.g. eu falo or falo)</div>
       <div class="input-row">
         <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
@@ -1385,10 +1521,8 @@ function checkAnswer() {
 
   answered = true;
   input.disabled = true;
-  const correct = normalize(card.conj);
-  const given = normalize(input.value);
 
-  if (given === correct) {
+  if (isVerbConjugationCorrect(card, input.value, normalize)) {
     if (hardMode) practiceStats.hardModeSolved++;
     input.classList.add('correct');
     btn.classList.add('go-green');
@@ -1416,12 +1550,9 @@ function checkAnswer() {
 
 function buildConjugationTable(verb) {
   const forms = ALL_CARDS.filter(c => c.verb === verb);
-  const rows = forms.map(f => {
-    const parts = f.conj.split(' ');
-    const pronoun = parts[0];
-    const conjugated = parts.slice(1).join(' ');
-    return `<tr><td class="conj-pronoun">${pronoun}</td><td class="conj-form">${conjugated}</td><td class="conj-pron">${f.pron}</td></tr>`;
-  }).join('');
+  const rows = forms.map(f =>
+    `<tr><td class="conj-pronoun">${f.person}</td><td class="conj-form">${f.form}</td><td class="conj-pron">${f.pron}</td></tr>`
+  ).join('');
   return `<div class="conj-table-wrapper"><div class="conj-table-label">${verb} — present tense</div><table class="conj-table">${rows}</table></div>`;
 }
 

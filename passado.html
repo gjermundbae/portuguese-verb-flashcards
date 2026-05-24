@@ -735,157 +735,207 @@
 
 <script src="drill-common.js"></script>
 <script>
-const ALL_CARDS = [
-  { verb:"falar", conj:"eu falei", pron:"fah-LAY", meaning:"I spoke / talked", example:"Eu falei com a Ana ontem.", group:"-ar verbs" },
-  { verb:"falar", conj:"você falou", pron:"fah-LOH", meaning:"you spoke / talked", example:"Você falou com o professor hoje cedo?", group:"-ar verbs" },
-  { verb:"falar", conj:"nós falamos", pron:"fah-LAH-moosh", meaning:"we spoke / talked", example:"Nós falamos sobre o filme ontem à noite.", group:"-ar verbs" },
-  { verb:"falar", conj:"vocês falaram", pron:"fah-LAH-rahng", meaning:"you all spoke / talked", example:"Vocês falaram com o garçom depois?", group:"-ar verbs" },
-
-  { verb:"trabalhar", conj:"eu trabalhei", pron:"trah-bah-LYAY", meaning:"I worked", example:"Eu trabalhei até tarde ontem.", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"você trabalhou", pron:"trah-bah-LYOH", meaning:"you worked", example:"Você trabalhou no sábado?", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"nós trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we worked", example:"Nós trabalhamos juntos no projeto.", group:"-ar verbs" },
-  { verb:"trabalhar", conj:"vocês trabalharam", pron:"trah-bah-LYAH-rahng", meaning:"you all worked", example:"Vocês trabalharam de casa ontem?", group:"-ar verbs" },
-
-  { verb:"morar", conj:"eu morei", pron:"moh-RAY", meaning:"I lived", example:"Eu morei em Lisboa por um ano.", group:"-ar verbs" },
-  { verb:"morar", conj:"você morou", pron:"moh-ROH", meaning:"you lived", example:"Você morou no Rio quando era criança?", group:"-ar verbs" },
-  { verb:"morar", conj:"nós moramos", pron:"moh-RAH-moosh", meaning:"we lived", example:"Nós moramos perto da praia naquele verão.", group:"-ar verbs" },
-  { verb:"morar", conj:"vocês moraram", pron:"moh-RAH-rahng", meaning:"you all lived", example:"Vocês moraram aqui antes?", group:"-ar verbs" },
-
-  { verb:"comprar", conj:"eu comprei", pron:"kohm-PRAY", meaning:"I bought", example:"Eu comprei pão na padaria.", group:"-ar verbs" },
-  { verb:"comprar", conj:"você comprou", pron:"kohm-PROH", meaning:"you bought", example:"Você comprou o presente ontem?", group:"-ar verbs" },
-  { verb:"comprar", conj:"nós compramos", pron:"kohm-PRAH-moosh", meaning:"we bought", example:"Nós compramos frutas na feira.", group:"-ar verbs" },
-  { verb:"comprar", conj:"vocês compraram", pron:"kohm-PRAH-rahng", meaning:"you all bought", example:"Vocês compraram as passagens já?", group:"-ar verbs" },
-
-  { verb:"voltar", conj:"eu voltei", pron:"vohl-TAY", meaning:"I returned / came back", example:"Eu voltei cedo para casa.", group:"-ar verbs" },
-  { verb:"voltar", conj:"você voltou", pron:"vohl-TOH", meaning:"you returned / came back", example:"Você voltou tarde da viagem?", group:"-ar verbs" },
-  { verb:"voltar", conj:"nós voltamos", pron:"vohl-TAH-moosh", meaning:"we returned / came back", example:"Nós voltamos depois do almoço.", group:"-ar verbs" },
-  { verb:"voltar", conj:"vocês voltaram", pron:"vohl-TAH-rahng", meaning:"you all returned / came back", example:"Vocês voltaram ontem à noite?", group:"-ar verbs" },
-
-  { verb:"levar", conj:"eu levei", pron:"leh-VAY", meaning:"I took / carried", example:"Eu levei um guarda-chuva comigo.", group:"-ar verbs" },
-  { verb:"levar", conj:"você levou", pron:"leh-VOH", meaning:"you took / carried", example:"Você levou os documentos?", group:"-ar verbs" },
-  { verb:"levar", conj:"nós levamos", pron:"leh-VAH-moosh", meaning:"we took / carried", example:"Nós levamos café para o escritório.", group:"-ar verbs" },
-  { verb:"levar", conj:"vocês levaram", pron:"leh-VAH-rahng", meaning:"you all took / carried", example:"Vocês levaram as crianças à escola?", group:"-ar verbs" },
-
-  { verb:"comer", conj:"eu comi", pron:"koh-MEE", meaning:"I ate", example:"Eu comi pão de queijo hoje cedo.", group:"-er verbs" },
-  { verb:"comer", conj:"você comeu", pron:"koh-MEH-oo", meaning:"you ate", example:"Você comeu no restaurante ontem?", group:"-er verbs" },
-  { verb:"comer", conj:"nós comemos", pron:"koh-MEH-moosh", meaning:"we ate", example:"Nós comemos na feira ontem.", group:"-er verbs" },
-  { verb:"comer", conj:"vocês comeram", pron:"koh-MEH-rahng", meaning:"you all ate", example:"Vocês comeram depois do trabalho?", group:"-er verbs" },
-
-  { verb:"beber", conj:"eu bebi", pron:"beh-BEE", meaning:"I drank", example:"Eu bebi muita água depois da corrida.", group:"-er verbs" },
-  { verb:"beber", conj:"você bebeu", pron:"beh-BEH-oo", meaning:"you drank", example:"Você bebeu café hoje cedo?", group:"-er verbs" },
-  { verb:"beber", conj:"nós bebemos", pron:"beh-BEH-moosh", meaning:"we drank", example:"Nós bebemos vinho no jantar.", group:"-er verbs" },
-  { verb:"beber", conj:"vocês beberam", pron:"beh-BEH-rahng", meaning:"you all drank", example:"Vocês beberam suco ou água?", group:"-er verbs" },
-
-  { verb:"aprender", conj:"eu aprendi", pron:"ah-pren-DJEE", meaning:"I learned", example:"Eu aprendi muita coisa na aula.", group:"-er verbs" },
-  { verb:"aprender", conj:"você aprendeu", pron:"ah-pren-DEH-oo", meaning:"you learned", example:"Você aprendeu isso sozinho?", group:"-er verbs" },
-  { verb:"aprender", conj:"nós aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learned", example:"Nós aprendemos uma expressão nova ontem.", group:"-er verbs" },
-  { verb:"aprender", conj:"vocês aprenderam", pron:"ah-pren-DEH-rahng", meaning:"you all learned", example:"Vocês aprenderam rápido.", group:"-er verbs" },
-
-  { verb:"escrever", conj:"eu escrevi", pron:"es-kreh-VEE", meaning:"I wrote", example:"Eu escrevi um e-mail para ela.", group:"-er verbs" },
-  { verb:"escrever", conj:"você escreveu", pron:"es-kreh-VEH-oo", meaning:"you wrote", example:"Você escreveu a resposta ontem?", group:"-er verbs" },
-  { verb:"escrever", conj:"nós escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we wrote", example:"Nós escrevemos tudo no caderno.", group:"-er verbs" },
-  { verb:"escrever", conj:"vocês escreveram", pron:"es-kreh-VEH-rahng", meaning:"you all wrote", example:"Vocês escreveram para o professor?", group:"-er verbs" },
-
-  { verb:"abrir", conj:"eu abri", pron:"ah-BREE", meaning:"I opened", example:"Eu abri a janela de manhã.", group:"-ir verbs" },
-  { verb:"abrir", conj:"você abriu", pron:"ah-BREE-oo", meaning:"you opened", example:"Você abriu a porta para ele?", group:"-ir verbs" },
-  { verb:"abrir", conj:"nós abrimos", pron:"ah-BREE-moosh", meaning:"we opened", example:"Nós abrimos a loja às nove.", group:"-ir verbs" },
-  { verb:"abrir", conj:"vocês abriram", pron:"ah-BREE-rahng", meaning:"you all opened", example:"Vocês abriram a garrafa já?", group:"-ir verbs" },
-
-  { verb:"decidir", conj:"eu decidi", pron:"deh-see-DJEE", meaning:"I decided", example:"Eu decidi ficar em casa.", group:"-ir verbs" },
-  { verb:"decidir", conj:"você decidiu", pron:"deh-see-DJEE-oo", meaning:"you decided", example:"Você decidiu isso ontem?", group:"-ir verbs" },
-  { verb:"decidir", conj:"nós decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decided", example:"Nós decidimos viajar em julho.", group:"-ir verbs" },
-  { verb:"decidir", conj:"vocês decidiram", pron:"deh-see-DJEE-rahng", meaning:"you all decided", example:"Vocês decidiram juntos?", group:"-ir verbs" },
-
-  { verb:"assistir", conj:"eu assisti", pron:"ah-sees-CHEE", meaning:"I watched", example:"Eu assisti ao filme ontem à noite.", group:"-ir verbs" },
-  { verb:"assistir", conj:"você assistiu", pron:"ah-sees-CHEE-oo", meaning:"you watched", example:"Você assistiu ao jogo?", group:"-ir verbs" },
-  { verb:"assistir", conj:"nós assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watched", example:"Nós assistimos à série no fim de semana.", group:"-ir verbs" },
-  { verb:"assistir", conj:"vocês assistiram", pron:"ah-sees-CHEE-rahng", meaning:"you all watched", example:"Vocês assistiram à aula toda?", group:"-ir verbs" },
-
-  { verb:"partir", conj:"eu parti", pron:"pahr-CHEE", meaning:"I left / departed", example:"Eu parti logo depois do almoço.", group:"-ir verbs" },
-  { verb:"partir", conj:"você partiu", pron:"pahr-CHEE-oo", meaning:"you left / departed", example:"Você partiu cedo da estação?", group:"-ir verbs" },
-  { verb:"partir", conj:"nós partimos", pron:"pahr-CHEE-moosh", meaning:"we left / departed", example:"Nós partimos antes do trânsito piorar.", group:"-ir verbs" },
-  { verb:"partir", conj:"vocês partiram", pron:"pahr-CHEE-rahng", meaning:"you all left / departed", example:"Vocês partiram na sexta-feira?", group:"-ir verbs" },
-
-  { verb:"ir", conj:"eu fui", pron:"FOO-ee", meaning:"I went", example:"Eu fui à praia no sábado.", group:"ser / ir", note:"These same forms also appear with ser in the simple past. Context tells you whether the meaning is went or was." },
-  { verb:"ir", conj:"você foi", pron:"FOY", meaning:"you went", example:"Você foi ao mercado ontem?", group:"ser / ir", note:"These same forms also appear with ser in the simple past. Context tells you whether the meaning is went or was." },
-  { verb:"ir", conj:"nós fomos", pron:"FOH-moosh", meaning:"we went", example:"Nós fomos de ônibus para o centro.", group:"ser / ir", note:"These same forms also appear with ser in the simple past. Context tells you whether the meaning is went or was." },
-  { verb:"ir", conj:"vocês foram", pron:"FOH-rahng", meaning:"you all went", example:"Vocês foram ao show na sexta-feira?", group:"ser / ir", note:"These same forms also appear with ser in the simple past. Context tells you whether the meaning is went or was." },
-
-  { verb:"ser", conj:"eu fui", pron:"FOO-ee", meaning:"I was", example:"Eu fui muito feliz naquela época.", group:"ser / ir", note:"These same forms also appear with ir in the simple past. Context tells you whether the meaning is was or went." },
-  { verb:"ser", conj:"você foi", pron:"FOY", meaning:"you were", example:"Você foi muito gentil ontem.", group:"ser / ir", note:"These same forms also appear with ir in the simple past. Context tells you whether the meaning is was or went." },
-  { verb:"ser", conj:"nós fomos", pron:"FOH-moosh", meaning:"we were", example:"Nós fomos colegas de trabalho por anos.", group:"ser / ir", note:"These same forms also appear with ir in the simple past. Context tells you whether the meaning is were or went." },
-  { verb:"ser", conj:"vocês foram", pron:"FOH-rahng", meaning:"you all were", example:"Vocês foram ótimos anfitriões.", group:"ser / ir", note:"These same forms also appear with ir in the simple past. Context tells you whether the meaning is were or went." },
-
-  { verb:"fazer", conj:"eu fiz", pron:"FEES", meaning:"I did / made", example:"Eu fiz o jantar ontem.", group:"irregular" },
-  { verb:"fazer", conj:"você fez", pron:"FEHS", meaning:"you did / made", example:"Você fez exercício hoje cedo?", group:"irregular" },
-  { verb:"fazer", conj:"nós fizemos", pron:"fee-ZEH-moosh", meaning:"we did / made", example:"Nós fizemos café em casa.", group:"irregular" },
-  { verb:"fazer", conj:"vocês fizeram", pron:"fee-ZEH-rahng", meaning:"you all did / made", example:"Vocês fizeram a reserva ontem?", group:"irregular" },
-
-  { verb:"ter", conj:"eu tive", pron:"TEE-vee", meaning:"I had", example:"Eu tive uma ideia no banho.", group:"irregular" },
-  { verb:"ter", conj:"você teve", pron:"TEH-vee", meaning:"you had", example:"Você teve tempo para almoçar?", group:"irregular" },
-  { verb:"ter", conj:"nós tivemos", pron:"tee-VEH-moosh", meaning:"we had", example:"Nós tivemos sorte com o tempo.", group:"irregular" },
-  { verb:"ter", conj:"vocês tiveram", pron:"tee-VEH-rahng", meaning:"you all had", example:"Vocês tiveram aula ontem?", group:"irregular" },
-
-  { verb:"estar", conj:"eu estive", pron:"es-CHEE-vee", meaning:"I was", example:"Eu estive em casa o dia todo.", group:"irregular" },
-  { verb:"estar", conj:"você esteve", pron:"es-TEH-vee", meaning:"you were", example:"Você esteve no escritório de manhã?", group:"irregular" },
-  { verb:"estar", conj:"nós estivemos", pron:"es-chee-VEH-moosh", meaning:"we were", example:"Nós estivemos lá no fim de semana.", group:"irregular" },
-  { verb:"estar", conj:"vocês estiveram", pron:"es-chee-VEH-rahng", meaning:"you all were", example:"Vocês estiveram com a Maria ontem?", group:"irregular" },
-
-  { verb:"dizer", conj:"eu disse", pron:"DJEE-see", meaning:"I said / told", example:"Eu disse a verdade.", group:"irregular" },
-  { verb:"dizer", conj:"você disse", pron:"DJEE-see", meaning:"you said / told", example:"Você disse isso para ele?", group:"irregular" },
-  { verb:"dizer", conj:"nós dissemos", pron:"djee-SEH-moosh", meaning:"we said / told", example:"Nós dissemos tudo no começo.", group:"irregular" },
-  { verb:"dizer", conj:"vocês disseram", pron:"djee-SEH-rahng", meaning:"you all said / told", example:"Vocês disseram que vinham hoje.", group:"irregular" },
-
-  { verb:"trazer", conj:"eu trouxe", pron:"TROH-see", meaning:"I brought", example:"Eu trouxe sobremesa para o jantar.", group:"irregular" },
-  { verb:"trazer", conj:"você trouxe", pron:"TROH-see", meaning:"you brought", example:"Você trouxe as chaves?", group:"irregular" },
-  { verb:"trazer", conj:"nós trouxemos", pron:"troh-SHEH-moosh", meaning:"we brought", example:"Nós trouxemos água para todo mundo.", group:"irregular" },
-  { verb:"trazer", conj:"vocês trouxeram", pron:"troh-SEH-rahng", meaning:"you all brought", example:"Vocês trouxeram os documentos?", group:"irregular" },
-
-  { verb:"poder", conj:"eu pude", pron:"POO-djee", meaning:"I could / was able to", example:"Eu pude descansar no feriado.", group:"irregular" },
-  { verb:"poder", conj:"você pôde", pron:"POH-djee", meaning:"you could / were able to", example:"Você pôde falar com ela ontem?", group:"irregular" },
-  { verb:"poder", conj:"nós pudemos", pron:"poo-DEH-moosh", meaning:"we could / were able to", example:"Nós pudemos entrar mais cedo.", group:"irregular" },
-  { verb:"poder", conj:"vocês puderam", pron:"poo-DEH-rahng", meaning:"you all could / were able to", example:"Vocês puderam resolver o problema?", group:"irregular" },
-
-  { verb:"querer", conj:"eu quis", pron:"KEES", meaning:"I wanted", example:"Eu quis comprar aquele livro.", group:"irregular" },
-  { verb:"querer", conj:"você quis", pron:"KEES", meaning:"you wanted", example:"Você quis sair mais cedo?", group:"irregular" },
-  { verb:"querer", conj:"nós quisemos", pron:"kee-ZEH-moosh", meaning:"we wanted", example:"Nós quisemos ajudar você.", group:"irregular" },
-  { verb:"querer", conj:"vocês quiseram", pron:"kee-ZEH-rahng", meaning:"you all wanted", example:"Vocês quiseram mudar a data?", group:"irregular" },
-
-  { verb:"ver", conj:"eu vi", pron:"VEE", meaning:"I saw", example:"Eu vi a Ana no mercado.", group:"irregular" },
-  { verb:"ver", conj:"você viu", pron:"VEE-oo", meaning:"you saw", example:"Você viu aquele filme já?", group:"irregular" },
-  { verb:"ver", conj:"nós vimos", pron:"VEE-moosh", meaning:"we saw", example:"Nós vimos o show da janela.", group:"irregular" },
-  { verb:"ver", conj:"vocês viram", pron:"VEE-rahng", meaning:"you all saw", example:"Vocês viram a mensagem dela?", group:"irregular" },
-
-  { verb:"vir", conj:"eu vim", pron:"VEENG", meaning:"I came", example:"Eu vim de metrô hoje.", group:"irregular" },
-  { verb:"vir", conj:"você veio", pron:"VAY-oo", meaning:"you came", example:"Você veio sozinho?", group:"irregular" },
-  { verb:"vir", conj:"nós viemos", pron:"vee-EH-moosh", meaning:"we came", example:"Nós viemos cedo para evitar trânsito.", group:"irregular" },
-  { verb:"vir", conj:"vocês vieram", pron:"vee-EH-rahng", meaning:"you all came", example:"Vocês vieram ontem à noite?", group:"irregular" },
-
-  { verb:"dar", conj:"eu dei", pron:"DAY", meaning:"I gave", example:"Eu dei um presente para ela.", group:"irregular" },
-  { verb:"dar", conj:"você deu", pron:"DEH-oo", meaning:"you gave", example:"Você deu comida ao cachorro?", group:"irregular" },
-  { verb:"dar", conj:"nós demos", pron:"DEH-moosh", meaning:"we gave", example:"Nós demos risada o tempo todo.", group:"irregular" },
-  { verb:"dar", conj:"vocês deram", pron:"DEH-rahng", meaning:"you all gave", example:"Vocês deram uma resposta final?", group:"irregular" },
-
-  { verb:"chegar", conj:"eu cheguei", pron:"sheh-GAY", meaning:"I arrived", example:"Eu cheguei tarde ontem.", group:"-car / -gar / -çar" },
-  { verb:"chegar", conj:"você chegou", pron:"sheh-GOH", meaning:"you arrived", example:"Você chegou cedo ao aeroporto?", group:"-car / -gar / -çar" },
-  { verb:"chegar", conj:"nós chegamos", pron:"sheh-GAH-moosh", meaning:"we arrived", example:"Nós chegamos em casa depois da meia-noite.", group:"-car / -gar / -çar" },
-  { verb:"chegar", conj:"vocês chegaram", pron:"sheh-GAH-rahng", meaning:"you all arrived", example:"Vocês chegaram juntos ontem?", group:"-car / -gar / -çar" },
-
-  { verb:"ficar", conj:"eu fiquei", pron:"fee-KAY", meaning:"I stayed / became", example:"Eu fiquei em casa ontem à noite.", group:"-car / -gar / -çar" },
-  { verb:"ficar", conj:"você ficou", pron:"fee-KOH", meaning:"you stayed / became", example:"Você ficou cansado depois da viagem?", group:"-car / -gar / -çar" },
-  { verb:"ficar", conj:"nós ficamos", pron:"fee-KAH-moosh", meaning:"we stayed / became", example:"Nós ficamos lá até tarde.", group:"-car / -gar / -çar" },
-  { verb:"ficar", conj:"vocês ficaram", pron:"fee-KAH-rahng", meaning:"you all stayed / became", example:"Vocês ficaram felizes com a notícia?", group:"-car / -gar / -çar" },
-
-  { verb:"pagar", conj:"eu paguei", pron:"pah-GAY", meaning:"I paid", example:"Eu paguei a conta no fim.", group:"-car / -gar / -çar" },
-  { verb:"pagar", conj:"você pagou", pron:"pah-GOH", meaning:"you paid", example:"Você pagou com cartão?", group:"-car / -gar / -çar" },
-  { verb:"pagar", conj:"nós pagamos", pron:"pah-GAH-moosh", meaning:"we paid", example:"Nós pagamos tudo ontem.", group:"-car / -gar / -çar" },
-  { verb:"pagar", conj:"vocês pagaram", pron:"pah-GAH-rahng", meaning:"you all paid", example:"Vocês pagaram adiantado?", group:"-car / -gar / -çar" },
-
-  { verb:"começar", conj:"eu comecei", pron:"koh-meh-SAY", meaning:"I started / began", example:"Eu comecei a estudar cedo.", group:"-car / -gar / -çar" },
-  { verb:"começar", conj:"você começou", pron:"koh-meh-SOH", meaning:"you started / began", example:"Você começou o livro já?", group:"-car / -gar / -çar" },
-  { verb:"começar", conj:"nós começamos", pron:"koh-meh-SAH-moosh", meaning:"we started / began", example:"Nós começamos a reunião às nove.", group:"-car / -gar / -çar" },
-  { verb:"começar", conj:"vocês começaram", pron:"koh-meh-SAH-rahng", meaning:"you all started / began", example:"Vocês começaram sem mim?", group:"-car / -gar / -çar" }
+// One block per verb; forms are eu → você → nós → vocês (expanded to ALL_CARDS at load).
+const VERB_ENTRIES = [
+  { verb:"falar", group:"-ar verbs",
+    forms:[
+      { form:"falei", pron:"fah-LAY", meaning:"I spoke / talked", example:"Eu falei com a Ana ontem." },
+      { form:"falou", pron:"fah-LOH", meaning:"you spoke / talked", example:"Você falou com o professor hoje cedo?" },
+      { form:"falamos", pron:"fah-LAH-moosh", meaning:"we spoke / talked", example:"Nós falamos sobre o filme ontem à noite." },
+      { form:"falaram", pron:"fah-LAH-rahng", meaning:"you all spoke / talked", example:"Vocês falaram com o garçom depois?" }
+    ] },
+  { verb:"trabalhar", group:"-ar verbs",
+    forms:[
+      { form:"trabalhei", pron:"trah-bah-LYAY", meaning:"I worked", example:"Eu trabalhei até tarde ontem." },
+      { form:"trabalhou", pron:"trah-bah-LYOH", meaning:"you worked", example:"Você trabalhou no sábado?" },
+      { form:"trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we worked", example:"Nós trabalhamos juntos no projeto." },
+      { form:"trabalharam", pron:"trah-bah-LYAH-rahng", meaning:"you all worked", example:"Vocês trabalharam de casa ontem?" }
+    ] },
+  { verb:"morar", group:"-ar verbs",
+    forms:[
+      { form:"morei", pron:"moh-RAY", meaning:"I lived", example:"Eu morei em Lisboa por um ano." },
+      { form:"morou", pron:"moh-ROH", meaning:"you lived", example:"Você morou no Rio quando era criança?" },
+      { form:"moramos", pron:"moh-RAH-moosh", meaning:"we lived", example:"Nós moramos perto da praia naquele verão." },
+      { form:"moraram", pron:"moh-RAH-rahng", meaning:"you all lived", example:"Vocês moraram aqui antes?" }
+    ] },
+  { verb:"comprar", group:"-ar verbs",
+    forms:[
+      { form:"comprei", pron:"kohm-PRAY", meaning:"I bought", example:"Eu comprei pão na padaria." },
+      { form:"comprou", pron:"kohm-PROH", meaning:"you bought", example:"Você comprou o presente ontem?" },
+      { form:"compramos", pron:"kohm-PRAH-moosh", meaning:"we bought", example:"Nós compramos frutas na feira." },
+      { form:"compraram", pron:"kohm-PRAH-rahng", meaning:"you all bought", example:"Vocês compraram as passagens já?" }
+    ] },
+  { verb:"voltar", group:"-ar verbs",
+    forms:[
+      { form:"voltei", pron:"vohl-TAY", meaning:"I returned / came back", example:"Eu voltei cedo para casa." },
+      { form:"voltou", pron:"vohl-TOH", meaning:"you returned / came back", example:"Você voltou tarde da viagem?" },
+      { form:"voltamos", pron:"vohl-TAH-moosh", meaning:"we returned / came back", example:"Nós voltamos depois do almoço." },
+      { form:"voltaram", pron:"vohl-TAH-rahng", meaning:"you all returned / came back", example:"Vocês voltaram ontem à noite?" }
+    ] },
+  { verb:"levar", group:"-ar verbs",
+    forms:[
+      { form:"levei", pron:"leh-VAY", meaning:"I took / carried", example:"Eu levei um guarda-chuva comigo." },
+      { form:"levou", pron:"leh-VOH", meaning:"you took / carried", example:"Você levou os documentos?" },
+      { form:"levamos", pron:"leh-VAH-moosh", meaning:"we took / carried", example:"Nós levamos café para o escritório." },
+      { form:"levaram", pron:"leh-VAH-rahng", meaning:"you all took / carried", example:"Vocês levaram as crianças à escola?" }
+    ] },
+  { verb:"comer", group:"-er verbs",
+    forms:[
+      { form:"comi", pron:"koh-MEE", meaning:"I ate", example:"Eu comi pão de queijo hoje cedo." },
+      { form:"comeu", pron:"koh-MEH-oo", meaning:"you ate", example:"Você comeu no restaurante ontem?" },
+      { form:"comemos", pron:"koh-MEH-moosh", meaning:"we ate", example:"Nós comemos na feira ontem." },
+      { form:"comeram", pron:"koh-MEH-rahng", meaning:"you all ate", example:"Vocês comeram depois do trabalho?" }
+    ] },
+  { verb:"beber", group:"-er verbs",
+    forms:[
+      { form:"bebi", pron:"beh-BEE", meaning:"I drank", example:"Eu bebi muita água depois da corrida." },
+      { form:"bebeu", pron:"beh-BEH-oo", meaning:"you drank", example:"Você bebeu café hoje cedo?" },
+      { form:"bebemos", pron:"beh-BEH-moosh", meaning:"we drank", example:"Nós bebemos vinho no jantar." },
+      { form:"beberam", pron:"beh-BEH-rahng", meaning:"you all drank", example:"Vocês beberam suco ou água?" }
+    ] },
+  { verb:"aprender", group:"-er verbs",
+    forms:[
+      { form:"aprendi", pron:"ah-pren-DJEE", meaning:"I learned", example:"Eu aprendi muita coisa na aula." },
+      { form:"aprendeu", pron:"ah-pren-DEH-oo", meaning:"you learned", example:"Você aprendeu isso sozinho?" },
+      { form:"aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learned", example:"Nós aprendemos uma expressão nova ontem." },
+      { form:"aprenderam", pron:"ah-pren-DEH-rahng", meaning:"you all learned", example:"Vocês aprenderam rápido." }
+    ] },
+  { verb:"escrever", group:"-er verbs",
+    forms:[
+      { form:"escrevi", pron:"es-kreh-VEE", meaning:"I wrote", example:"Eu escrevi um e-mail para ela." },
+      { form:"escreveu", pron:"es-kreh-VEH-oo", meaning:"you wrote", example:"Você escreveu a resposta ontem?" },
+      { form:"escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we wrote", example:"Nós escrevemos tudo no caderno." },
+      { form:"escreveram", pron:"es-kreh-VEH-rahng", meaning:"you all wrote", example:"Vocês escreveram para o professor?" }
+    ] },
+  { verb:"abrir", group:"-ir verbs",
+    forms:[
+      { form:"abri", pron:"ah-BREE", meaning:"I opened", example:"Eu abri a janela de manhã." },
+      { form:"abriu", pron:"ah-BREE-oo", meaning:"you opened", example:"Você abriu a porta para ele?" },
+      { form:"abrimos", pron:"ah-BREE-moosh", meaning:"we opened", example:"Nós abrimos a loja às nove." },
+      { form:"abriram", pron:"ah-BREE-rahng", meaning:"you all opened", example:"Vocês abriram a garrafa já?" }
+    ] },
+  { verb:"decidir", group:"-ir verbs",
+    forms:[
+      { form:"decidi", pron:"deh-see-DJEE", meaning:"I decided", example:"Eu decidi ficar em casa." },
+      { form:"decidiu", pron:"deh-see-DJEE-oo", meaning:"you decided", example:"Você decidiu isso ontem?" },
+      { form:"decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decided", example:"Nós decidimos viajar em julho." },
+      { form:"decidiram", pron:"deh-see-DJEE-rahng", meaning:"you all decided", example:"Vocês decidiram juntos?" }
+    ] },
+  { verb:"assistir", group:"-ir verbs",
+    forms:[
+      { form:"assisti", pron:"ah-sees-CHEE", meaning:"I watched", example:"Eu assisti ao filme ontem à noite." },
+      { form:"assistiu", pron:"ah-sees-CHEE-oo", meaning:"you watched", example:"Você assistiu ao jogo?" },
+      { form:"assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watched", example:"Nós assistimos à série no fim de semana." },
+      { form:"assistiram", pron:"ah-sees-CHEE-rahng", meaning:"you all watched", example:"Vocês assistiram à aula toda?" }
+    ] },
+  { verb:"partir", group:"-ir verbs",
+    forms:[
+      { form:"parti", pron:"pahr-CHEE", meaning:"I left / departed", example:"Eu parti logo depois do almoço." },
+      { form:"partiu", pron:"pahr-CHEE-oo", meaning:"you left / departed", example:"Você partiu cedo da estação?" },
+      { form:"partimos", pron:"pahr-CHEE-moosh", meaning:"we left / departed", example:"Nós partimos antes do trânsito piorar." },
+      { form:"partiram", pron:"pahr-CHEE-rahng", meaning:"you all left / departed", example:"Vocês partiram na sexta-feira?" }
+    ] },
+  { verb:"fazer", group:"irregular",
+    forms:[
+      { form:"fiz", pron:"FEES", meaning:"I did / made", example:"Eu fiz o jantar ontem." },
+      { form:"fez", pron:"FEHS", meaning:"you did / made", example:"Você fez exercício hoje cedo?" },
+      { form:"fizemos", pron:"fee-ZEH-moosh", meaning:"we did / made", example:"Nós fizemos café em casa." },
+      { form:"fizeram", pron:"fee-ZEH-rahng", meaning:"you all did / made", example:"Vocês fizeram a reserva ontem?" }
+    ] },
+  { verb:"ter", group:"irregular",
+    forms:[
+      { form:"tive", pron:"TEE-vee", meaning:"I had", example:"Eu tive uma ideia no banho." },
+      { form:"teve", pron:"TEH-vee", meaning:"you had", example:"Você teve tempo para almoçar?" },
+      { form:"tivemos", pron:"tee-VEH-moosh", meaning:"we had", example:"Nós tivemos sorte com o tempo." },
+      { form:"tiveram", pron:"tee-VEH-rahng", meaning:"you all had", example:"Vocês tiveram aula ontem?" }
+    ] },
+  { verb:"estar", group:"irregular",
+    forms:[
+      { form:"estive", pron:"es-CHEE-vee", meaning:"I was", example:"Eu estive em casa o dia todo." },
+      { form:"esteve", pron:"es-TEH-vee", meaning:"you were", example:"Você esteve no escritório de manhã?" },
+      { form:"estivemos", pron:"es-chee-VEH-moosh", meaning:"we were", example:"Nós estivemos lá no fim de semana." },
+      { form:"estiveram", pron:"es-chee-VEH-rahng", meaning:"you all were", example:"Vocês estiveram com a Maria ontem?" }
+    ] },
+  { verb:"dizer", group:"irregular",
+    forms:[
+      { form:"disse", pron:"DJEE-see", meaning:"I said / told", example:"Eu disse a verdade." },
+      { form:"disse", pron:"DJEE-see", meaning:"you said / told", example:"Você disse isso para ele?" },
+      { form:"dissemos", pron:"djee-SEH-moosh", meaning:"we said / told", example:"Nós dissemos tudo no começo." },
+      { form:"disseram", pron:"djee-SEH-rahng", meaning:"you all said / told", example:"Vocês disseram que vinham hoje." }
+    ] },
+  { verb:"trazer", group:"irregular",
+    forms:[
+      { form:"trouxe", pron:"TROH-see", meaning:"I brought", example:"Eu trouxe sobremesa para o jantar." },
+      { form:"trouxe", pron:"TROH-see", meaning:"you brought", example:"Você trouxe as chaves?" },
+      { form:"trouxemos", pron:"troh-SHEH-moosh", meaning:"we brought", example:"Nós trouxemos água para todo mundo." },
+      { form:"trouxeram", pron:"troh-SEH-rahng", meaning:"you all brought", example:"Vocês trouxeram os documentos?" }
+    ] },
+  { verb:"poder", group:"irregular",
+    forms:[
+      { form:"pude", pron:"POO-djee", meaning:"I could / was able to", example:"Eu pude descansar no feriado." },
+      { form:"pôde", pron:"POH-djee", meaning:"you could / were able to", example:"Você pôde falar com ela ontem?" },
+      { form:"pudemos", pron:"poo-DEH-moosh", meaning:"we could / were able to", example:"Nós pudemos entrar mais cedo." },
+      { form:"puderam", pron:"poo-DEH-rahng", meaning:"you all could / were able to", example:"Vocês puderam resolver o problema?" }
+    ] },
+  { verb:"querer", group:"irregular",
+    forms:[
+      { form:"quis", pron:"KEES", meaning:"I wanted", example:"Eu quis comprar aquele livro." },
+      { form:"quis", pron:"KEES", meaning:"you wanted", example:"Você quis sair mais cedo?" },
+      { form:"quisemos", pron:"kee-ZEH-moosh", meaning:"we wanted", example:"Nós quisemos ajudar você." },
+      { form:"quiseram", pron:"kee-ZEH-rahng", meaning:"you all wanted", example:"Vocês quiseram mudar a data?" }
+    ] },
+  { verb:"ver", group:"irregular",
+    forms:[
+      { form:"vi", pron:"VEE", meaning:"I saw", example:"Eu vi a Ana no mercado." },
+      { form:"viu", pron:"VEE-oo", meaning:"you saw", example:"Você viu aquele filme já?" },
+      { form:"vimos", pron:"VEE-moosh", meaning:"we saw", example:"Nós vimos o show da janela." },
+      { form:"viram", pron:"VEE-rahng", meaning:"you all saw", example:"Vocês viram a mensagem dela?" }
+    ] },
+  { verb:"vir", group:"irregular",
+    forms:[
+      { form:"vim", pron:"VEENG", meaning:"I came", example:"Eu vim de metrô hoje." },
+      { form:"veio", pron:"VAY-oo", meaning:"you came", example:"Você veio sozinho?" },
+      { form:"viemos", pron:"vee-EH-moosh", meaning:"we came", example:"Nós viemos cedo para evitar trânsito." },
+      { form:"vieram", pron:"vee-EH-rahng", meaning:"you all came", example:"Vocês vieram ontem à noite?" }
+    ] },
+  { verb:"dar", group:"irregular",
+    forms:[
+      { form:"dei", pron:"DAY", meaning:"I gave", example:"Eu dei um presente para ela." },
+      { form:"deu", pron:"DEH-oo", meaning:"you gave", example:"Você deu comida ao cachorro?" },
+      { form:"demos", pron:"DEH-moosh", meaning:"we gave", example:"Nós demos risada o tempo todo." },
+      { form:"deram", pron:"DEH-rahng", meaning:"you all gave", example:"Vocês deram uma resposta final?" }
+    ] },
+  { verb:"chegar", group:"-car / -gar / -çar",
+    forms:[
+      { form:"cheguei", pron:"sheh-GAY", meaning:"I arrived", example:"Eu cheguei tarde ontem." },
+      { form:"chegou", pron:"sheh-GOH", meaning:"you arrived", example:"Você chegou cedo ao aeroporto?" },
+      { form:"chegamos", pron:"sheh-GAH-moosh", meaning:"we arrived", example:"Nós chegamos em casa depois da meia-noite." },
+      { form:"chegaram", pron:"sheh-GAH-rahng", meaning:"you all arrived", example:"Vocês chegaram juntos ontem?" }
+    ] },
+  { verb:"ficar", group:"-car / -gar / -çar",
+    forms:[
+      { form:"fiquei", pron:"fee-KAY", meaning:"I stayed / became", example:"Eu fiquei em casa ontem à noite." },
+      { form:"ficou", pron:"fee-KOH", meaning:"you stayed / became", example:"Você ficou cansado depois da viagem?" },
+      { form:"ficamos", pron:"fee-KAH-moosh", meaning:"we stayed / became", example:"Nós ficamos lá até tarde." },
+      { form:"ficaram", pron:"fee-KAH-rahng", meaning:"you all stayed / became", example:"Vocês ficaram felizes com a notícia?" }
+    ] },
+  { verb:"pagar", group:"-car / -gar / -çar",
+    forms:[
+      { form:"paguei", pron:"pah-GAY", meaning:"I paid", example:"Eu paguei a conta no fim." },
+      { form:"pagou", pron:"pah-GOH", meaning:"you paid", example:"Você pagou com cartão?" },
+      { form:"pagamos", pron:"pah-GAH-moosh", meaning:"we paid", example:"Nós pagamos tudo ontem." },
+      { form:"pagaram", pron:"pah-GAH-rahng", meaning:"you all paid", example:"Vocês pagaram adiantado?" }
+    ] },
+  { verb:"começar", group:"-car / -gar / -çar",
+    forms:[
+      { form:"comecei", pron:"koh-meh-SAY", meaning:"I started / began", example:"Eu comecei a estudar cedo." },
+      { form:"começou", pron:"koh-meh-SOH", meaning:"you started / began", example:"Você começou o livro já?" },
+      { form:"começamos", pron:"koh-meh-SAH-moosh", meaning:"we started / began", example:"Nós começamos a reunião às nove." },
+      { form:"começaram", pron:"koh-meh-SAH-rahng", meaning:"you all started / began", example:"Vocês começaram sem mim?" }
+    ] },
 ];
+
+const ALL_CARDS = expandVerbEntries(VERB_ENTRIES);
 
 const GROUPS = ["-ar verbs", "-er verbs", "-ir verbs", "ser / ir", "irregular", "-car / -gar / -çar"];
 let activeGroups = new Set(GROUPS);
@@ -1048,7 +1098,7 @@ function renderDailyCard() {
     <div class="card">
       <div class="card-meta">${getCardMeta(card)}</div>
       <div class="card-prompt">${card.meaning}</div>
-      <div class="card-sub">Type the Portuguese conjugation</div>
+      <div class="card-sub">Type the conjugation</div>
       <div class="input-row">
         <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleDailyAction()">→</button>
@@ -1090,10 +1140,8 @@ function checkDailyAnswer() {
   if (!input.value.trim()) return;
 
   dailyAttempts[dailyCurrent]++;
-  const correct = normalize(card.conj);
-  const given = normalize(input.value);
 
-  if (given === correct) {
+  if (isVerbConjugationCorrect(card, input.value, normalize)) {
     if (hardMode) dailyStats.hardModeSolved++;
     dailyAnswered = true;
     input.disabled = true;
@@ -1338,7 +1386,7 @@ function render() {
     <div class="card">
       <div class="card-meta">${getCardMeta(card)}</div>
       <div class="card-prompt">${card.meaning}</div>
-      <div class="card-sub">Type the Portuguese conjugation</div>
+      <div class="card-sub">Type the conjugation (e.g. eu falei or falei)</div>
       <div class="input-row">
         <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
@@ -1375,10 +1423,8 @@ function checkAnswer() {
 
   answered = true;
   input.disabled = true;
-  const correct = normalize(card.conj);
-  const given = normalize(input.value);
 
-  if (given === correct) {
+  if (isVerbConjugationCorrect(card, input.value, normalize)) {
     if (hardMode) practiceStats.hardModeSolved++;
     input.classList.add('correct');
     btn.classList.add('go-green');
@@ -1403,12 +1449,9 @@ function checkAnswer() {
 
 function buildConjugationTable(verb, tone) {
   const forms = ALL_CARDS.filter(c => c.verb === verb);
-  const rows = forms.map(f => {
-    const parts = f.conj.split(' ');
-    const pronoun = parts[0];
-    const conjugated = parts.slice(1).join(' ');
-    return `<tr><td class="conj-pronoun">${pronoun}</td><td class="conj-form">${conjugated}</td><td class="conj-pron">${f.pron}</td></tr>`;
-  }).join('');
+  const rows = forms.map(f =>
+    `<tr><td class="conj-pronoun">${f.person}</td><td class="conj-form">${f.form}</td><td class="conj-pron">${f.pron}</td></tr>`
+  ).join('');
   return `<div class="conj-table-wrapper ${tone}"><div class="conj-table-label">${verb} — pretérito perfeito</div><table class="conj-table">${rows}</table></div>`;
 }
 
