@@ -415,6 +415,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   { en: "the person", pt: "a pessoa", article: "a", noun: "pessoa", gender: "feminine", pronIpa: "[a pe'soɐ]", pronHint: "ah peh-SOH-ah", example: "A pessoa está esperando ali.", exampleEn: "The person is waiting over there.", group: "people", note: "Pessoa is feminine even when it refers to a man." },
@@ -677,7 +678,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById("answerInput");
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener("keydown", event => {
     if (event.key === "Enter") handleAction();
   });

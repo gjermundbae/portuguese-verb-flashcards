@@ -703,6 +703,7 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   { verb:"være", conj:"jeg er", pron:"EHR", meaning:"I am", example:"Jeg er norsk.", group:"irregular" },
@@ -914,7 +915,7 @@ function renderDailyCard() {
   `;
 
   const input = document.getElementById('answerInput');
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter') handleDailyAction();
   });
@@ -970,7 +971,7 @@ function checkDailyAnswer() {
       setTimeout(() => {
         input.classList.remove('shake', 'wrong');
         input.value = '';
-        input.focus();
+        focusAnswerInput(input);
         feedback.className = 'feedback';
         feedback.textContent = '';
       }, 700);
@@ -1173,7 +1174,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById('answerInput');
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter') handleAction();
   });

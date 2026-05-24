@@ -416,6 +416,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   // ── Prepositions ──────────────────────────────────────────
@@ -662,7 +663,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById('answerInput');
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter') handleAction();
   });

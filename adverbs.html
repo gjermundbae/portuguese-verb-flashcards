@@ -383,6 +383,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   { en: "now", pt: "agora", pronIpa: "[a'gɔɾɐ]", pronHint: "ah-GOH-rah", example: "Eu preciso sair agora.", exampleEn: "I need to leave now.", group: "time", note: "One of the most useful time words in everyday speech." },
@@ -558,7 +559,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById("answerInput");
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener("keydown", event => {
     if (event.key === "Enter") handleAction();
   });

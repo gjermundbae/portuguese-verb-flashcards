@@ -394,6 +394,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   { en: "good", pt: "bom", alts: ["boa"], agreement: "fem.: boa", pronIpa: "[bõ]", pronHint: "BOHNG", example: "A comida aqui é boa.", exampleEn: "The food here is good.", group: "quality" },
@@ -585,7 +586,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById("answerInput");
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener("keydown", event => {
     if (event.key === "Enter") handleAction();
   });

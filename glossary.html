@@ -373,6 +373,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   { pt: "que saco", meaning: "how annoying", group: "reactions", note: "A common way to complain when something is irritating or a drag.", example: "Ah, perdi o ônibus de novo. Que saco.", exampleEn: "Ah, I missed the bus again. How annoying." },
@@ -514,7 +515,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById("answerInput");
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener("keydown", event => {
     if (event.key === "Enter") handleAction();
   });

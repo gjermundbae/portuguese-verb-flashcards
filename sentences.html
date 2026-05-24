@@ -402,6 +402,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 // Sentence cards. Conventions:
 //   - Always use explicit subject pronouns (eu, voce, nos, ele, ela, eles, elas).
@@ -749,7 +750,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById("answerInput");
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener("keydown", event => {
     if (event.key === "Enter") handleAction();
   });

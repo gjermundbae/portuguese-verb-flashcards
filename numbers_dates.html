@@ -402,6 +402,7 @@
   <div id="cardArea"></div>
 </div>
 
+<script src="drill-common.js"></script>
 <script>
 const ALL_CARDS = [
   { prompt: "one", answer: "um", alts: ["uma"], pron: "OOM / OO-mah", example: "1 = um", tip: "Use <strong>uma</strong> before feminine nouns: <em>uma casa</em>. For straight counting, <strong>um</strong> is the base form.", group: "cardinal numbers" },
@@ -624,7 +625,7 @@ function render() {
 
   answered = false;
   const input = document.getElementById("answerInput");
-  input.focus();
+  focusAnswerInput(input);
   input.addEventListener("keydown", event => {
     if (event.key === "Enter") handleAction();
   });
