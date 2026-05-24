@@ -463,15 +463,37 @@ const ALL_CARDS = [
   { prompt: "September", answer: "setembro", pron: "seh-TEM-broo", example: "Setembro vem depois de agosto.", group: "months" },
   { prompt: "October", answer: "outubro", pron: "ow-TOO-broo", example: "Meu curso termina em outubro.", group: "months" },
   { prompt: "November", answer: "novembro", pron: "noh-VEM-broo", example: "Novembro antecede dezembro.", group: "months" },
-  { prompt: "December", answer: "dezembro", pron: "deh-ZEM-broo", example: "O Natal é em dezembro.", group: "months" }
+  { prompt: "December", answer: "dezembro", pron: "deh-ZEM-broo", example: "O Natal é em dezembro.", group: "months" },
+
+  { prompt: "white", answer: "branco", alts: ["branca"], pron: "BRAHN-koo / BRAHN-kah", example: "A parede é branca.", tip: "Color adjectives agree with the noun: <strong>branco</strong> (masc.) / <strong>branca</strong> (fem.).", group: "colors" },
+  { prompt: "black", answer: "preto", alts: ["preta"], pron: "PREH-too / PREH-tah", example: "O carro é preto.", tip: "Use <strong>preta</strong> with feminine nouns: <em>uma camisa preta</em>.", group: "colors" },
+  { prompt: "gray", answer: "cinza", pron: "SEEN-zah", example: "O céu está cinza hoje.", tip: "British spelling <strong>grey</strong> maps to the same Portuguese word. <strong>Cinza</strong> does not change for gender.", group: "colors" },
+  { prompt: "red", answer: "vermelho", alts: ["vermelha"], pron: "vehr-MEH-lyoo / vehr-MEH-lyah", example: "Ela comprou um vestido vermelho.", tip: "The <strong>-lh-</strong> sounds like <strong>ly</strong> in Brazilian Portuguese: ver<strong>me</strong>lyo.", group: "colors" },
+  { prompt: "pink", answer: "rosa", pron: "HOH-zah", example: "A camisa é rosa.", tip: "Same word as the flower. <strong>Rosa</strong> is invariable — it does not change for gender.", group: "colors" },
+  { prompt: "orange", answer: "laranja", pron: "lah-RAHN-zhah", example: "A blusa é laranja.", tip: "Like <strong>rosa</strong> and <strong>azul</strong>, <strong>laranja</strong> stays the same for masculine and feminine nouns.", group: "colors" },
+  { prompt: "yellow", answer: "amarelo", alts: ["amarela"], pron: "ah-mah-REH-loo / ah-mah-REH-lah", example: "O táxi é amarelo.", tip: "Use <strong>amarela</strong> with feminine nouns: <em>uma flor amarela</em>.", group: "colors" },
+  { prompt: "green", answer: "verde", pron: "VEHR-jee", example: "A grama é verde.", tip: "<strong>Verde</strong> is invariable in gender. For shades, add <strong>claro</strong> or <strong>escuro</strong>: <em>verde claro</em>.", group: "colors" },
+  { prompt: "blue", answer: "azul", pron: "ah-ZOOL", example: "O mar é azul.", tip: "<strong>Azul</strong> is invariable. <strong>Azul claro</strong> = light blue; <strong>azul escuro</strong> = dark blue.", group: "colors" },
+  { prompt: "purple", answer: "roxo", alts: ["roxa"], pron: "HOH-shoo / HOH-shah", example: "Ela gosta de roxo.", tip: "In Brazil, <strong>roxo</strong> is the everyday word for purple. <strong>Violeta</strong> also exists but is less common in speech.", group: "colors" },
+  { prompt: "brown", answer: "marrom", pron: "mah-HOHNG", example: "A mesa é marrom.", tip: "<strong>Marrom</strong> is invariable — no feminine form. The <strong>-m</strong> is nasal, like the end of <em>sim</em>.", group: "colors" },
+  { prompt: "beige", answer: "bege", pron: "BEH-zhee", example: "O sofá é bege.", tip: "Borrowed from French; stays invariable in Brazilian Portuguese.", group: "colors" },
+  { prompt: "gold", answer: "dourado", alts: ["dourada"], pron: "doo-RAH-doo / doo-RAH-dah", example: "Ela usa um anel dourado.", tip: "From <em>ouro</em> (gold). Agrees with gender like most color adjectives ending in <strong>-ado</strong>.", group: "colors" },
+  { prompt: "silver", answer: "prateado", alts: ["prateada"], pron: "prah-chee-AH-doo / prah-chee-AH-dah", example: "O carro é prateado.", tip: "From <em>prata</em> (silver). Use <strong>prateada</strong> with feminine nouns.", group: "colors" },
+  { prompt: "turquoise", answer: "turquesa", pron: "toor-KEH-zah", example: "A pedra é turquesa.", tip: "Invariable in gender, like <strong>rosa</strong> and <strong>laranja</strong>.", group: "colors" },
+  { prompt: "navy blue", answer: "azul marinho", pron: "ah-ZOOL mah-REEN-yoo", example: "Ele veste um terno azul marinho.", tip: "Literally 'sea blue'. The color word <strong>azul</strong> comes first; the shade follows.", group: "colors" },
+  { prompt: "light blue", answer: "azul claro", pron: "ah-ZOOL KLAH-roo", example: "O quarto é azul claro.", tip: "Shade words come <em>after</em> the color: <strong>azul claro</strong>, not <em>claro azul</em>.", group: "colors" },
+  { prompt: "dark green", answer: "verde escuro", pron: "VEHR-jee es-KOO-roo", example: "O vestido é verde escuro.", tip: "Same word order as English: color + shade. <strong>Escuro</strong> can also agree: <em>verde escura</em> with a feminine noun.", group: "colors" },
+  { prompt: "light", answer: "claro", alts: ["clara"], pron: "KLAH-roo / KLAH-rah", example: "Um tom claro de azul.", tip: "Used after a color for a lighter shade: <em>verde claro</em>, <em>rosa claro</em>. Not to be confused with <strong>claro!</strong> meaning 'of course!'", group: "colors" },
+  { prompt: "dark", answer: "escuro", alts: ["escura"], pron: "es-KOO-roo / es-KOO-rah", example: "Um verde escuro.", tip: "Follows the color: <em>azul escuro</em>, <em>vermelho escuro</em>. Agrees with a feminine noun when placed after one.", group: "colors" }
 ];
 
-const GROUPS = ["cardinal numbers", "ordinal numbers", "weekdays", "months"];
+const GROUPS = ["cardinal numbers", "ordinal numbers", "weekdays", "months", "colors"];
 const GROUP_LABELS = {
   "cardinal numbers": "cardinal numbers",
   "ordinal numbers": "ordinal numbers",
   "weekdays": "days of the week",
-  "months": "months"
+  "months": "months",
+  "colors": "colors"
 };
 let activeGroups = new Set(GROUPS);
 let deck = [];
