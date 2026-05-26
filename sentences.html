@@ -489,6 +489,14 @@ const ALL_CARDS = [
     note: "Abrir past: eu abri, você abriu, nós abrimos, eles abriram. Regular -ir pattern." },
   { en: "We did the homework.", pt: "Nós fizemos a lição de casa.", group: "Past",
     note: "Fazer past is irregular: eu fiz, você fez, nós fizemos, eles fizeram. 'Lição de casa' is the BR term for homework (Portugal: 'trabalhos de casa')." },
+  { en: "I had to work yesterday.", pt: "Eu tive que trabalhar ontem.", group: "Past", batch: 1,
+    note: "'Ter que + infinitive' = had to (obligation). Don't confuse with possession ('Eu tive um cachorro' = I had a dog) — the 'que + verb' pattern shifts the meaning to necessity. Spoken BR also accepts 'ter de', but 'ter que' dominates." },
+  { en: "There was a party at João's house yesterday.", pt: "Teve uma festa na casa do João ontem.", group: "Past", batch: 1,
+    note: "Impersonal 'ter' = 'there is/was' in spoken BR. No subject and no agreement — it stays singular even with a plural noun ('teve muitas festas ontem', not 'tiveram')." },
+  { en: "He got nervous before the test.", pt: "Ele ficou nervoso antes da prova.", group: "Past", batch: 1,
+    note: "Ficar = to become (a change of state). 'Ficou nervoso' = he became nervous. Contrast: 'estava nervoso' = was nervous (ongoing state at that time); 'é nervoso' would describe him as a nervous person by nature." },
+  { en: "The cake turned out delicious.", pt: "O bolo ficou delicioso.", group: "Past", batch: 1,
+    note: "Ficar also means 'to turn out / end up' — the result of a process. Compare with 'foi delicioso' (it was delicious — the overall experience) and 'teve um sabor delicioso' (it had a delicious flavor — a property it possessed). 'Ficou' zooms in on the final state something arrived at." },
 
   // Prepositions & contractions
   { en: "I go to the school.", pt: "Eu vou {para_a} escola.",
@@ -532,10 +540,12 @@ const ALL_CARDS = [
 ];
 
 const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions", "Questions"];
+const LATEST_BATCH = 1;
 
 const MAX_CARTESIAN = 32;
 
 let activeGroups = new Set(GROUPS);
+let showOnlyLatestBatch = false;
 let deck = [];
 let current = 0;
 let known = new Set();
@@ -629,8 +639,14 @@ for (const card of ALL_CARDS) expandCandidates(card);
 
 // ---- Deck management --------------------------------------------------------
 
+function getFilteredCards() {
+  return ALL_CARDS.filter(card =>
+    activeGroups.has(card.group) && (!showOnlyLatestBatch || card.batch === LATEST_BATCH)
+  );
+}
+
 function buildDeck() {
-  deck = shuffle(ALL_CARDS.filter(card => activeGroups.has(card.group)));
+  deck = shuffle(getFilteredCards());
   current = 0;
   known = new Set();
   answered = false;
@@ -652,10 +668,18 @@ function toggleGroup(group) {
 
 function renderFilters() {
   const row = document.getElementById("filterRow");
-  row.innerHTML = GROUPS.map(group => {
+  const groupTags = GROUPS.map(group => {
     const safeGroup = group.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     return `<button class="fc-tag ${activeGroups.has(group) ? "active" : ""}" onclick="toggleGroup('${safeGroup}')">${escapeHtml(group)}</button>`;
   }).join("");
+  const latestTag = `<button class="fc-tag ${showOnlyLatestBatch ? "active" : ""}" onclick="toggleLatestBatch()">Only new sentences</button>`;
+  row.innerHTML = groupTags + latestTag;
+}
+
+function toggleLatestBatch() {
+  showOnlyLatestBatch = !showOnlyLatestBatch;
+  renderFilters();
+  buildDeck();
 }
 
 function updateStats() {
@@ -691,10 +715,13 @@ function render() {
   const remaining = deck.filter((_, i) => !known.has(i));
 
   if (deck.length === 0) {
+    const subtitle = showOnlyLatestBatch
+      ? "No cards match the current groups in the latest batch."
+      : "Pick at least one sentence group to keep practicing.";
     area.innerHTML = `
       <div class="card done-screen">
         <h2>No matching cards</h2>
-        <p>Pick at least one sentence group to keep practicing.</p>
+        <p>${subtitle}</p>
       </div>
     `;
     return;
