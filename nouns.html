@@ -495,10 +495,22 @@ const ALL_CARDS = [
   { en: "the bee", pt: "a abelha", article: "a", noun: "abelha", gender: "feminine", pronIpa: "[a a'beʎɐ]", pronHint: "ah ah-BEH-lyah", example: "A abelha faz mel.", exampleEn: "The bee makes honey.", group: "insects" },
   { en: "the wasp", pt: "a vespa", article: "a", noun: "vespa", gender: "feminine", pronIpa: "[a 'vɛspɐ]", pronHint: "ah VEHS-pah", example: "A vespa construiu um ninho.", exampleEn: "The wasp built a nest.", group: "insects" },
   { en: "the butterfly", pt: "a borboleta", article: "a", noun: "borboleta", gender: "feminine", pronIpa: "[a boʁbo'letɐ]", pronHint: "ah bohr-boh-LEH-tah", example: "A borboleta pousou na flor.", exampleEn: "The butterfly landed on the flower.", group: "insects" },
-  { en: "the spider", pt: "a aranha", article: "a", noun: "aranha", gender: "feminine", pronIpa: "[a a'ɾɐɲɐ]", pronHint: "ah ah-RAH-nyah", example: "A aranha teceu uma teia.", exampleEn: "The spider spun a web.", group: "insects", note: "Technically an arachnid, not an insect, but grouped here for practical vocabulary purposes." }
+  { en: "the spider", pt: "a aranha", article: "a", noun: "aranha", gender: "feminine", pronIpa: "[a a'ɾɐɲɐ]", pronHint: "ah ah-RAH-nyah", example: "A aranha teceu uma teia.", exampleEn: "The spider spun a web.", group: "insects", note: "Technically an arachnid, not an insect, but grouped here for practical vocabulary purposes." },
+
+  { en: "the t-shirt", pt: "a camiseta", article: "a", noun: "camiseta", gender: "feminine", pronIpa: "[a kami'zetɐ]", pronHint: "ah kah-mee-ZEH-tah", example: "A camiseta está suja.", exampleEn: "The t-shirt is dirty.", group: "clothing", batch: 1 },
+  { en: "the shirt", pt: "a camisa", article: "a", noun: "camisa", gender: "feminine", pronIpa: "[a ka'mizɐ]", pronHint: "ah kah-MEE-zah", example: "A camisa está no armário.", exampleEn: "The shirt is in the wardrobe.", group: "clothing", batch: 1, note: "Camisa = button-up shirt; camiseta = t-shirt. Easy pair to mix up." },
+  { en: "the pants", pt: "a calça", article: "a", noun: "calça", gender: "feminine", pronIpa: "[a 'kawsɐ]", pronHint: "ah KOW-sah", example: "A calça está na gaveta.", exampleEn: "The pants are in the drawer.", group: "clothing", batch: 1 },
+  { en: "the dress", pt: "o vestido", article: "o", noun: "vestido", gender: "masculine", pronIpa: "[u ves'tʃidu]", pronHint: "oo ves-CHEE-doo", example: "O vestido está pendurado no armário.", exampleEn: "The dress is hanging in the wardrobe.", group: "clothing", batch: 1 },
+  { en: "the shoe", pt: "o sapato", article: "o", noun: "sapato", gender: "masculine", pronIpa: "[u sa'patu]", pronHint: "oo sah-PAH-too", example: "O sapato está sujo.", exampleEn: "The shoe is dirty.", group: "clothing", batch: 1 },
+  { en: "the sandal", pt: "a sandália", article: "a", noun: "sandália", gender: "feminine", pronIpa: "[a sɐ̃'daʎɐ]", pronHint: "ah sahn-DAH-lyah", example: "A sandália é perfeita para a praia.", exampleEn: "The sandal is perfect for the beach.", group: "clothing", batch: 1 },
+  { en: "the shorts / board shorts", pt: "a bermuda", article: "a", noun: "bermuda", gender: "feminine", pronIpa: "[a beʁ'mudɐ]", pronHint: "ah behr-MOO-dah", example: "A bermuda é ótima para a praia.", exampleEn: "The shorts are great for the beach.", group: "clothing", batch: 1 },
+  { en: "the bikini", pt: "o biquíni", article: "o", noun: "biquíni", gender: "masculine", pronIpa: "[u bi'kini]", pronHint: "oo bee-KEE-nee", example: "O biquíni está pendurado no banheiro.", exampleEn: "The bikini is hanging in the bathroom.", group: "clothing", batch: 1 },
+  { en: "the sneaker", pt: "o tênis", article: "o", noun: "tênis", gender: "masculine", pronIpa: "[u 'tenis]", pronHint: "oo TEH-nees", example: "O tênis está molhado de chuva.", exampleEn: "The sneaker is wet from the rain.", group: "clothing", batch: 1, note: "Tênis also means the sport tennis — context tells them apart." },
+  { en: "the hat", pt: "o chapéu", article: "o", noun: "chapéu", gender: "masculine", pronIpa: "[u ʃa'pɛw]", pronHint: "oo shah-PEH-oo", example: "O chapéu protege do sol.", exampleEn: "The hat protects from the sun.", group: "clothing", batch: 1 },
+  { en: "the jacket / coat", pt: "o casaco", article: "o", noun: "casaco", gender: "masculine", pronIpa: "[u ka'zaku]", pronHint: "oo kah-ZAH-koo", example: "O casaco está no cabide.", exampleEn: "The jacket is on the hanger.", group: "clothing", batch: 1 }
 ];
 
-const GROUPS = ["people", "home & food", "city & travel", "work & study", "time & nature", "animals", "insects"];
+const GROUPS = ["people", "home & food", "city & travel", "work & study", "time & nature", "animals", "insects", "clothing"];
 const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
 let activeGroups = new Set(GROUPS);
 let showOnlyLatestBatch = false;
