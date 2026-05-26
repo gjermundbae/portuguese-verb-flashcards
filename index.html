@@ -1047,7 +1047,7 @@ const VERB_ENTRIES = [
 const ALL_CARDS = expandVerbEntries(VERB_ENTRIES);
 
 const GROUPS = ["ser / estar", "irregular", "-ar verbs", "-er verbs", "-ir verbs"];
-const LATEST_BATCH = 1;
+const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
 let activeGroups = new Set(GROUPS);
 let showOnlyLatestBatch = false;
 let deck = [], current = 0, known = new Set(), answered = false, perfect = true;

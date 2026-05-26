@@ -497,6 +497,8 @@ const ALL_CARDS = [
     note: "Ficar = to become (a change of state). 'Ficou nervoso' = he became nervous. Contrast: 'estava nervoso' = was nervous (ongoing state at that time); 'é nervoso' would describe him as a nervous person by nature." },
   { en: "The cake turned out delicious.", pt: "O bolo ficou delicioso.", group: "Past", batch: 1,
     note: "Ficar also means 'to turn out / end up' — the result of a process. Compare with 'foi delicioso' (it was delicious — the overall experience) and 'teve um sabor delicioso' (it had a delicious flavor — a property it possessed). 'Ficou' zooms in on the final state something arrived at." },
+  { en: "I called you 5 minutes ago.", pt: "Eu liguei faz 5 minutos.", group: "Past", batch: 2,
+    note: "Spoken BR uses 'faz X tempo' for time elapsed — not 'há X tempo' (PT-PT/formal). Same pattern: 'faz uma hora', 'faz 3 dias', 'faz um mês'." },
 
   // Prepositions & contractions
   { en: "I go to the school.", pt: "Eu vou {para_a} escola.",
@@ -525,6 +527,8 @@ const ALL_CARDS = [
     note: "Para = recipient or purpose ('for you', 'in order to'). Por = cause or exchange ('because of', 'in exchange for'). They are not interchangeable." },
   { en: "I traveled by car.", pt: "Eu viajei de carro.", group: "Prepositions",
     note: "Means of transport uses 'de': de carro, de ônibus, de avião, de bicicleta. The one exception is 'a pé' (on foot)." },
+  { en: "The movie starts in 2 hours.", pt: "O filme começa daqui a 2 horas.", group: "Prepositions", batch: 2,
+    note: "'Daqui a + time' = 'in X time from now': daqui a 2 horas, daqui a 3 dias. You may also hear 'em 2 horas', but 'daqui a' anchors the countdown explicitly to the present moment." },
 
   // Questions
   { en: "How are you?", pt: "Como você está?", group: "Questions",
@@ -540,7 +544,7 @@ const ALL_CARDS = [
 ];
 
 const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions", "Questions"];
-const LATEST_BATCH = 1;
+const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
 
 const MAX_CARTESIAN = 32;
 

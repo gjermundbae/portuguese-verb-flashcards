@@ -499,7 +499,9 @@ const ALL_CARDS = [
 ];
 
 const GROUPS = ["people", "home & food", "city & travel", "work & study", "time & nature", "animals", "insects"];
+const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
 let activeGroups = new Set(GROUPS);
+let showOnlyLatestBatch = false;
 let deck = [];
 let current = 0;
 let known = new Set();
@@ -572,8 +574,15 @@ function getSentenceSpec(card) {
   };
 }
 
+function getFilteredCards() {
+  return ALL_CARDS.filter(card =>
+    activeGroups.has(card.group) &&
+    (!showOnlyLatestBatch || card.batch === LATEST_BATCH)
+  );
+}
+
 function buildDeck() {
-  deck = shuffle(ALL_CARDS.filter(card => activeGroups.has(card.group)));
+  deck = shuffle(getFilteredCards());
   current = 0;
   known = new Set();
   answered = false;
@@ -595,10 +604,18 @@ function toggleGroup(group) {
 
 function renderFilters() {
   const row = document.getElementById("filterRow");
-  row.innerHTML = GROUPS.map(group => {
+  const groupTags = GROUPS.map(group => {
     const safeGroup = group.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     return `<button class="fc-tag ${activeGroups.has(group) ? "active" : ""}" onclick="toggleGroup('${safeGroup}')">${escapeHtml(group)}</button>`;
   }).join("");
+  const latestTag = `<button class="fc-tag ${showOnlyLatestBatch ? "active" : ""}" onclick="toggleLatestBatch()">Only new nouns</button>`;
+  row.innerHTML = groupTags + latestTag;
+}
+
+function toggleLatestBatch() {
+  showOnlyLatestBatch = !showOnlyLatestBatch;
+  renderFilters();
+  buildDeck();
 }
 
 function updateStats() {
