@@ -437,6 +437,8 @@ const ALL_CARDS = [
     note: "Ler is irregular: eu leio, você lê, nós lemos, eles leem. 'Todo dia' (every day) is more idiomatic than 'cada dia'." },
   { en: "I don't speak English.", pt: "Eu não falo inglês.", group: "Present basics",
     note: "Negation is simply 'não' before the verb — no auxiliary needed. Languages take no article: falo inglês, falo português." },
+  { en: "I think Norway can win the World Cup.", batch: 3, pt: "Eu acho que a Noruega pode ganhar a Copa do Mundo.", group: "Present basics",
+    note: "'Que' after 'acho' is mandatory — Portuguese never drops the connector the way English drops 'that' ('I think Norway can win'). Template: 'Acho que [alguém] pode [verbo].' = 'I think [someone] can [verb].'" },
 
   // Ser vs Estar
   { en: "I am Brazilian.", pt: "Eu sou {gender_br}.",
@@ -467,8 +469,10 @@ const ALL_CARDS = [
   // Past (pretérito perfeito)
   { en: "I ate bread yesterday.", pt: "Eu comi pão ontem.", group: "Past",
     note: "Pretérito perfeito of comer: eu comi, você comeu, nós comemos, eles comeram. Used for completed past actions." },
-  { en: "She went to the market.", pt: "Ela foi ao mercado.", group: "Past",
-    note: "Foi is the past of both ir and ser — context tells you which. a + o contracts to ao (never write 'a o')." },
+  { en: "She went to the market.", pt: "Ela foi {dest_mercado}.",
+    slots: { dest_mercado: ["ao mercado", "pro mercado"] },
+    group: "Past",
+    note: "Foi is the past of both ir and ser — context tells you which. Two natural options: 'ao mercado' (a + o = ao, more written/formal) and 'pro mercado' (para + o = pro, very common spoken BR). Both are correct in Rio." },
   { en: "We watched a movie yesterday.", pt: "Nós {assistimos_filme} ontem.",
     slots: { assistimos_filme: ["assistimos um filme", "assistimos a um filme"] },
     group: "Past",
@@ -498,7 +502,7 @@ const ALL_CARDS = [
   { en: "The cake turned out delicious.", pt: "O bolo ficou delicioso.", group: "Past", batch: 1,
     note: "Ficar also means 'to turn out / end up' — the result of a process. Compare with 'foi delicioso' (it was delicious — the overall experience) and 'teve um sabor delicioso' (it had a delicious flavor — a property it possessed). 'Ficou' zooms in on the final state something arrived at." },
   { en: "I called you 5 minutes ago.", pt: "Eu liguei faz 5 minutos.", group: "Past", batch: 2,
-    note: "Spoken BR uses 'faz X tempo' for time elapsed — not 'há X tempo' (PT-PT/formal). Same pattern: 'faz uma hora', 'faz 3 dias', 'faz um mês'." },
+    note: "Ligar = to call (by phone). Past: eu liguei, você ligou, nós ligamos, eles ligaram. Spoken BR uses 'faz X tempo' for time elapsed — not 'há X tempo' (PT-PT/formal). Same pattern: 'faz uma hora', 'faz 3 dias', 'faz um mês'." },
 
   // Prepositions & contractions
   { en: "I go to the school.", pt: "Eu vou {para_a} escola.",
@@ -540,10 +544,49 @@ const ALL_CARDS = [
   { en: "Why did she leave?", pt: "Por que ela saiu?", group: "Questions",
     note: "'Por que' (two words) asks 'why?'. 'Porque' (one word) answers 'because'. Sair past: eu saí, ela saiu, nós saímos, eles saíram." },
   { en: "How much does the coffee cost?", pt: "Quanto custa o café?", group: "Questions",
-    note: "Quanto agrees with what it quantifies: quanto (m.sg), quanta (f.sg), quantos (m.pl), quantas (f.pl). The subject can follow the verb in questions: 'custa o café'." }
+    note: "Quanto agrees with what it quantifies: quanto (m.sg), quanta (f.sg), quantos (m.pl), quantas (f.pl). The subject can follow the verb in questions: 'custa o café'." },
+
+  // Time expressions
+  { en: "I will stay in Brazil from February to March.",
+    pt: "Eu vou ficar no Brasil de fevereiro {a_ate} março.",
+    slots: { a_ate: ["a", "até"] },
+    group: "Time expressions",
+    batch: 3,
+    note: "'De X a Y' = from X to Y for date ranges. Both 'a' and 'até' are natural: 'de fevereiro a março' (cleaner/written) vs 'de fevereiro até março' (more emphatic, very common spoken). Months take no article, so no contraction needed." },
+  { en: "I work from 9 to 5.",
+    pt: "Eu trabalho das 9 às 17.",
+    group: "Time expressions",
+    batch: 3,
+    note: "Clock-time ranges use mandatory contractions: 'das' (de + as) and 'às' (a + as). Horas is always feminine plural — so always das/às, never dos/aos. Brazil commonly uses 24-hour time in writing: 17 = 5pm." },
+  { en: "Last week I worked a lot.",
+    pt: "Semana passada eu trabalhei muito.",
+    group: "Time expressions",
+    batch: 3,
+    note: "'Semana passada' = last week, placed before the subject with no preposition. Same pattern: 'mês passado', 'ano passado', 'fim de semana passado'." },
+  { en: "This weekend I'm going to the beach.",
+    pt: "Esse fim de semana eu vou {dest_praia}.",
+    slots: { dest_praia: ["pra praia", "para a praia"] },
+    group: "Time expressions",
+    batch: 3,
+    note: "'Esse fim de semana' = this weekend. 'Esse' is the everyday spoken-BR demonstrative for things close in time. 'Fim de semana' is masculine: o fim de semana." },
+  { en: "How long are you staying in Brazil?",
+    pt: "Quanto tempo você vai ficar no Brasil?",
+    group: "Time expressions",
+    batch: 3,
+    note: "'Quanto tempo' = how long (lit. how much time). The natural answer uses 'de X a Y', 'até Y', or 'por X semanas'." },
+  { en: "I've been here for two months.",
+    pt: "Faz dois meses que eu estou aqui.",
+    group: "Time expressions",
+    batch: 3,
+    note: "'Faz X tempo que + verb' = I've been doing this for X — the action is still ongoing. Compare: 'faz dois meses' alone = 'two months ago' (a completed, finished action)." },
+  { en: "I'm staying until the end of August.",
+    pt: "Eu vou ficar até o fim de agosto.",
+    group: "Time expressions",
+    batch: 3,
+    note: "'Até' = until / through. 'Fim de + month' = end of [month]. The article goes with 'fim' (o fim), not with the month name (de agosto, no article)." }
 ];
 
-const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions", "Questions"];
+const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions", "Questions", "Time expressions"];
 const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
 
 const MAX_CARTESIAN = 32;
