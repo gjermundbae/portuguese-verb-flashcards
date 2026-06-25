@@ -85,12 +85,36 @@
 
   .filters {
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 1.5rem;
   }
 
+  .filter-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    width: 64px;
+    flex-shrink: 0;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
   .fc-tag {
+    position: relative;
     font-size: 0.7rem;
     padding: 5px 12px;
     border-radius: 999px;
@@ -110,6 +134,37 @@
     background: var(--text);
     color: var(--bg);
     border-color: var(--text);
+  }
+
+  .fc-tag.disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .batch-chip { min-width: 34px; text-align: center; }
+
+  .batch-chip.done {
+    border-color: var(--green-light);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .batch-chip.done.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--bg);
+  }
+
+  .batch-chip .crown {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.78rem;
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
   }
 
   .stats {
@@ -737,14 +792,14 @@
 <script>
 // One block per verb; forms are eu → você → nós → vocês (expanded to ALL_CARDS at load).
 const VERB_ENTRIES = [
-  { verb:"frequentar", group:"-ar verbs",
+  { verb:"frequentar", group:"-ar verbs", batch:5,
     forms:[
       { form:"frequentava", pron:"freh-kwen-TAH-vah", meaning:"I used to frequent / would go to", example:"Quando era criança, eu frequentava aquela praia toda semana." },
       { form:"frequentava", pron:"freh-kwen-TAH-vah", meaning:"you used to frequent / would go to", example:"Você frequentava muito a casa dela?" },
       { form:"frequentávamos", pron:"freh-kwen-TAH-vah-moosh", meaning:"we used to frequent / would go to", example:"Nós frequentávamos o mesmo bar todo sábado." },
       { form:"frequentavam", pron:"freh-kwen-TAH-vahng", meaning:"you all used to frequent / would go to", example:"Vocês frequentavam aquele restaurante antes?" }
     ] },
-  { verb:"odiar", group:"-ar verbs",
+  { verb:"odiar", group:"-ar verbs", batch:5,
     forms:[
       { form:"odiava", pron:"oh-djee-AH-vah", meaning:"I used to hate", example:"Eu odiava acordar cedo na escola." },
       { form:"odiava", pron:"oh-djee-AH-vah", meaning:"you used to hate", example:"Você odiava fazer dever de casa?" },
@@ -752,35 +807,35 @@ const VERB_ENTRIES = [
       { form:"odiavam", pron:"oh-djee-AH-vahng", meaning:"you all used to hate", example:"Vocês odiavam aquela professora?" }
     ],
     note:"Present tense odiar is irregular (eu odeio), but the imperfeito is regular -ar." },
-  { verb:"escrever", group:"-er verbs",
+  { verb:"escrever", group:"-er verbs", batch:4,
     forms:[
       { form:"escrevia", pron:"es-kreh-VEE-ah", meaning:"I used to write / was writing", example:"Eu escrevia cartas para a minha avó todo mês." },
       { form:"escrevia", pron:"es-kreh-VEE-ah", meaning:"you used to write / were writing", example:"Você escrevia no diário todo dia?" },
       { form:"escrevíamos", pron:"es-kreh-VEE-ah-moosh", meaning:"we used to write / were writing", example:"Nós escrevíamos as respostas no quadro." },
       { form:"escreviam", pron:"es-kreh-VEE-ahng", meaning:"you all used to write / were writing", example:"Vocês escreviam muito no colégio?" }
     ] },
-  { verb:"ler", group:"-er verbs",
+  { verb:"ler", group:"-er verbs", batch:3,
     forms:[
       { form:"lia", pron:"LEE-ah", meaning:"I used to read / was reading", example:"Eu lia antes de dormir todo dia." },
       { form:"lia", pron:"LEE-ah", meaning:"you used to read / were reading", example:"Você lia muito quando era criança?" },
       { form:"líamos", pron:"LEE-ah-moosh", meaning:"we used to read / were reading", example:"Nós líamos o jornal de manhã." },
       { form:"liam", pron:"LEE-ahng", meaning:"you all used to read / were reading", example:"Vocês liam revistas em casa?" }
     ] },
-  { verb:"decidir", group:"-ir verbs",
+  { verb:"decidir", group:"-ir verbs", batch:2,
     forms:[
       { form:"decidia", pron:"deh-see-DJEE-ah", meaning:"I used to decide / would decide", example:"Eu sempre decidia o que pedir antes de chegar." },
       { form:"decidia", pron:"deh-see-DJEE-ah", meaning:"you used to decide / would decide", example:"Você decidia tudo sozinho?" },
       { form:"decidíamos", pron:"deh-see-DJEE-ah-moosh", meaning:"we used to decide / would decide", example:"Nós decidíamos juntos onde almoçar." },
       { form:"decidiam", pron:"deh-see-DJEE-ahng", meaning:"you all used to decide / would decide", example:"Vocês decidiam rápido ou demorava?" }
     ] },
-  { verb:"sugerir", group:"-ir verbs",
+  { verb:"sugerir", group:"-ir verbs", batch:5,
     forms:[
       { form:"sugeria", pron:"soo-jeh-REE-ah", meaning:"I used to suggest", example:"Eu sempre sugeria o mesmo restaurante." },
       { form:"sugeria", pron:"soo-jeh-REE-ah", meaning:"you used to suggest", example:"Você sugeria filmes para a gente?" },
       { form:"sugeríamos", pron:"soo-jeh-REE-ah-moosh", meaning:"we used to suggest", example:"Nós sugeríamos lugares para visitar." },
       { form:"sugeriam", pron:"soo-jeh-REE-ahng", meaning:"you all used to suggest", example:"Vocês sugeriam ideias na reunião?" }
     ] },
-  { verb:"ser", group:"irregular",
+  { verb:"ser", group:"irregular", batch:1,
     forms:[
       { form:"era", pron:"EH-rah", meaning:"I was / used to be", example:"Eu era muito tímido quando era criança." },
       { form:"era", pron:"EH-rah", meaning:"you were / used to be", example:"Você era assim antes também?" },
@@ -788,21 +843,21 @@ const VERB_ENTRIES = [
       { form:"eram", pron:"EH-rahng", meaning:"you all were / used to be", example:"Vocês eram amigos no colégio?" }
     ],
     note:"Ser is one of only four truly irregular verbs in the imperfeito (with ter, vir, pôr)." },
-  { verb:"ter", group:"irregular",
+  { verb:"ter", group:"irregular", batch:1,
     forms:[
       { form:"tinha", pron:"CHEE-nyah", meaning:"I had / used to have", example:"Eu tinha um cachorro quando era pequeno." },
       { form:"tinha", pron:"CHEE-nyah", meaning:"you had / used to have", example:"Você tinha bicicleta quando era criança?" },
       { form:"tínhamos", pron:"CHEE-nyah-moosh", meaning:"we had / used to have", example:"Nós tínhamos uma casa na praia." },
       { form:"tinham", pron:"CHEE-nyahng", meaning:"you all had / used to have", example:"Vocês tinham aula aos sábados?" }
     ] },
-  { verb:"vir", group:"irregular",
+  { verb:"vir", group:"irregular", batch:2,
     forms:[
       { form:"vinha", pron:"VEE-nyah", meaning:"I used to come / was coming", example:"Eu vinha aqui todo domingo." },
       { form:"vinha", pron:"VEE-nyah", meaning:"you used to come / were coming", example:"Você vinha de ônibus antes?" },
       { form:"vínhamos", pron:"VEE-nyah-moosh", meaning:"we used to come / were coming", example:"Nós vínhamos juntos para a aula." },
       { form:"vinham", pron:"VEE-nyahng", meaning:"you all used to come / were coming", example:"Vocês vinham sempre nesse horário?" }
     ] },
-  { verb:"pôr", group:"irregular",
+  { verb:"pôr", group:"irregular", batch:5,
     forms:[
       { form:"punha", pron:"POO-nyah", meaning:"I used to put", example:"Eu punha açúcar no café antes." },
       { form:"punha", pron:"POO-nyah", meaning:"you used to put", example:"Você punha tudo na mochila?" },
@@ -880,98 +935,98 @@ const VERB_ENTRIES = [
       { form:"morávamos", pron:"moh-RAH-vah-moosh", meaning:"we used to live / were living", example:"Nós morávamos em Copacabana naquela época." },
       { form:"moravam", pron:"moh-RAH-vahng", meaning:"you all used to live / were living", example:"Vocês moravam no mesmo prédio?" }
     ] },
-  { verb:"comer", group:"-er verbs", batch:1,
+  { verb:"comer", group:"-er verbs", batch:2,
     forms:[
       { form:"comia", pron:"koh-MEE-ah", meaning:"I used to eat / was eating", example:"Eu comia feijão todo dia." },
       { form:"comia", pron:"koh-MEE-ah", meaning:"you used to eat / were eating", example:"Você comia muito doce?" },
       { form:"comíamos", pron:"koh-MEE-ah-moosh", meaning:"we used to eat / were eating", example:"Nós comíamos na casa da vó aos domingos." },
       { form:"comiam", pron:"koh-MEE-ahng", meaning:"you all used to eat / were eating", example:"Vocês comiam juntos no intervalo?" }
     ] },
-  { verb:"beber", group:"-er verbs", batch:1,
+  { verb:"beber", group:"-er verbs", batch:2,
     forms:[
       { form:"bebia", pron:"beh-BEE-ah", meaning:"I used to drink / was drinking", example:"Eu bebia leite todo dia de manhã." },
       { form:"bebia", pron:"beh-BEE-ah", meaning:"you used to drink / were drinking", example:"Você bebia café quando era adolescente?" },
       { form:"bebíamos", pron:"beh-BEE-ah-moosh", meaning:"we used to drink / were drinking", example:"Nós bebíamos suco natural em casa." },
       { form:"bebiam", pron:"beh-BEE-ahng", meaning:"you all used to drink / were drinking", example:"Vocês bebiam água durante o treino?" }
     ] },
-  { verb:"conhecer", group:"-er verbs", batch:1,
+  { verb:"conhecer", group:"-er verbs", batch:2,
     forms:[
       { form:"conhecia", pron:"koh-nyeh-SEE-ah", meaning:"I used to know / was acquainted with", example:"Eu conhecia todo mundo no bairro." },
       { form:"conhecia", pron:"koh-nyeh-SEE-ah", meaning:"you used to know / were acquainted with", example:"Você conhecia a família dele?" },
       { form:"conhecíamos", pron:"koh-nyeh-SEE-ah-moosh", meaning:"we used to know / were acquainted with", example:"Nós conhecíamos aquele lugar desde criança." },
       { form:"conheciam", pron:"koh-nyeh-SEE-ahng", meaning:"you all used to know / were acquainted with", example:"Vocês conheciam a professora antes?" }
     ] },
-  { verb:"abrir", group:"-ir verbs", batch:1,
+  { verb:"abrir", group:"-ir verbs", batch:2,
     forms:[
       { form:"abria", pron:"ah-BREE-ah", meaning:"I used to open / was opening", example:"Eu abria a janela todo dia de manhã." },
       { form:"abria", pron:"ah-BREE-ah", meaning:"you used to open / were opening", example:"Você abria a porta para os visitantes?" },
       { form:"abríamos", pron:"ah-BREE-ah-moosh", meaning:"we used to open / were opening", example:"Nós abríamos a loja às oito." },
       { form:"abriam", pron:"ah-BREE-ahng", meaning:"you all used to open / were opening", example:"Vocês abriam os presentes no Natal?" }
     ] },
-  { verb:"partir", group:"-ir verbs", batch:1,
+  { verb:"partir", group:"-ir verbs", batch:2,
     forms:[
       { form:"partia", pron:"par-CHEE-ah", meaning:"I used to leave / depart / was leaving", example:"Eu partia de casa cedo para o trabalho." },
       { form:"partia", pron:"par-CHEE-ah", meaning:"you used to leave / depart / were leaving", example:"Você partia no mesmo horário todo dia?" },
       { form:"partíamos", pron:"par-CHEE-ah-moosh", meaning:"we used to leave / depart / were leaving", example:"Nós partíamos juntos para a escola." },
       { form:"partiam", pron:"par-CHEE-ahng", meaning:"you all used to leave / depart / were leaving", example:"Vocês partiam de ônibus?" }
     ] },
-  { verb:"assistir", group:"-ir verbs", batch:1,
+  { verb:"assistir", group:"-ir verbs", batch:2,
     forms:[
       { form:"assistia", pron:"ah-sees-CHEE-ah", meaning:"I used to watch / attend", example:"Eu assistia desenho todo dia depois da escola." },
       { form:"assistia", pron:"ah-sees-CHEE-ah", meaning:"you used to watch / attend", example:"Você assistia novela com a sua mãe?" },
       { form:"assistíamos", pron:"ah-sees-CHEE-ah-moosh", meaning:"we used to watch / attend", example:"Nós assistíamos filme no sábado à noite." },
       { form:"assistiam", pron:"ah-sees-CHEE-ahng", meaning:"you all used to watch / attend", example:"Vocês assistiam futebol na TV?" }
     ] },
-  { verb:"ver", group:"irregular", batch:1,
+  { verb:"ver", group:"irregular", batch:2,
     forms:[
       { form:"via", pron:"VEE-ah", meaning:"I used to see / was seeing", example:"Eu via meus primos todo fim de semana." },
       { form:"via", pron:"VEE-ah", meaning:"you used to see / were seeing", example:"Você via muitos filmes quando era criança?" },
       { form:"víamos", pron:"VEE-ah-moosh", meaning:"we used to see / were seeing", example:"Nós víamos o pôr do sol da varanda." },
       { form:"viam", pron:"VEE-ahng", meaning:"you all used to see / were seeing", example:"Vocês viam aquele programa na Globo?" }
     ] },
-  { verb:"dar", group:"-ar verbs", batch:1,
+  { verb:"dar", group:"-ar verbs", batch:2,
     forms:[
       { form:"dava", pron:"DAH-vah", meaning:"I used to give / was giving", example:"Eu dava comida para o gato todo dia." },
       { form:"dava", pron:"DAH-vah", meaning:"you used to give / were giving", example:"Você dava presente no aniversário dela?" },
       { form:"dávamos", pron:"DAH-vah-moosh", meaning:"we used to give / were giving", example:"Nós dávamos aula de reforço no sábado." },
       { form:"davam", pron:"DAH-vahng", meaning:"you all used to give / were giving", example:"Vocês davam café da manhã cedo?" }
     ] },
-  { verb:"dizer", group:"-er verbs", batch:1,
+  { verb:"dizer", group:"-er verbs", batch:2,
     forms:[
       { form:"dizia", pron:"djee-ZEE-ah", meaning:"I used to say / was saying", example:"Eu dizia a verdade para a minha mãe." },
       { form:"dizia", pron:"djee-ZEE-ah", meaning:"you used to say / were saying", example:"Você dizia tudo o que pensava?" },
       { form:"dizíamos", pron:"djee-ZEE-ah-moosh", meaning:"we used to say / were saying", example:"Nós dizíamos piada na hora do almoço." },
       { form:"diziam", pron:"djee-ZEE-ahng", meaning:"you all used to say / were saying", example:"Vocês diziam que iam voltar cedo?" }
     ] },
-  { verb:"precisar", group:"-ar verbs", batch:1,
+  { verb:"precisar", group:"-ar verbs", batch:2,
     forms:[
       { form:"precisava", pron:"preh-see-ZAH-vah", meaning:"I used to need", example:"Eu precisava de ajuda com a lição." },
       { form:"precisava", pron:"preh-see-ZAH-vah", meaning:"you used to need", example:"Você precisava acordar cedo?" },
       { form:"precisávamos", pron:"preh-see-ZAH-vah-moosh", meaning:"we used to need", example:"Nós precisávamos estudar para a prova." },
       { form:"precisavam", pron:"preh-see-ZAH-vahng", meaning:"you all used to need", example:"Vocês precisavam de mais tempo?" }
     ] },
-  { verb:"ficar", group:"-ar verbs", batch:1,
+  { verb:"ficar", group:"-ar verbs", batch:3,
     forms:[
       { form:"ficava", pron:"fee-KAH-vah", meaning:"I used to stay / remain / was staying", example:"Eu ficava em casa nas férias." },
       { form:"ficava", pron:"fee-KAH-vah", meaning:"you used to stay / remain / were staying", example:"Você ficava até tarde na festa?" },
       { form:"ficávamos", pron:"fee-KAH-vah-moosh", meaning:"we used to stay / remain / were staying", example:"Nós ficávamos no parque até o anoitecer." },
       { form:"ficavam", pron:"fee-KAH-vahng", meaning:"you all used to stay / remain / were staying", example:"Vocês ficavam com os avós no verão?" }
     ] },
-  { verb:"achar", group:"-ar verbs", batch:1,
+  { verb:"achar", group:"-ar verbs", batch:3,
     forms:[
       { form:"achava", pron:"ah-SHAH-vah", meaning:"I used to think / find", example:"Eu achava aquele filme muito engraçado." },
       { form:"achava", pron:"ah-SHAH-vah", meaning:"you used to think / find", example:"Você achava que ia chover?" },
       { form:"achávamos", pron:"ah-SHAH-vah-moosh", meaning:"we used to think / find", example:"Nós achávamos o lugar bonito." },
       { form:"achavam", pron:"ah-SHAH-vahng", meaning:"you all used to think / find", example:"Vocês achavam difícil aprender inglês?" }
     ] },
-  { verb:"chegar", group:"-ar verbs", batch:1,
+  { verb:"chegar", group:"-ar verbs", batch:3,
     forms:[
       { form:"chegava", pron:"sheh-GAH-vah", meaning:"I used to arrive / was arriving", example:"Eu chegava em casa às seis." },
       { form:"chegava", pron:"sheh-GAH-vah", meaning:"you used to arrive / were arriving", example:"Você chegava sempre atrasado?" },
       { form:"chegávamos", pron:"sheh-GAH-vah-moosh", meaning:"we used to arrive / were arriving", example:"Nós chegávamos cedo no trabalho." },
       { form:"chegavam", pron:"sheh-GAH-vahng", meaning:"you all used to arrive / were arriving", example:"Vocês chegavam de ônibus?" }
     ] },
-  { verb:"sair", group:"-ir verbs", batch:1,
+  { verb:"sair", group:"-ir verbs", batch:3,
     forms:[
       { form:"saía", pron:"sah-EE-ah", meaning:"I used to leave / go out / was leaving", example:"Eu saía com os meus amigos todo sábado." },
       { form:"saía", pron:"sah-EE-ah", meaning:"you used to leave / go out / were leaving", example:"Você saía para correr de manhã?" },
@@ -979,427 +1034,427 @@ const VERB_ENTRIES = [
       { form:"saíam", pron:"sah-EE-ahng", meaning:"you all used to leave / go out / were leaving", example:"Vocês saíam do trabalho às cinco?" }
     ],
     note:"Acute on í throughout." },
-  { verb:"levar", group:"-ar verbs", batch:1,
+  { verb:"levar", group:"-ar verbs", batch:3,
     forms:[
       { form:"levava", pron:"leh-VAH-vah", meaning:"I used to take / carry / was taking", example:"Eu levava o lanche para a escola." },
       { form:"levava", pron:"leh-VAH-vah", meaning:"you used to take / carry / were taking", example:"Você levava o cachorro no parque?" },
       { form:"levávamos", pron:"leh-VAH-vah-moosh", meaning:"we used to take / carry / were taking", example:"Nós levávamos flores para a professora." },
       { form:"levavam", pron:"leh-VAH-vahng", meaning:"you all used to take / carry / were taking", example:"Vocês levavam a bicicleta na viagem?" }
     ] },
-  { verb:"chamar", group:"-ar verbs", batch:1,
+  { verb:"chamar", group:"-ar verbs", batch:3,
     forms:[
       { form:"chamava", pron:"shah-MAH-vah", meaning:"I used to call", example:"Eu chamava o meu cachorro de Rex." },
       { form:"chamava", pron:"shah-MAH-vah", meaning:"you used to call", example:"Você chamava a sua mãe todo dia?" },
       { form:"chamávamos", pron:"shah-MAH-vah-moosh", meaning:"we used to call", example:"Nós chamávamos a vizinha para o café." },
       { form:"chamavam", pron:"shah-MAH-vahng", meaning:"you all used to call", example:"Vocês chamavam ele de Zé?" }
     ] },
-  { verb:"pedir", group:"-ir verbs", batch:1,
+  { verb:"pedir", group:"-ir verbs", batch:3,
     forms:[
       { form:"pedia", pron:"peh-DJEE-ah", meaning:"I used to ask for / order", example:"Eu pedia pizza todo sábado." },
       { form:"pedia", pron:"peh-DJEE-ah", meaning:"you used to ask for / order", example:"Você pedia ajuda quando precisava?" },
       { form:"pedíamos", pron:"peh-DJEE-ah-moosh", meaning:"we used to ask for / order", example:"Nós pedíamos comida no mesmo restaurante." },
       { form:"pediam", pron:"peh-DJEE-ahng", meaning:"you all used to ask for / order", example:"Vocês pediam refrigerante no almoço?" }
     ] },
-  { verb:"dormir", group:"-ir verbs", batch:1,
+  { verb:"dormir", group:"-ir verbs", batch:3,
     forms:[
       { form:"dormia", pron:"dor-MEE-ah", meaning:"I used to sleep / was sleeping", example:"Eu dormia cedo quando era criança." },
       { form:"dormia", pron:"dor-MEE-ah", meaning:"you used to sleep / were sleeping", example:"Você dormia de tarde nos fins de semana?" },
       { form:"dormíamos", pron:"dor-MEE-ah-moosh", meaning:"we used to sleep / were sleeping", example:"Nós dormíamos na rede na praia." },
       { form:"dormiam", pron:"dor-MEE-ahng", meaning:"you all used to sleep / were sleeping", example:"Vocês dormiam com a luz acesa?" }
     ] },
-  { verb:"aprender", group:"-er verbs", batch:1,
+  { verb:"aprender", group:"-er verbs", batch:3,
     forms:[
       { form:"aprendia", pron:"ah-pren-DJEE-ah", meaning:"I used to learn / was learning", example:"Eu aprendia português na escola." },
       { form:"aprendia", pron:"ah-pren-DJEE-ah", meaning:"you used to learn / were learning", example:"Você aprendia piano quando era pequeno?" },
       { form:"aprendíamos", pron:"ah-pren-DJEE-ah-moosh", meaning:"we used to learn / were learning", example:"Nós aprendíamos coisas novas todo dia." },
       { form:"aprendiam", pron:"ah-pren-DJEE-ahng", meaning:"you all used to learn / were learning", example:"Vocês aprendiam rápido na aula?" }
     ] },
-  { verb:"entender", group:"-er verbs", batch:1,
+  { verb:"entender", group:"-er verbs", batch:3,
     forms:[
       { form:"entendia", pron:"en-ten-DJEE-ah", meaning:"I used to understand", example:"Eu entendia tudo o que a professora falava." },
       { form:"entendia", pron:"en-ten-DJEE-ah", meaning:"you used to understand", example:"Você entendia as instruções?" },
       { form:"entendíamos", pron:"en-ten-DJEE-ah-moosh", meaning:"we used to understand", example:"Nós entendíamos uns aos outros sem falar." },
       { form:"entendiam", pron:"en-ten-DJEE-ahng", meaning:"you all used to understand", example:"Vocês entendiam a lição?" }
     ] },
-  { verb:"comprar", group:"-ar verbs", batch:1,
+  { verb:"comprar", group:"-ar verbs", batch:3,
     forms:[
       { form:"comprava", pron:"kohm-PRAH-vah", meaning:"I used to buy / was buying", example:"Eu comprava pão na padaria todo dia." },
       { form:"comprava", pron:"kohm-PRAH-vah", meaning:"you used to buy / were buying", example:"Você comprava revista toda semana?" },
       { form:"comprávamos", pron:"kohm-PRAH-vah-moosh", meaning:"we used to buy / were buying", example:"Nós comprávamos fruta no mercado." },
       { form:"compravam", pron:"kohm-PRAH-vahng", meaning:"you all used to buy / were buying", example:"Vocês compravam ingresso antecipado?" }
     ] },
-  { verb:"ouvir", group:"-ir verbs", batch:1,
+  { verb:"ouvir", group:"-ir verbs", batch:4,
     forms:[
       { form:"ouvia", pron:"oh-VEE-ah", meaning:"I used to hear / listen / was listening", example:"Eu ouvia música no rádio todo dia." },
       { form:"ouvia", pron:"oh-VEE-ah", meaning:"you used to hear / listen / were listening", example:"Você ouvia as histórias do seu avô?" },
       { form:"ouvíamos", pron:"oh-VEE-ah-moosh", meaning:"we used to hear / listen / were listening", example:"Nós ouvíamos samba no carro." },
       { form:"ouviam", pron:"oh-VEE-ahng", meaning:"you all used to hear / listen / were listening", example:"Vocês ouviam podcast no trabalho?" }
     ] },
-  { verb:"fechar", group:"-ar verbs", batch:1,
+  { verb:"fechar", group:"-ar verbs", batch:4,
     forms:[
       { form:"fechava", pron:"feh-SHAH-vah", meaning:"I used to close / was closing", example:"Eu fechava a porta à noite." },
       { form:"fechava", pron:"feh-SHAH-vah", meaning:"you used to close / were closing", example:"Você fechava o caderno depois da aula?" },
       { form:"fechávamos", pron:"feh-SHAH-vah-moosh", meaning:"we used to close / were closing", example:"Nós fechávamos a loja às dez." },
       { form:"fechavam", pron:"feh-SHAH-vahng", meaning:"you all used to close / were closing", example:"Vocês fechavam as janelas quando chovia?" }
     ] },
-  { verb:"usar", group:"-ar verbs", batch:1,
+  { verb:"usar", group:"-ar verbs", batch:4,
     forms:[
       { form:"usava", pron:"oo-ZAH-vah", meaning:"I used to use / wear", example:"Eu usava uniforme na escola." },
       { form:"usava", pron:"oo-ZAH-vah", meaning:"you used to use / wear", example:"Você usava óculos quando era criança?" },
       { form:"usávamos", pron:"oo-ZAH-vah-moosh", meaning:"we used to use / wear", example:"Nós usávamos o mesmo computador." },
       { form:"usavam", pron:"oo-ZAH-vahng", meaning:"you all used to use / wear", example:"Vocês usavam boné no sol?" }
     ] },
-  { verb:"dirigir", group:"-ir verbs", batch:1,
+  { verb:"dirigir", group:"-ir verbs", batch:4,
     forms:[
       { form:"dirigia", pron:"djee-ree-DJEE-ah", meaning:"I used to drive / was driving", example:"Eu dirigia devagar quando aprendi." },
       { form:"dirigia", pron:"djee-ree-DJEE-ah", meaning:"you used to drive / were driving", example:"Você dirigia para o trabalho todo dia?" },
       { form:"dirigíamos", pron:"djee-ree-DJEE-ah-moosh", meaning:"we used to drive / were driving", example:"Nós dirigíamos pelo mesmo caminho." },
       { form:"dirigiam", pron:"djee-ree-DJEE-ahng", meaning:"you all used to drive / were driving", example:"Vocês dirigiam na madrugada?" }
     ] },
-  { verb:"voltar", group:"-ar verbs", batch:1,
+  { verb:"voltar", group:"-ar verbs", batch:4,
     forms:[
       { form:"voltava", pron:"vohl-TAH-vah", meaning:"I used to return / come back / was returning", example:"Eu voltava para casa antes do jantar." },
       { form:"voltava", pron:"vohl-TAH-vah", meaning:"you used to return / come back / were returning", example:"Você voltava cedo da escola?" },
       { form:"voltávamos", pron:"vohl-TAH-vah-moosh", meaning:"we used to return / come back / were returning", example:"Nós voltávamos da praia todo domingo." },
       { form:"voltavam", pron:"vohl-TAH-vahng", meaning:"you all used to return / come back / were returning", example:"Vocês voltavam tarde da festa?" }
     ] },
-  { verb:"correr", group:"-er verbs", batch:1,
+  { verb:"correr", group:"-er verbs", batch:4,
     forms:[
       { form:"corria", pron:"koh-HEE-ah", meaning:"I used to run / was running", example:"Eu corria no parque toda manhã." },
       { form:"corria", pron:"koh-HEE-ah", meaning:"you used to run / were running", example:"Você corria na escola na educação física?" },
       { form:"corríamos", pron:"koh-HEE-ah-moosh", meaning:"we used to run / were running", example:"Nós corríamos juntos no fim da tarde." },
       { form:"corriam", pron:"koh-HEE-ahng", meaning:"you all used to run / were running", example:"Vocês corriam na praia?" }
     ] },
-  { verb:"andar", group:"-ar verbs", batch:1,
+  { verb:"andar", group:"-ar verbs", batch:4,
     forms:[
       { form:"andava", pron:"an-DAH-vah", meaning:"I used to walk / go / was walking", example:"Eu andava de patins no calçadão." },
       { form:"andava", pron:"an-DAH-vah", meaning:"you used to walk / go / were walking", example:"Você andava de bicicleta no bairro?" },
       { form:"andávamos", pron:"an-DAH-vah-moosh", meaning:"we used to walk / go / were walking", example:"Nós andávamos muito pela cidade." },
       { form:"andavam", pron:"an-DAH-vahng", meaning:"you all used to walk / go / were walking", example:"Vocês andavam de ônibus para a escola?" }
     ] },
-  { verb:"curtir", group:"-ir verbs", batch:1,
+  { verb:"curtir", group:"-ir verbs", batch:4,
     forms:[
       { form:"curtia", pron:"koors-CHEE-ah", meaning:"I used to enjoy / like (slang)", example:"Eu curtia ficar na praia o dia todo." },
       { form:"curtia", pron:"koors-CHEE-ah", meaning:"you used to enjoy / like (slang)", example:"Você curtia festa com os amigos?" },
       { form:"curtíamos", pron:"koors-CHEE-ah-moosh", meaning:"we used to enjoy / like (slang)", example:"Nós curtíamos aquele bar na Lapa." },
       { form:"curtiam", pron:"koors-CHEE-ahng", meaning:"you all used to enjoy / like (slang)", example:"Vocês curtiam viajar nas férias?" }
     ] },
-  { verb:"ganhar", group:"-ar verbs", batch:1,
+  { verb:"ganhar", group:"-ar verbs", batch:4,
     forms:[
       { form:"ganhava", pron:"gah-NYAH-vah", meaning:"I used to win / earn", example:"Eu ganhava dinheiro nos trabalhos de verão." },
       { form:"ganhava", pron:"gah-NYAH-vah", meaning:"you used to win / earn", example:"Você ganhava sempre no jogo?" },
       { form:"ganhávamos", pron:"gah-NYAH-vah-moosh", meaning:"we used to win / earn", example:"Nós ganhávamos medalha na escola." },
       { form:"ganhavam", pron:"gah-NYAH-vahng", meaning:"you all used to win / earn", example:"Vocês ganhavam presentes no Natal?" }
     ] },
-  { verb:"perder", group:"-er verbs", batch:1,
+  { verb:"perder", group:"-er verbs", batch:4,
     forms:[
       { form:"perdia", pron:"per-DJEE-ah", meaning:"I used to lose / was losing", example:"Eu perdia o ônibus às vezes." },
       { form:"perdia", pron:"per-DJEE-ah", meaning:"you used to lose / were losing", example:"Você perdia a chave com frequência?" },
       { form:"perdíamos", pron:"per-DJEE-ah-moosh", meaning:"we used to lose / were losing", example:"Nós perdíamos as partidas no começo." },
       { form:"perdiam", pron:"per-DJEE-ahng", meaning:"you all used to lose / were losing", example:"Vocês perdiam o treino quando chovia?" }
     ] },
-  { verb:"jogar", group:"-ar verbs", batch:1,
+  { verb:"jogar", group:"-ar verbs", batch:4,
     forms:[
       { form:"jogava", pron:"zho-GAH-vah", meaning:"I used to play / was playing", example:"Eu jogava bola na rua todo dia." },
       { form:"jogava", pron:"zho-GAH-vah", meaning:"you used to play / were playing", example:"Você jogava videogame depois da escola?" },
       { form:"jogávamos", pron:"zho-GAH-vah-moosh", meaning:"we used to play / were playing", example:"Nós jogávamos cartas na varanda." },
       { form:"jogavam", pron:"zho-GAH-vahng", meaning:"you all used to play / were playing", example:"Vocês jogavam futebol no sábado?" }
     ] },
-  { verb:"nadar", group:"-ar verbs", batch:1,
+  { verb:"nadar", group:"-ar verbs", batch:5,
     forms:[
       { form:"nadava", pron:"nah-DAH-vah", meaning:"I used to swim / was swimming", example:"Eu nadava na piscina do clube." },
       { form:"nadava", pron:"nah-DAH-vah", meaning:"you used to swim / were swimming", example:"Você nadava no mar quando era criança?" },
       { form:"nadávamos", pron:"nah-DAH-vah-moosh", meaning:"we used to swim / were swimming", example:"Nós nadávamos todo verão." },
       { form:"nadavam", pron:"nah-DAH-vahng", meaning:"you all used to swim / were swimming", example:"Vocês nadavam na lagoa?" }
     ] },
-  { verb:"viajar", group:"-ar verbs", batch:1,
+  { verb:"viajar", group:"-ar verbs", batch:5,
     forms:[
       { form:"viajava", pron:"vjah-ZAH-vah", meaning:"I used to travel / was traveling", example:"Eu viajava de avião com a minha família." },
       { form:"viajava", pron:"vjah-ZAH-vah", meaning:"you used to travel / were traveling", example:"Você viajava nas férias escolares?" },
       { form:"viajávamos", pron:"vjah-ZAH-vah-moosh", meaning:"we used to travel / were traveling", example:"Nós viajávamos para o interior todo ano." },
       { form:"viajavam", pron:"vjah-ZAH-vahng", meaning:"you all used to travel / were traveling", example:"Vocês viajavam de carro?" }
     ] },
-  { verb:"ajudar", group:"-ar verbs", batch:1,
+  { verb:"ajudar", group:"-ar verbs", batch:5,
     forms:[
       { form:"ajudava", pron:"ah-zoo-DAH-vah", meaning:"I used to help / was helping", example:"Eu ajudava a minha mãe na cozinha." },
       { form:"ajudava", pron:"ah-zoo-DAH-vah", meaning:"you used to help / were helping", example:"Você ajudava os seus colegas na escola?" },
       { form:"ajudávamos", pron:"ah-zoo-DAH-vah-moosh", meaning:"we used to help / were helping", example:"Nós ajudávamos a vizinha com as compras." },
       { form:"ajudavam", pron:"ah-zoo-DAH-vahng", meaning:"you all used to help / were helping", example:"Vocês ajudavam na festa da escola?" }
     ] },
-  { verb:"esperar", group:"-ar verbs", batch:1,
+  { verb:"esperar", group:"-ar verbs", batch:5,
     forms:[
       { form:"esperava", pron:"es-peh-RAH-vah", meaning:"I used to wait / hope", example:"Eu esperava o ônibus todo dia na mesma parada." },
       { form:"esperava", pron:"es-peh-RAH-vah", meaning:"you used to wait / hope", example:"Você esperava a sua mãe na porta da escola?" },
       { form:"esperávamos", pron:"es-peh-RAH-vah-moosh", meaning:"we used to wait / hope", example:"Nós esperávamos o filme começar." },
       { form:"esperavam", pron:"es-peh-RAH-vahng", meaning:"you all used to wait / hope", example:"Vocês esperavam muito tempo no banco?" }
     ] },
-  { verb:"encontrar", group:"-ar verbs", batch:1,
+  { verb:"encontrar", group:"-ar verbs", batch:5,
     forms:[
       { form:"encontrava", pron:"en-kohn-TRAH-vah", meaning:"I used to meet / find", example:"Eu encontrava os meus amigos no parque." },
       { form:"encontrava", pron:"en-kohn-TRAH-vah", meaning:"you used to meet / find", example:"Você encontrava moedas no chão?" },
       { form:"encontrávamos", pron:"en-kohn-TRAH-vah-moosh", meaning:"we used to meet / find", example:"Nós encontrávamos lugar para sentar." },
       { form:"encontravam", pron:"en-kohn-TRAH-vahng", meaning:"you all used to meet / find", example:"Vocês encontravam tempo para estudar?" }
     ] },
-  { verb:"trazer", group:"-er verbs", batch:1,
+  { verb:"trazer", group:"-er verbs", batch:5,
     forms:[
       { form:"trazia", pron:"trah-ZEE-ah", meaning:"I used to bring / was bringing", example:"Eu trazia lanche de casa todo dia." },
       { form:"trazia", pron:"trah-ZEE-ah", meaning:"you used to bring / were bringing", example:"Você trazia flores para a professora?" },
       { form:"trazíamos", pron:"trah-ZEE-ah-moosh", meaning:"we used to bring / were bringing", example:"Nós trazíamos comida para a festa." },
       { form:"traziam", pron:"trah-ZEE-ahng", meaning:"you all used to bring / were bringing", example:"Vocês traziam novidades da viagem?" }
     ] },
-  { verb:"pagar", group:"-ar verbs", batch:1,
+  { verb:"pagar", group:"-ar verbs", batch:5,
     forms:[
       { form:"pagava", pron:"pah-GAH-vah", meaning:"I used to pay / was paying", example:"Eu pagava o lanche com o meu dinheiro." },
       { form:"pagava", pron:"pah-GAH-vah", meaning:"you used to pay / were paying", example:"Você pagava a passagem de ônibus?" },
       { form:"pagávamos", pron:"pah-GAH-vah-moosh", meaning:"we used to pay / were paying", example:"Nós pagávamos a conta dividida." },
       { form:"pagavam", pron:"pah-GAH-vahng", meaning:"you all used to pay / were paying", example:"Vocês pagavam em dinheiro?" }
     ] },
-  { verb:"começar", group:"-ar verbs", batch:1,
+  { verb:"começar", group:"-ar verbs", batch:5,
     forms:[
       { form:"começava", pron:"koh-meh-SAH-vah", meaning:"I used to start / begin / was starting", example:"Eu começava a estudar às sete." },
       { form:"começava", pron:"koh-meh-SAH-vah", meaning:"you used to start / begin / were starting", example:"Você começava o dia cedo?" },
       { form:"começávamos", pron:"koh-meh-SAH-vah-moosh", meaning:"we used to start / begin / were starting", example:"Nós começávamos a aula com música." },
       { form:"começavam", pron:"koh-meh-SAH-vahng", meaning:"you all used to start / begin / were starting", example:"Vocês começavam o trabalho às oito?" }
     ] },
-  { verb:"pegar", group:"-ar verbs", batch: 2,
+  { verb:"pegar", group:"-ar verbs", batch:6,
     forms:[
       { form:"pegava", pron:"peh-GAH-vah", meaning:"I used to grab / pick up / was grabbing", example:"Eu pegava o ônibus todo dia." },
       { form:"pegava", pron:"peh-GAH-vah", meaning:"you used to grab / pick up / were grabbing", example:"Você pegava a mochila antes de sair?" },
       { form:"pegávamos", pron:"peh-GAH-vah-moosh", meaning:"we used to grab / pick up / were grabbing", example:"Nós pegávamos o metrô juntos." },
       { form:"pegavam", pron:"peh-GAH-vahng", meaning:"you all used to grab / pick up", example:"Vocês pegavam o mesmo caminho?" }
     ] },
-  { verb:"botar", group:"-ar verbs", batch: 2,
+  { verb:"botar", group:"-ar verbs", batch:6,
     forms:[
       { form:"botava", pron:"boh-TAH-vah", meaning:"I used to put / place / was putting", example:"Eu botava açúcar no café." },
       { form:"botava", pron:"boh-TAH-vah", meaning:"you used to put / place / were putting", example:"Você botava sal na comida?" },
       { form:"botávamos", pron:"boh-TAH-vah-moosh", meaning:"we used to put / place / were putting", example:"Nós botávamos a mesa antes do jantar." },
       { form:"botavam", pron:"boh-TAH-vahng", meaning:"you all used to put / place", example:"Vocês botavam as coisas no lugar?" }
     ] },
-  { verb:"deixar", group:"-ar verbs", batch: 2,
+  { verb:"deixar", group:"-ar verbs", batch:6,
     forms:[
       { form:"deixava", pron:"day-SHAH-vah", meaning:"I used to leave / let / was leaving", example:"Eu deixava as chaves na mesa." },
       { form:"deixava", pron:"day-SHAH-vah", meaning:"you used to leave / let / were leaving", example:"Você deixava a porta aberta?" },
       { form:"deixávamos", pron:"day-SHAH-vah-moosh", meaning:"we used to leave / let / were leaving", example:"Nós deixávamos o cachorro solto." },
       { form:"deixavam", pron:"day-SHAH-vahng", meaning:"you all used to leave / let", example:"Vocês deixavam a luz acesa?" }
     ] },
-  { verb:"tentar", group:"-ar verbs", batch: 2,
+  { verb:"tentar", group:"-ar verbs", batch:6,
     forms:[
       { form:"tentava", pron:"ten-TAH-vah", meaning:"I used to try / was trying", example:"Eu tentava dormir cedo." },
       { form:"tentava", pron:"ten-TAH-vah", meaning:"you used to try / were trying", example:"Você tentava acordar às seis?" },
       { form:"tentávamos", pron:"ten-TAH-vah-moosh", meaning:"we used to try / were trying", example:"Nós tentávamos chegar no horário." },
       { form:"tentavam", pron:"ten-TAH-vahng", meaning:"you all used to try", example:"Vocês tentavam falar português?" }
     ] },
-  { verb:"lembrar", group:"-ar verbs", batch: 2,
+  { verb:"lembrar", group:"-ar verbs", batch:6,
     forms:[
       { form:"lembrava", pron:"lem-BRAH-vah", meaning:"I used to remember / was remembering", example:"Eu lembrava de tudo que ela dizia." },
       { form:"lembrava", pron:"lem-BRAH-vah", meaning:"you used to remember / were remembering", example:"Você lembrava o nome dos colegas?" },
       { form:"lembrávamos", pron:"lem-BRAH-vah-moosh", meaning:"we used to remember / were remembering", example:"Nós lembrávamos as receitas de cor." },
       { form:"lembravam", pron:"lem-BRAH-vahng", meaning:"you all used to remember", example:"Vocês lembravam das histórias antigas?" }
     ] },
-  { verb:"tirar", group:"-ar verbs", batch: 2,
+  { verb:"tirar", group:"-ar verbs", batch:6,
     forms:[
       { form:"tirava", pron:"tee-RAH-vah", meaning:"I used to take off / remove / was taking", example:"Eu tirava foto de tudo." },
       { form:"tirava", pron:"tee-RAH-vah", meaning:"you used to take off / remove / were taking", example:"Você tirava as dúvidas com o professor?" },
       { form:"tirávamos", pron:"tee-RAH-vah-moosh", meaning:"we used to take off / remove / were taking", example:"Nós tirávamos férias no verão." },
       { form:"tiravam", pron:"tee-RAH-vahng", meaning:"you all used to take off / remove", example:"Vocês tiravam o sapato na entrada?" }
     ] },
-  { verb:"ligar", group:"-ar verbs", batch: 2,
+  { verb:"ligar", group:"-ar verbs", batch:6,
     forms:[
       { form:"ligava", pron:"lee-GAH-vah", meaning:"I used to call / turn on / was calling", example:"Eu ligava pra ela todo fim de semana." },
       { form:"ligava", pron:"lee-GAH-vah", meaning:"you used to call / turn on / were calling", example:"Você ligava pro trabalho com frequência?" },
       { form:"ligávamos", pron:"lee-GAH-vah-moosh", meaning:"we used to call / turn on / were calling", example:"Nós ligávamos o rádio de manhã." },
       { form:"ligavam", pron:"lee-GAH-vahng", meaning:"you all used to call / turn on", example:"Vocês ligavam pra família às vezes?" }
     ] },
-  { verb:"entrar", group:"-ar verbs", batch: 2,
+  { verb:"entrar", group:"-ar verbs", batch:6,
     forms:[
       { form:"entrava", pron:"en-TRAH-vah", meaning:"I used to enter / go in / was entering", example:"Eu entrava pela porta dos fundos." },
       { form:"entrava", pron:"en-TRAH-vah", meaning:"you used to enter / go in / were entering", example:"Você entrava na aula em cima da hora?" },
       { form:"entrávamos", pron:"en-TRAH-vah-moosh", meaning:"we used to enter / go in / were entering", example:"Nós entrávamos juntos no prédio." },
       { form:"entravam", pron:"en-TRAH-vahng", meaning:"you all used to enter / go in", example:"Vocês entravam sem bater na porta?" }
     ] },
-  { verb:"acordar", group:"-ar verbs", batch: 2,
+  { verb:"acordar", group:"-ar verbs", batch:6,
     forms:[
       { form:"acordava", pron:"ah-kohr-DAH-vah", meaning:"I used to wake up / was waking up", example:"Eu acordava cedo toda manhã." },
       { form:"acordava", pron:"ah-kohr-DAH-vah", meaning:"you used to wake up / were waking up", example:"Você acordava com o barulho?" },
       { form:"acordávamos", pron:"ah-kohr-DAH-vah-moosh", meaning:"we used to wake up / were waking up", example:"Nós acordávamos às seis juntos." },
       { form:"acordavam", pron:"ah-kohr-DAH-vahng", meaning:"you all used to wake up", example:"Vocês acordavam tarde nos fins de semana?" }
     ] },
-  { verb:"estudar", group:"-ar verbs", batch: 2,
+  { verb:"estudar", group:"-ar verbs", batch:6,
     forms:[
       { form:"estudava", pron:"es-too-DAH-vah", meaning:"I used to study / was studying", example:"Eu estudava português todos os dias." },
       { form:"estudava", pron:"es-too-DAH-vah", meaning:"you used to study / were studying", example:"Você estudava muito antes das provas?" },
       { form:"estudávamos", pron:"es-too-DAH-vah-moosh", meaning:"we used to study / were studying", example:"Nós estudávamos juntos na biblioteca." },
       { form:"estudavam", pron:"es-too-DAH-vahng", meaning:"you all used to study", example:"Vocês estudavam à noite?" }
     ] },
-  { verb:"chorar", group:"-ar verbs", batch: 2,
+  { verb:"chorar", group:"-ar verbs", batch:6,
     forms:[
       { form:"chorava", pron:"shoh-RAH-vah", meaning:"I used to cry / was crying", example:"Eu chorava em todo filme triste." },
       { form:"chorava", pron:"shoh-RAH-vah", meaning:"you used to cry / were crying", example:"Você chorava quando tinha saudade?" },
       { form:"chorávamos", pron:"shoh-RAH-vah-moosh", meaning:"we used to cry / were crying", example:"Nós chorávamos de tanto rir." },
       { form:"choravam", pron:"shoh-RAH-vahng", meaning:"you all used to cry", example:"Vocês choravam por qualquer coisa?" }
     ] },
-  { verb:"contar", group:"-ar verbs", batch: 2,
+  { verb:"contar", group:"-ar verbs", batch:6,
     forms:[
       { form:"contava", pron:"kon-TAH-vah", meaning:"I used to count / tell / was counting", example:"Eu contava histórias para os filhos." },
       { form:"contava", pron:"kon-TAH-vah", meaning:"you used to count / tell / were counting", example:"Você contava os dias até as férias?" },
       { form:"contávamos", pron:"kon-TAH-vah-moosh", meaning:"we used to count / tell / were counting", example:"Nós contávamos o dinheiro com cuidado." },
       { form:"contavam", pron:"kon-TAH-vahng", meaning:"you all used to count / tell", example:"Vocês contavam com a nossa ajuda?" }
     ] },
-  { verb:"marcar", group:"-ar verbs", batch: 2,
+  { verb:"marcar", group:"-ar verbs", batch:7,
     forms:[
       { form:"marcava", pron:"mahr-KAH-vah", meaning:"I used to schedule / book / was scheduling", example:"Eu marcava as reuniões com antecedência." },
       { form:"marcava", pron:"mahr-KAH-vah", meaning:"you used to schedule / book / were scheduling", example:"Você marcava consulta com frequência?" },
       { form:"marcávamos", pron:"mahr-KAH-vah-moosh", meaning:"we used to schedule / book / were scheduling", example:"Nós marcávamos encontros todo domingo." },
       { form:"marcavam", pron:"mahr-KAH-vahng", meaning:"you all used to schedule / book", example:"Vocês marcavam hora no restaurante?" }
     ] },
-  { verb:"passear", group:"-ar verbs", batch: 2,
+  { verb:"passear", group:"-ar verbs", batch:7,
     forms:[
       { form:"passeava", pron:"pah-see-AH-vah", meaning:"I used to stroll / walk around / was strolling", example:"Eu passeava no parque aos domingos." },
       { form:"passeava", pron:"pah-see-AH-vah", meaning:"you used to stroll / walk around / were strolling", example:"Você passeava com o cachorro todo dia?" },
       { form:"passeávamos", pron:"pah-see-AH-vah-moosh", meaning:"we used to stroll / walk around / were strolling", example:"Nós passeávamos pelo centro aos fins de semana." },
       { form:"passeavam", pron:"pah-see-AH-vahng", meaning:"you all used to stroll / walk around", example:"Vocês passeavam pela praia à tarde?" }
     ] },
-  { verb:"cozinhar", group:"-ar verbs", batch: 2,
+  { verb:"cozinhar", group:"-ar verbs", batch:7,
     forms:[
       { form:"cozinhava", pron:"koh-zeen-YAH-vah", meaning:"I used to cook / was cooking", example:"Eu cozinhava para a família inteira." },
       { form:"cozinhava", pron:"koh-zeen-YAH-vah", meaning:"you used to cook / were cooking", example:"Você cozinhava em casa todo dia?" },
       { form:"cozinhávamos", pron:"koh-zeen-YAH-vah-moosh", meaning:"we used to cook / were cooking", example:"Nós cozinhávamos juntos nos fins de semana." },
       { form:"cozinhavam", pron:"koh-zeen-YAH-vahng", meaning:"you all used to cook", example:"Vocês cozinhavam a própria comida?" }
     ] },
-  { verb:"limpar", group:"-ar verbs", batch: 2,
+  { verb:"limpar", group:"-ar verbs", batch:7,
     forms:[
       { form:"limpava", pron:"leem-PAH-vah", meaning:"I used to clean / was cleaning", example:"Eu limpava a casa todo sábado." },
       { form:"limpava", pron:"leem-PAH-vah", meaning:"you used to clean / were cleaning", example:"Você limpava o quarto com frequência?" },
       { form:"limpávamos", pron:"leem-PAH-vah-moosh", meaning:"we used to clean / were cleaning", example:"Nós limpávamos a cozinha depois de comer." },
       { form:"limpavam", pron:"leem-PAH-vahng", meaning:"you all used to clean", example:"Vocês limpavam o apartamento juntos?" }
     ] },
-  { verb:"mostrar", group:"-ar verbs", batch: 2,
+  { verb:"mostrar", group:"-ar verbs", batch:7,
     forms:[
       { form:"mostrava", pron:"mohs-TRAH-vah", meaning:"I used to show / was showing", example:"Eu mostrava as fotos para todo mundo." },
       { form:"mostrava", pron:"mohs-TRAH-vah", meaning:"you used to show / were showing", example:"Você mostrava o caminho para os turistas?" },
       { form:"mostrávamos", pron:"mohs-TRAH-vah-moosh", meaning:"we used to show / were showing", example:"Nós mostrávamos o projeto na reunião." },
       { form:"mostravam", pron:"mohs-TRAH-vahng", meaning:"you all used to show", example:"Vocês mostravam o trabalho para o chefe?" }
     ] },
-  { verb:"explicar", group:"-ar verbs", batch: 2,
+  { verb:"explicar", group:"-ar verbs", batch:7,
     forms:[
       { form:"explicava", pron:"eks-plee-KAH-vah", meaning:"I used to explain / was explaining", example:"Eu explicava a matéria com calma." },
       { form:"explicava", pron:"eks-plee-KAH-vah", meaning:"you used to explain / were explaining", example:"Você explicava bem para os alunos?" },
       { form:"explicávamos", pron:"eks-plee-KAH-vah-moosh", meaning:"we used to explain / were explaining", example:"Nós explicávamos o problema sem pressa." },
       { form:"explicavam", pron:"eks-plee-KAH-vahng", meaning:"you all used to explain", example:"Vocês explicavam tudo em detalhes?" }
     ] },
-  { verb:"perguntar", group:"-ar verbs", batch: 2,
+  { verb:"perguntar", group:"-ar verbs", batch:7,
     forms:[
       { form:"perguntava", pron:"pehr-goon-TAH-vah", meaning:"I used to ask / was asking", example:"Eu perguntava quando tinha dúvida." },
       { form:"perguntava", pron:"pehr-goon-TAH-vah", meaning:"you used to ask / were asking", example:"Você perguntava o preço antes de comprar?" },
       { form:"perguntávamos", pron:"pehr-goon-TAH-vah-moosh", meaning:"we used to ask / were asking", example:"Nós perguntávamos o caminho sempre." },
       { form:"perguntavam", pron:"pehr-goon-TAH-vahng", meaning:"you all used to ask", example:"Vocês perguntavam a opinião dos outros?" }
     ] },
-  { verb:"mudar", group:"-ar verbs", batch: 2,
+  { verb:"mudar", group:"-ar verbs", batch:7,
     forms:[
       { form:"mudava", pron:"moo-DAH-vah", meaning:"I used to change / move / was changing", example:"Eu mudava de ideia com frequência." },
       { form:"mudava", pron:"moo-DAH-vah", meaning:"you used to change / move / were changing", example:"Você mudava de assunto na hora errada?" },
       { form:"mudávamos", pron:"moo-DAH-vah-moosh", meaning:"we used to change / move / were changing", example:"Nós mudávamos os planos de última hora." },
       { form:"mudavam", pron:"moo-DAH-vahng", meaning:"you all used to change / move", example:"Vocês mudavam muito durante esse período?" }
     ] },
-  { verb:"terminar", group:"-ar verbs", batch: 2,
+  { verb:"terminar", group:"-ar verbs", batch:7,
     forms:[
       { form:"terminava", pron:"tehr-mee-NAH-vah", meaning:"I used to finish / end / was finishing", example:"Eu terminava o trabalho antes das seis." },
       { form:"terminava", pron:"tehr-mee-NAH-vah", meaning:"you used to finish / end / were finishing", example:"Você terminava a tarefa a tempo?" },
       { form:"terminávamos", pron:"tehr-mee-NAH-vah-moosh", meaning:"we used to finish / end / were finishing", example:"Nós terminávamos as reuniões cedo." },
       { form:"terminavam", pron:"tehr-mee-NAH-vahng", meaning:"you all used to finish / end", example:"Vocês terminavam tudo no prazo?" }
     ] },
-  { verb:"continuar", group:"-ar verbs", batch: 2,
+  { verb:"continuar", group:"-ar verbs", batch:7,
     forms:[
       { form:"continuava", pron:"kon-tee-noo-AH-vah", meaning:"I used to continue / keep / was continuing", example:"Eu continuava estudando mesmo cansada." },
       { form:"continuava", pron:"kon-tee-noo-AH-vah", meaning:"you used to continue / keep / were continuing", example:"Você continuava tentando mesmo assim?" },
       { form:"continuávamos", pron:"kon-tee-noo-AH-vah-moosh", meaning:"we used to continue / keep / were continuing", example:"Nós continuávamos o projeto sem parar." },
       { form:"continuavam", pron:"kon-tee-noo-AH-vahng", meaning:"you all used to continue / keep", example:"Vocês continuavam trabalhando tarde da noite?" }
     ] },
-  { verb:"pensar", group:"-ar verbs", batch: 2,
+  { verb:"pensar", group:"-ar verbs", batch:7,
     forms:[
       { form:"pensava", pron:"pen-SAH-vah", meaning:"I used to think / was thinking", example:"Eu pensava em você o tempo todo." },
       { form:"pensava", pron:"pen-SAH-vah", meaning:"you used to think / were thinking", example:"Você pensava em desistir às vezes?" },
       { form:"pensávamos", pron:"pen-SAH-vah-moosh", meaning:"we used to think / were thinking", example:"Nós pensávamos em nos mudar." },
       { form:"pensavam", pron:"pen-SAH-vahng", meaning:"you all used to think", example:"Vocês pensavam muito antes de decidir?" }
     ] },
-  { verb:"dever", group:"-er verbs", batch: 2,
+  { verb:"dever", group:"-er verbs", batch:7,
     forms:[
       { form:"devia", pron:"deh-VEE-ah", meaning:"I used to owe / should / was supposed to", example:"Eu devia ligar antes de aparecer." },
       { form:"devia", pron:"deh-VEE-ah", meaning:"you used to owe / should / were supposed to", example:"Você devia estudar mais nessa época?" },
       { form:"devíamos", pron:"deh-VEE-ah-moosh", meaning:"we used to owe / should / were supposed to", example:"Nós devíamos mais atenção a isso." },
       { form:"deviam", pron:"deh-VEE-ahng", meaning:"you all used to owe / should", example:"Vocês deviam chegar mais cedo?" }
     ] },
-  { verb:"resolver", group:"-er verbs", batch: 2,
+  { verb:"resolver", group:"-er verbs", batch:8,
     forms:[
       { form:"resolvia", pron:"heh-zohl-VEE-ah", meaning:"I used to solve / resolve / was solving", example:"Eu resolvia os problemas sozinha." },
       { form:"resolvia", pron:"heh-zohl-VEE-ah", meaning:"you used to solve / resolve / were solving", example:"Você resolvia tudo na base da conversa?" },
       { form:"resolvíamos", pron:"heh-zohl-VEE-ah-moosh", meaning:"we used to solve / resolve / were solving", example:"Nós resolvíamos as questões em grupo." },
       { form:"resolviam", pron:"heh-zohl-VEE-ahng", meaning:"you all used to solve / resolve", example:"Vocês resolviam os conflitos com calma?" }
     ] },
-  { verb:"depender", group:"-er verbs", batch: 2,
+  { verb:"depender", group:"-er verbs", batch:8,
     forms:[
       { form:"dependia", pron:"deh-pen-DEE-ah", meaning:"I used to depend / was depending", example:"Eu dependia muito da família." },
       { form:"dependia", pron:"deh-pen-DEE-ah", meaning:"you used to depend / were depending", example:"Você dependia do ônibus para trabalhar?" },
       { form:"dependíamos", pron:"deh-pen-DEE-ah-moosh", meaning:"we used to depend / were depending", example:"Nós dependíamos do clima para sair." },
       { form:"dependiam", pron:"deh-pen-DEE-ahng", meaning:"you all used to depend", example:"Vocês dependiam uns dos outros?" }
     ] },
-  { verb:"responder", group:"-er verbs", batch: 2,
+  { verb:"responder", group:"-er verbs", batch:8,
     forms:[
       { form:"respondia", pron:"heh-spon-DEE-ah", meaning:"I used to answer / respond / was answering", example:"Eu respondia todas as mensagens no dia." },
       { form:"respondia", pron:"heh-spon-DEE-ah", meaning:"you used to answer / respond / were answering", example:"Você respondia rápido aos e-mails?" },
       { form:"respondíamos", pron:"heh-spon-DEE-ah-moosh", meaning:"we used to answer / respond / were answering", example:"Nós respondíamos às perguntas com cuidado." },
       { form:"respondiam", pron:"heh-spon-DEE-ahng", meaning:"you all used to answer / respond", example:"Vocês respondiam as ligações sempre?" }
     ] },
-  { verb:"esquecer", group:"-er verbs", batch: 2,
+  { verb:"esquecer", group:"-er verbs", batch:8,
     forms:[
       { form:"esquecia", pron:"es-keh-SEE-ah", meaning:"I used to forget / was forgetting", example:"Eu esquecia o guarda-chuva sempre." },
       { form:"esquecia", pron:"es-keh-SEE-ah", meaning:"you used to forget / were forgetting", example:"Você esquecia o nome das pessoas?" },
       { form:"esquecíamos", pron:"es-keh-SEE-ah-moosh", meaning:"we used to forget / were forgetting", example:"Nós esquecíamos de confirmar a reserva." },
       { form:"esqueciam", pron:"es-keh-SEE-ahng", meaning:"you all used to forget", example:"Vocês esqueciam as tarefas com frequência?" }
     ] },
-  { verb:"descer", group:"-er verbs", batch: 2,
+  { verb:"descer", group:"-er verbs", batch:8,
     forms:[
       { form:"descia", pron:"deh-SEE-ah", meaning:"I used to go down / descend / was going down", example:"Eu descia as escadas correndo." },
       { form:"descia", pron:"deh-SEE-ah", meaning:"you used to go down / descend / were going down", example:"Você descia de elevador ou de escada?" },
       { form:"descíamos", pron:"deh-SEE-ah-moosh", meaning:"we used to go down / descend / were going down", example:"Nós descíamos a serra de carro." },
       { form:"desciam", pron:"deh-SEE-ahng", meaning:"you all used to go down / descend", example:"Vocês desciam para o café todo dia?" }
     ] },
-  { verb:"conseguir", group:"-ir verbs", batch: 2,
+  { verb:"conseguir", group:"-ir verbs", batch:8,
     forms:[
       { form:"conseguia", pron:"kon-seh-GEE-ah", meaning:"I used to manage / achieve / was managing", example:"Eu conseguia dormir em qualquer lugar." },
       { form:"conseguia", pron:"kon-seh-GEE-ah", meaning:"you used to manage / achieve / were managing", example:"Você conseguia resolver isso sozinha?" },
       { form:"conseguíamos", pron:"kon-seh-GEE-ah-moosh", meaning:"we used to manage / achieve / were managing", example:"Nós conseguíamos trabalhar bem juntos." },
       { form:"conseguiam", pron:"kon-seh-GEE-ahng", meaning:"you all used to manage / achieve", example:"Vocês conseguiam se comunicar em inglês?" }
     ] },
-  { verb:"preferir", group:"-ir verbs", batch: 2,
+  { verb:"preferir", group:"-ir verbs", batch:8,
     forms:[
       { form:"preferia", pron:"preh-feh-REE-ah", meaning:"I used to prefer / was preferring", example:"Eu preferia ficar em casa no frio." },
       { form:"preferia", pron:"preh-feh-REE-ah", meaning:"you used to prefer / were preferring", example:"Você preferia chá ou café?" },
       { form:"preferíamos", pron:"preh-feh-REE-ah-moosh", meaning:"we used to prefer / were preferring", example:"Nós preferíamos almoçar fora na sexta." },
       { form:"preferiam", pron:"preh-feh-REE-ahng", meaning:"you all used to prefer", example:"Vocês preferiam viajar de carro ou de avião?" }
     ] },
-  { verb:"seguir", group:"-ir verbs", batch: 2,
+  { verb:"seguir", group:"-ir verbs", batch:8,
     forms:[
       { form:"seguia", pron:"seh-GEE-ah", meaning:"I used to follow / was following", example:"Eu seguia as instruções à risca." },
       { form:"seguia", pron:"seh-GEE-ah", meaning:"you used to follow / were following", example:"Você seguia as notícias com atenção?" },
       { form:"seguíamos", pron:"seh-GEE-ah-moosh", meaning:"we used to follow / were following", example:"Nós seguíamos a mesma rotina todo dia." },
       { form:"seguiam", pron:"seh-GEE-ahng", meaning:"you all used to follow", example:"Vocês seguiam as redes sociais dela?" }
     ] },
-  { verb:"sentir", group:"-ir verbs", batch: 2,
+  { verb:"sentir", group:"-ir verbs", batch:8,
     forms:[
       { form:"sentia", pron:"sen-CHEE-ah", meaning:"I used to feel / was feeling", example:"Eu sentia saudade da minha cidade." },
       { form:"sentia", pron:"sen-CHEE-ah", meaning:"you used to feel / were feeling", example:"Você sentia frio nessa época do ano?" },
       { form:"sentíamos", pron:"sen-CHEE-ah-moosh", meaning:"we used to feel / were feeling", example:"Nós sentíamos falta da comida de casa." },
       { form:"sentiam", pron:"sen-CHEE-ahng", meaning:"you all used to feel", example:"Vocês sentiam dificuldade no começo?" }
     ] },
-  { verb:"subir", group:"-ir verbs", batch: 2,
+  { verb:"subir", group:"-ir verbs", batch:8,
     forms:[
       { form:"subia", pron:"soo-BEE-ah", meaning:"I used to go up / climb / was going up", example:"Eu subia as escadas para me exercitar." },
       { form:"subia", pron:"soo-BEE-ah", meaning:"you used to go up / climb / were going up", example:"Você subia no terraço para ver o pôr do sol?" },
       { form:"subíamos", pron:"soo-BEE-ah-moosh", meaning:"we used to go up / climb / were going up", example:"Nós subíamos a serra nas férias." },
       { form:"subiam", pron:"soo-BEE-ahng", meaning:"you all used to go up / climb", example:"Vocês subiam de elevador sempre?" }
     ] },
-  { verb:"rir", group:"irregular", batch: 2,
+  { verb:"rir", group:"irregular", batch:8,
     forms:[
       { form:"ria", pron:"HEE-ah", meaning:"I used to laugh / was laughing", example:"Eu ria de tudo naquela época." },
       { form:"ria", pron:"HEE-ah", meaning:"you used to laugh / were laughing", example:"Você ria muito com ela?" },
@@ -1411,9 +1466,36 @@ const VERB_ENTRIES = [
 const ALL_CARDS = expandVerbEntries(VERB_ENTRIES);
 
 const GROUPS = ["-ar verbs", "-er verbs", "-ir verbs", "irregular"];
-const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
+const BATCHES = [...new Set(ALL_CARDS.map(c => c.batch))].sort((a, b) => a - b);
+
+// Card keys (verb+person) that make up each batch — used to detect batch completion.
+const batchCardKeys = {};
+BATCHES.forEach(b => { batchCardKeys[b] = new Set(); });
+ALL_CARDS.forEach(c => batchCardKeys[c.batch].add(cardKey(c)));
+
 let activeGroups = new Set(GROUPS);
-let showOnlyLatestBatch = false;
+let activeBatches = new Set([BATCHES[0]]);
+
+// Per-batch completion saved in the browser (no backend; works on GitHub Pages).
+// Value: 'done' = all cleared, 'perfect' = cleared with no misses/skips.
+const PROGRESS_KEY = 'verbBatchProgress:imperfeito';
+let batchProgress = loadBatchProgress();
+
+// Cards missed or skipped in the current practice run (for the crown / completion check).
+let runMissed = new Set();
+let runSkipped = new Set();
+
+function cardKey(c) { return c.verb + '|' + c.person; }
+
+function loadBatchProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+
+function saveBatchProgress() {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(batchProgress)); }
+  catch (e) {}
+}
 let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
 let hardMode = false;
 let practiceStats = createRunStats();
@@ -1799,8 +1881,15 @@ function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
 function getFilteredCards() {
   return ALL_CARDS.filter(card =>
-    activeGroups.has(card.group) && (!showOnlyLatestBatch || card.batch === LATEST_BATCH)
+    activeBatches.has(card.batch) && activeGroups.has(card.group)
   );
+}
+
+// Categories that have at least one card in the currently selected batches.
+function availableGroups() {
+  const s = new Set();
+  ALL_CARDS.forEach(c => { if (activeBatches.has(c.batch)) s.add(c.group); });
+  return s;
 }
 
 function buildDeck() {
@@ -1809,6 +1898,8 @@ function buildDeck() {
   known = new Set();
   answered = false;
   perfect = true;
+  runMissed = new Set();
+  runSkipped = new Set();
   practiceStats = createRunStats();
   render();
 }
@@ -1830,19 +1921,17 @@ function render() {
   const remaining = deck.filter((_, i) => !known.has(i));
 
   if (deck.length === 0) {
-    const subtitle = showOnlyLatestBatch
-      ? 'No cards match the current categories in the latest batch.'
-      : 'No cards match the current filters.';
     area.innerHTML = `
       <div class="card done-screen">
         <h2>No matching cards</h2>
-        <p>${subtitle}</p>
+        <p>No cards match the current batch and category filters.</p>
       </div>
     `;
     return;
   }
 
   if (remaining.length === 0 && deck.length > 0) {
+    recordBatchCompletion();
     const title = perfect ? 'Perfeito!' : 'Deck complete!';
     const subtitle = perfect
       ? `You cleared all ${deck.length} cards.`
@@ -1916,6 +2005,7 @@ function checkAnswer() {
   } else {
     practiceStats.errors++;
     perfect = false;
+    runMissed.add(cardKey(card));
     input.classList.add('wrong');
     btn.classList.add('go-red');
     feedback.className = 'feedback err';
@@ -1953,28 +2043,71 @@ function nextCard() {
 }
 
 function skipCard() {
+  runSkipped.add(cardKey(deck[current]));
   known.add(current);
   updateStats();
   advanceToNextUnknown();
 }
 
-function renderFilters() {
-  const groupTags = GROUPS.map(g =>
-    `<div class="fc-tag${activeGroups.has(g) ? ' active' : ''}" onclick="toggleGroup('${g}')">${g}</div>`
-  ).join('');
-  const latestTag = `<div class="fc-tag${showOnlyLatestBatch ? ' active' : ''}" onclick="toggleLatestBatch()">Only new verbs</div>`;
-  document.getElementById('filterRow').innerHTML = groupTags + latestTag;
+// On deck completion, mark every batch fully covered by this deck as done/perfect.
+function recordBatchCompletion() {
+  const deckKeys = new Set(deck.map(cardKey));
+  let changed = false;
+  BATCHES.forEach(b => {
+    const keys = batchCardKeys[b];
+    const fullyCovered = [...keys].every(k => deckKeys.has(k));
+    if (!fullyCovered) return;
+    const clean = [...keys].every(k => !runMissed.has(k) && !runSkipped.has(k));
+    const status = clean ? 'perfect' : 'done';
+    // Never downgrade an existing perfect to done.
+    if (batchProgress[b] === 'perfect') return;
+    if (batchProgress[b] !== status) { batchProgress[b] = status; changed = true; }
+  });
+  if (changed) { saveBatchProgress(); renderFilters(); }
 }
 
-function toggleLatestBatch() {
-  showOnlyLatestBatch = !showOnlyLatestBatch;
+function renderFilters() {
+  const batchTags = BATCHES.map(b => {
+    const status = batchProgress[b];
+    const cls = ['fc-tag', 'batch-chip'];
+    if (activeBatches.has(b)) cls.push('active');
+    if (status) cls.push('done');
+    const crown = status === 'perfect' ? '<span class="crown">👑</span>' : '';
+    return `<div class="${cls.join(' ')}" onclick="toggleBatch(${b})">${crown}${b}</div>`;
+  }).join('');
+
+  const avail = availableGroups();
+  const groupTags = GROUPS.map(g => {
+    const disabled = !avail.has(g);
+    const cls = ['fc-tag'];
+    if (!disabled && activeGroups.has(g)) cls.push('active');
+    if (disabled) cls.push('disabled');
+    const handler = disabled ? '' : ` onclick="toggleGroup('${g}')"`;
+    return `<div class="${cls.join(' ')}"${handler}>${g}</div>`;
+  }).join('');
+
+  document.getElementById('filterRow').innerHTML = `
+    <div class="filter-section"><span class="filter-label">Batches</span><div class="filter-chips">${batchTags}</div></div>
+    <div class="filter-section"><span class="filter-label">Categories</span><div class="filter-chips">${groupTags}</div></div>`;
+}
+
+function toggleBatch(b) {
+  if (activeBatches.has(b)) {
+    if (activeBatches.size === 1) return;
+    activeBatches.delete(b);
+  } else {
+    activeBatches.add(b);
+  }
   renderFilters();
   buildDeck();
 }
 
 function toggleGroup(g) {
   if (activeGroups.has(g)) {
-    if (activeGroups.size === 1) return;
+    // Keep at least one selectable category active for the current batches.
+    const avail = availableGroups();
+    const activeAvail = GROUPS.filter(x => activeGroups.has(x) && avail.has(x));
+    if (activeAvail.length <= 1 && activeAvail[0] === g) return;
     activeGroups.delete(g);
   } else {
     activeGroups.add(g);

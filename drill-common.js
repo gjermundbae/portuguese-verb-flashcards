@@ -14,13 +14,13 @@ const BR_PERSONS = [
 
 /**
  * Expand compact verb entries into flat drill cards.
- * Each entry: { verb, group, batch?, forms: [{ form, pron, meaning, example, alts? }] }
+ * Each entry: { verb, group, batch?, note?, forms: [{ form, pron, meaning, example, alts? }] }
  * forms must be exactly 4, in BR_PERSONS order.
  */
 function expandVerbEntries(entries) {
   const cards = [];
   for (const entry of entries) {
-    const { verb, group, batch, forms } = entry;
+    const { verb, group, batch, note, forms } = entry;
     if (!forms || forms.length !== BR_PERSONS.length) {
       throw new Error(
         `Verb "${verb}": expected ${BR_PERSONS.length} forms, got ${forms?.length ?? 0}`
@@ -33,6 +33,7 @@ function expandVerbEntries(entries) {
         verb,
         group,
         ...(batch != null ? { batch } : {}),
+        ...(note ? { note } : {}),
         person: person.key,
         form: row.form,
         conj,

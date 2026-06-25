@@ -85,12 +85,36 @@
 
   .filters {
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 1.5rem;
   }
 
+  .filter-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    width: 64px;
+    flex-shrink: 0;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
   .fc-tag {
+    position: relative;
     font-size: 0.7rem;
     padding: 5px 12px;
     border-radius: 999px;
@@ -110,6 +134,37 @@
     background: var(--text);
     color: var(--bg);
     border-color: var(--text);
+  }
+
+  .fc-tag.disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .batch-chip { min-width: 34px; text-align: center; }
+
+  .batch-chip.done {
+    border-color: var(--green-light);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .batch-chip.done.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--bg);
+  }
+
+  .batch-chip .crown {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.78rem;
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
   }
 
   .stats {
@@ -737,202 +792,206 @@
 <script>
 // One block per verb; forms are eu → você → nós → vocês (expanded to ALL_CARDS at load).
 const VERB_ENTRIES = [
-  { verb:"falar", group:"-ar verbs",
+  { verb:"falar", group:"-ar verbs", batch:1,
     forms:[
       { form:"falei", pron:"fah-LAY", meaning:"I spoke / talked", example:"Eu falei com a Ana ontem." },
       { form:"falou", pron:"fah-LOH", meaning:"you spoke / talked", example:"Você falou com o professor hoje cedo?" },
       { form:"falamos", pron:"fah-LAH-moosh", meaning:"we spoke / talked", example:"Nós falamos sobre o filme ontem à noite." },
       { form:"falaram", pron:"fah-LAH-rahng", meaning:"you all spoke / talked", example:"Vocês falaram com o garçom depois?" }
     ] },
-  { verb:"trabalhar", group:"-ar verbs",
+  { verb:"trabalhar", group:"-ar verbs", batch:1,
     forms:[
       { form:"trabalhei", pron:"trah-bah-LYAY", meaning:"I worked", example:"Eu trabalhei até tarde ontem." },
       { form:"trabalhou", pron:"trah-bah-LYOH", meaning:"you worked", example:"Você trabalhou no sábado?" },
       { form:"trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we worked", example:"Nós trabalhamos juntos no projeto." },
       { form:"trabalharam", pron:"trah-bah-LYAH-rahng", meaning:"you all worked", example:"Vocês trabalharam de casa ontem?" }
     ] },
-  { verb:"morar", group:"-ar verbs",
+  { verb:"morar", group:"-ar verbs", batch:1,
     forms:[
       { form:"morei", pron:"moh-RAY", meaning:"I lived", example:"Eu morei em Lisboa por um ano." },
       { form:"morou", pron:"moh-ROH", meaning:"you lived", example:"Você morou no Rio quando era criança?" },
       { form:"moramos", pron:"moh-RAH-moosh", meaning:"we lived", example:"Nós moramos perto da praia naquele verão." },
       { form:"moraram", pron:"moh-RAH-rahng", meaning:"you all lived", example:"Vocês moraram aqui antes?" }
     ] },
-  { verb:"comprar", group:"-ar verbs",
+  { verb:"comprar", group:"-ar verbs", batch:3,
     forms:[
       { form:"comprei", pron:"kohm-PRAY", meaning:"I bought", example:"Eu comprei pão na padaria." },
       { form:"comprou", pron:"kohm-PROH", meaning:"you bought", example:"Você comprou o presente ontem?" },
       { form:"compramos", pron:"kohm-PRAH-moosh", meaning:"we bought", example:"Nós compramos frutas na feira." },
       { form:"compraram", pron:"kohm-PRAH-rahng", meaning:"you all bought", example:"Vocês compraram as passagens já?" }
     ] },
-  { verb:"voltar", group:"-ar verbs",
+  { verb:"voltar", group:"-ar verbs", batch:4,
     forms:[
       { form:"voltei", pron:"vohl-TAY", meaning:"I returned / came back", example:"Eu voltei cedo para casa." },
       { form:"voltou", pron:"vohl-TOH", meaning:"you returned / came back", example:"Você voltou tarde da viagem?" },
       { form:"voltamos", pron:"vohl-TAH-moosh", meaning:"we returned / came back", example:"Nós voltamos depois do almoço." },
       { form:"voltaram", pron:"vohl-TAH-rahng", meaning:"you all returned / came back", example:"Vocês voltaram ontem à noite?" }
     ] },
-  { verb:"levar", group:"-ar verbs",
+  { verb:"levar", group:"-ar verbs", batch:3,
     forms:[
       { form:"levei", pron:"leh-VAY", meaning:"I took / carried", example:"Eu levei um guarda-chuva comigo." },
       { form:"levou", pron:"leh-VOH", meaning:"you took / carried", example:"Você levou os documentos?" },
       { form:"levamos", pron:"leh-VAH-moosh", meaning:"we took / carried", example:"Nós levamos café para o escritório." },
       { form:"levaram", pron:"leh-VAH-rahng", meaning:"you all took / carried", example:"Vocês levaram as crianças à escola?" }
     ] },
-  { verb:"comer", group:"-er verbs",
+  { verb:"comer", group:"-er verbs", batch:2,
     forms:[
       { form:"comi", pron:"koh-MEE", meaning:"I ate", example:"Eu comi pão de queijo hoje cedo." },
       { form:"comeu", pron:"koh-MEH-oo", meaning:"you ate", example:"Você comeu no restaurante ontem?" },
       { form:"comemos", pron:"koh-MEH-moosh", meaning:"we ate", example:"Nós comemos na feira ontem." },
       { form:"comeram", pron:"koh-MEH-rahng", meaning:"you all ate", example:"Vocês comeram depois do trabalho?" }
     ] },
-  { verb:"beber", group:"-er verbs",
+  { verb:"beber", group:"-er verbs", batch:2,
     forms:[
       { form:"bebi", pron:"beh-BEE", meaning:"I drank", example:"Eu bebi muita água depois da corrida." },
       { form:"bebeu", pron:"beh-BEH-oo", meaning:"you drank", example:"Você bebeu café hoje cedo?" },
       { form:"bebemos", pron:"beh-BEH-moosh", meaning:"we drank", example:"Nós bebemos vinho no jantar." },
       { form:"beberam", pron:"beh-BEH-rahng", meaning:"you all drank", example:"Vocês beberam suco ou água?" }
     ] },
-  { verb:"aprender", group:"-er verbs",
+  { verb:"aprender", group:"-er verbs", batch:3,
     forms:[
       { form:"aprendi", pron:"ah-pren-DJEE", meaning:"I learned", example:"Eu aprendi muita coisa na aula." },
       { form:"aprendeu", pron:"ah-pren-DEH-oo", meaning:"you learned", example:"Você aprendeu isso sozinho?" },
       { form:"aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learned", example:"Nós aprendemos uma expressão nova ontem." },
       { form:"aprenderam", pron:"ah-pren-DEH-rahng", meaning:"you all learned", example:"Vocês aprenderam rápido." }
     ] },
-  { verb:"escrever", group:"-er verbs",
+  { verb:"escrever", group:"-er verbs", batch:4,
     forms:[
       { form:"escrevi", pron:"es-kreh-VEE", meaning:"I wrote", example:"Eu escrevi um e-mail para ela." },
       { form:"escreveu", pron:"es-kreh-VEH-oo", meaning:"you wrote", example:"Você escreveu a resposta ontem?" },
       { form:"escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we wrote", example:"Nós escrevemos tudo no caderno." },
       { form:"escreveram", pron:"es-kreh-VEH-rahng", meaning:"you all wrote", example:"Vocês escreveram para o professor?" }
     ] },
-  { verb:"abrir", group:"-ir verbs",
+  { verb:"abrir", group:"-ir verbs", batch:2,
     forms:[
       { form:"abri", pron:"ah-BREE", meaning:"I opened", example:"Eu abri a janela de manhã." },
       { form:"abriu", pron:"ah-BREE-oo", meaning:"you opened", example:"Você abriu a porta para ele?" },
       { form:"abrimos", pron:"ah-BREE-moosh", meaning:"we opened", example:"Nós abrimos a loja às nove." },
       { form:"abriram", pron:"ah-BREE-rahng", meaning:"you all opened", example:"Vocês abriram a garrafa já?" }
     ] },
-  { verb:"decidir", group:"-ir verbs",
+  { verb:"decidir", group:"-ir verbs", batch:2,
     forms:[
       { form:"decidi", pron:"deh-see-DJEE", meaning:"I decided", example:"Eu decidi ficar em casa." },
       { form:"decidiu", pron:"deh-see-DJEE-oo", meaning:"you decided", example:"Você decidiu isso ontem?" },
       { form:"decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decided", example:"Nós decidimos viajar em julho." },
       { form:"decidiram", pron:"deh-see-DJEE-rahng", meaning:"you all decided", example:"Vocês decidiram juntos?" }
     ] },
-  { verb:"assistir", group:"-ir verbs",
+  { verb:"assistir", group:"-ir verbs", batch:2,
     forms:[
       { form:"assisti", pron:"ah-sees-CHEE", meaning:"I watched", example:"Eu assisti ao filme ontem à noite." },
       { form:"assistiu", pron:"ah-sees-CHEE-oo", meaning:"you watched", example:"Você assistiu ao jogo?" },
       { form:"assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watched", example:"Nós assistimos à série no fim de semana." },
       { form:"assistiram", pron:"ah-sees-CHEE-rahng", meaning:"you all watched", example:"Vocês assistiram à aula toda?" }
     ] },
-  { verb:"partir", group:"-ir verbs",
+  { verb:"partir", group:"-ir verbs", batch:2,
     forms:[
       { form:"parti", pron:"pahr-CHEE", meaning:"I left / departed", example:"Eu parti logo depois do almoço." },
       { form:"partiu", pron:"pahr-CHEE-oo", meaning:"you left / departed", example:"Você partiu cedo da estação?" },
       { form:"partimos", pron:"pahr-CHEE-moosh", meaning:"we left / departed", example:"Nós partimos antes do trânsito piorar." },
       { form:"partiram", pron:"pahr-CHEE-rahng", meaning:"you all left / departed", example:"Vocês partiram na sexta-feira?" }
     ] },
-  { verb:"fazer", group:"irregular",
+  { verb:"fazer", group:"irregular", batch:1,
     forms:[
       { form:"fiz", pron:"FEES", meaning:"I did / made", example:"Eu fiz o jantar ontem." },
       { form:"fez", pron:"FEHS", meaning:"you did / made", example:"Você fez exercício hoje cedo?" },
       { form:"fizemos", pron:"fee-ZEH-moosh", meaning:"we did / made", example:"Nós fizemos café em casa." },
       { form:"fizeram", pron:"fee-ZEH-rahng", meaning:"you all did / made", example:"Vocês fizeram a reserva ontem?" }
     ] },
-  { verb:"ter", group:"irregular",
+  { verb:"ter", group:"irregular", batch:1,
     forms:[
       { form:"tive", pron:"TEE-vee", meaning:"I had", example:"Eu tive uma ideia no banho." },
       { form:"teve", pron:"TEH-vee", meaning:"you had", example:"Você teve tempo para almoçar?" },
       { form:"tivemos", pron:"tee-VEH-moosh", meaning:"we had", example:"Nós tivemos sorte com o tempo." },
       { form:"tiveram", pron:"tee-VEH-rahng", meaning:"you all had", example:"Vocês tiveram aula ontem?" }
     ] },
-  { verb:"estar", group:"irregular",
+  { verb:"estar", group:"irregular", batch:1,
     forms:[
       { form:"estive", pron:"es-CHEE-vee", meaning:"I was", example:"Eu estive em casa o dia todo." },
       { form:"esteve", pron:"es-TEH-vee", meaning:"you were", example:"Você esteve no escritório de manhã?" },
       { form:"estivemos", pron:"es-chee-VEH-moosh", meaning:"we were", example:"Nós estivemos lá no fim de semana." },
       { form:"estiveram", pron:"es-chee-VEH-rahng", meaning:"you all were", example:"Vocês estiveram com a Maria ontem?" }
     ] },
-  { verb:"dizer", group:"irregular",
+  { verb:"dizer", group:"irregular", batch:2,
     forms:[
       { form:"disse", pron:"DJEE-see", meaning:"I said / told", example:"Eu disse a verdade." },
       { form:"disse", pron:"DJEE-see", meaning:"you said / told", example:"Você disse isso para ele?" },
       { form:"dissemos", pron:"djee-SEH-moosh", meaning:"we said / told", example:"Nós dissemos tudo no começo." },
       { form:"disseram", pron:"djee-SEH-rahng", meaning:"you all said / told", example:"Vocês disseram que vinham hoje." }
     ] },
-  { verb:"trazer", group:"irregular",
+  { verb:"trazer", group:"irregular", batch:5,
     forms:[
       { form:"trouxe", pron:"TROH-see", meaning:"I brought", example:"Eu trouxe sobremesa para o jantar." },
       { form:"trouxe", pron:"TROH-see", meaning:"you brought", example:"Você trouxe as chaves?" },
       { form:"trouxemos", pron:"troh-SHEH-moosh", meaning:"we brought", example:"Nós trouxemos água para todo mundo." },
       { form:"trouxeram", pron:"troh-SEH-rahng", meaning:"you all brought", example:"Vocês trouxeram os documentos?" }
     ] },
-  { verb:"poder", group:"irregular",
+  { verb:"poder", group:"irregular", batch:1,
     forms:[
       { form:"pude", pron:"POO-djee", meaning:"I could / was able to", example:"Eu pude descansar no feriado." },
       { form:"pôde", pron:"POH-djee", meaning:"you could / were able to", example:"Você pôde falar com ela ontem?" },
       { form:"pudemos", pron:"poo-DEH-moosh", meaning:"we could / were able to", example:"Nós pudemos entrar mais cedo." },
       { form:"puderam", pron:"poo-DEH-rahng", meaning:"you all could / were able to", example:"Vocês puderam resolver o problema?" }
     ] },
-  { verb:"querer", group:"irregular",
+  { verb:"querer", group:"irregular", batch:1,
     forms:[
       { form:"quis", pron:"KEES", meaning:"I wanted", example:"Eu quis comprar aquele livro." },
       { form:"quis", pron:"KEES", meaning:"you wanted", example:"Você quis sair mais cedo?" },
       { form:"quisemos", pron:"kee-ZEH-moosh", meaning:"we wanted", example:"Nós quisemos ajudar você." },
       { form:"quiseram", pron:"kee-ZEH-rahng", meaning:"you all wanted", example:"Vocês quiseram mudar a data?" }
     ] },
-  { verb:"ver", group:"irregular",
+  { verb:"ver", group:"irregular", batch:2,
     forms:[
       { form:"vi", pron:"VEE", meaning:"I saw", example:"Eu vi a Ana no mercado." },
       { form:"viu", pron:"VEE-oo", meaning:"you saw", example:"Você viu aquele filme já?" },
       { form:"vimos", pron:"VEE-moosh", meaning:"we saw", example:"Nós vimos o show da janela." },
       { form:"viram", pron:"VEE-rahng", meaning:"you all saw", example:"Vocês viram a mensagem dela?" }
     ] },
-  { verb:"vir", group:"irregular",
+  { verb:"vir", group:"irregular", batch:2,
     forms:[
       { form:"vim", pron:"VEENG", meaning:"I came", example:"Eu vim de metrô hoje." },
       { form:"veio", pron:"VAY-oo", meaning:"you came", example:"Você veio sozinho?" },
       { form:"viemos", pron:"vee-EH-moosh", meaning:"we came", example:"Nós viemos cedo para evitar trânsito." },
       { form:"vieram", pron:"vee-EH-rahng", meaning:"you all came", example:"Vocês vieram ontem à noite?" }
     ] },
-  { verb:"dar", group:"irregular",
+  { verb:"dar", group:"irregular", batch:2,
     forms:[
       { form:"dei", pron:"DAY", meaning:"I gave", example:"Eu dei um presente para ela." },
       { form:"deu", pron:"DEH-oo", meaning:"you gave", example:"Você deu comida ao cachorro?" },
       { form:"demos", pron:"DEH-moosh", meaning:"we gave", example:"Nós demos risada o tempo todo." },
       { form:"deram", pron:"DEH-rahng", meaning:"you all gave", example:"Vocês deram uma resposta final?" }
     ] },
-  { verb:"chegar", group:"-car / -gar / -çar",
+  { verb:"chegar", group:"-ar verbs", batch:3,
     forms:[
       { form:"cheguei", pron:"sheh-GAY", meaning:"I arrived", example:"Eu cheguei tarde ontem." },
       { form:"chegou", pron:"sheh-GOH", meaning:"you arrived", example:"Você chegou cedo ao aeroporto?" },
       { form:"chegamos", pron:"sheh-GAH-moosh", meaning:"we arrived", example:"Nós chegamos em casa depois da meia-noite." },
       { form:"chegaram", pron:"sheh-GAH-rahng", meaning:"you all arrived", example:"Vocês chegaram juntos ontem?" }
-    ] },
-  { verb:"ficar", group:"-car / -gar / -çar",
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -gar's 'g' would soften before 'e', so you add a 'u': cheguei (not *chegei*). The rest are regular: chegou, chegamos, chegaram." },
+  { verb:"ficar", group:"-ar verbs", batch:3,
     forms:[
       { form:"fiquei", pron:"fee-KAY", meaning:"I stayed / became", example:"Eu fiquei em casa ontem à noite." },
       { form:"ficou", pron:"fee-KOH", meaning:"you stayed / became", example:"Você ficou cansado depois da viagem?" },
       { form:"ficamos", pron:"fee-KAH-moosh", meaning:"we stayed / became", example:"Nós ficamos lá até tarde." },
       { form:"ficaram", pron:"fee-KAH-rahng", meaning:"you all stayed / became", example:"Vocês ficaram felizes com a notícia?" }
-    ] },
-  { verb:"pagar", group:"-car / -gar / -çar",
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -car's 'c' would soften to an 's' sound before 'e', so it becomes 'qu': fiquei (not *ficei*). The rest are regular: ficou, ficamos, ficaram." },
+  { verb:"pagar", group:"-ar verbs", batch:5,
     forms:[
       { form:"paguei", pron:"pah-GAY", meaning:"I paid", example:"Eu paguei a conta no fim." },
       { form:"pagou", pron:"pah-GOH", meaning:"you paid", example:"Você pagou com cartão?" },
       { form:"pagamos", pron:"pah-GAH-moosh", meaning:"we paid", example:"Nós pagamos tudo ontem." },
       { form:"pagaram", pron:"pah-GAH-rahng", meaning:"you all paid", example:"Vocês pagaram adiantado?" }
-    ] },
-  { verb:"começar", group:"-car / -gar / -çar",
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -gar's 'g' would soften before 'e', so you add a 'u': paguei (not *pagei*). The rest are regular: pagou, pagamos, pagaram." },
+  { verb:"começar", group:"-ar verbs", batch:5,
     forms:[
       { form:"comecei", pron:"koh-meh-SAY", meaning:"I started / began", example:"Eu comecei a estudar cedo." },
       { form:"começou", pron:"koh-meh-SOH", meaning:"you started / began", example:"Você começou o livro já?" },
       { form:"começamos", pron:"koh-meh-SAH-moosh", meaning:"we started / began", example:"Nós começamos a reunião às nove." },
       { form:"começaram", pron:"koh-meh-SAH-rahng", meaning:"you all started / began", example:"Vocês começaram sem mim?" }
-    ] },
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -çar drops its cedilla before 'e' (a plain 'c' is already soft): comecei (not *começei*). The rest keep the ç: começou, começamos, começaram." },
   { verb:"ser", group:"irregular", batch:1,
     forms:[
       { form:"fui", pron:"FOO-ee", meaning:"I was", example:"Eu fui ao mercado ontem." },
@@ -963,7 +1022,7 @@ const VERB_ENTRIES = [
       { form:"gostamos", pron:"gohs-TAH-moosh", meaning:"we liked", example:"Nós gostamos da viagem." },
       { form:"gostaram", pron:"gohs-TAH-rahng", meaning:"you all liked", example:"Vocês gostaram da festa?" }
     ] },
-  { verb:"conhecer", group:"-er verbs", batch:1,
+  { verb:"conhecer", group:"-er verbs", batch:2,
     forms:[
       { form:"conheci", pron:"koh-nyeh-SEE", meaning:"I met / got to know", example:"Eu conheci ela na festa ontem." },
       { form:"conheceu", pron:"koh-nyeh-SEH-oo", meaning:"you met / got to know", example:"Você conheceu o Pedro no trabalho?" },
@@ -971,288 +1030,291 @@ const VERB_ENTRIES = [
       { form:"conheceram", pron:"koh-nyeh-SEH-rahng", meaning:"you all met / got to know", example:"Vocês conheceram a família dela?" }
     ],
     note:"In perfeito 'conheci' often means 'I met (for the first time)'." },
-  { verb:"precisar", group:"-ar verbs", batch:1,
+  { verb:"precisar", group:"-ar verbs", batch:2,
     forms:[
       { form:"precisei", pron:"preh-see-ZAY", meaning:"I needed", example:"Eu precisei sair cedo ontem." },
       { form:"precisou", pron:"preh-see-ZOH", meaning:"you needed", example:"Você precisou de ajuda?" },
       { form:"precisamos", pron:"preh-see-ZAH-moosh", meaning:"we needed", example:"Nós precisamos comprar mais água." },
       { form:"precisaram", pron:"preh-see-ZAH-rahng", meaning:"you all needed", example:"Vocês precisaram ligar para ela?" }
     ] },
-  { verb:"achar", group:"-ar verbs", batch:1,
+  { verb:"achar", group:"-ar verbs", batch:3,
     forms:[
       { form:"achei", pron:"ah-SHAY", meaning:"I thought / found", example:"Eu achei o livro na estante." },
       { form:"achou", pron:"ah-SHOH", meaning:"you thought / found", example:"Você achou estranho?" },
       { form:"achamos", pron:"ah-SHAH-moosh", meaning:"we thought / found", example:"Nós achamos um lugar legal." },
       { form:"acharam", pron:"ah-SHAH-rahng", meaning:"you all thought / found", example:"Vocês acharam a resposta?" }
     ] },
-  { verb:"sair", group:"irregular", batch:1,
+  { verb:"sair", group:"irregular", batch:3,
     forms:[
       { form:"saí", pron:"sah-EE", meaning:"I left / went out", example:"Eu saí cedo hoje." },
       { form:"saiu", pron:"sah-EE-oo", meaning:"you left / went out", example:"Você saiu ontem à noite?" },
       { form:"saímos", pron:"sah-EE-moosh", meaning:"we left / went out", example:"Nós saímos depois do jantar." },
       { form:"saíram", pron:"sah-EE-rahng", meaning:"you all left / went out", example:"Vocês saíram sem avisar?" }
     ] },
-  { verb:"chamar", group:"-ar verbs", batch:1,
+  { verb:"chamar", group:"-ar verbs", batch:3,
     forms:[
       { form:"chamei", pron:"shah-MAY", meaning:"I called", example:"Eu chamei a Marina ontem." },
       { form:"chamou", pron:"shah-MOH", meaning:"you called", example:"Você chamou o Uber?" },
       { form:"chamamos", pron:"shah-MAH-moosh", meaning:"we called", example:"Nós chamamos o garçom." },
       { form:"chamaram", pron:"shah-MAH-rahng", meaning:"you all called", example:"Vocês chamaram o médico?" }
     ] },
-  { verb:"pedir", group:"-ir verbs", batch:1,
+  { verb:"pedir", group:"-ir verbs", batch:3,
     forms:[
       { form:"pedi", pron:"peh-DJEE", meaning:"I asked for / ordered", example:"Eu pedi um suco no bar." },
       { form:"pediu", pron:"peh-DJEE-oo", meaning:"you asked for / ordered", example:"Você pediu a conta?" },
       { form:"pedimos", pron:"peh-DJEE-moosh", meaning:"we asked for / ordered", example:"Nós pedimos pizza ontem." },
       { form:"pediram", pron:"peh-DJEE-rahng", meaning:"you all asked for / ordered", example:"Vocês pediram desconto?" }
     ] },
-  { verb:"dormir", group:"-ir verbs", batch:1,
+  { verb:"dormir", group:"-ir verbs", batch:3,
     forms:[
       { form:"dormi", pron:"dohr-MEE", meaning:"I slept", example:"Eu dormi pouco ontem à noite." },
       { form:"dormiu", pron:"dohr-MEE-oo", meaning:"you slept", example:"Você dormiu bem?" },
       { form:"dormimos", pron:"dohr-MEE-moosh", meaning:"we slept", example:"Nós dormimos na casa dela." },
       { form:"dormiram", pron:"dohr-MEE-rahng", meaning:"you all slept", example:"Vocês dormiram até tarde?" }
     ] },
-  { verb:"entender", group:"-er verbs", batch:1,
+  { verb:"entender", group:"-er verbs", batch:3,
     forms:[
       { form:"entendi", pron:"en-ten-DJEE", meaning:"I understood", example:"Eu entendi tudo na aula." },
       { form:"entendeu", pron:"en-ten-DEH-oo", meaning:"you understood", example:"Você entendeu a explicação?" },
       { form:"entendemos", pron:"en-ten-DEH-moosh", meaning:"we understood", example:"Nós entendemos o problema ontem." },
       { form:"entenderam", pron:"en-ten-DEH-rahng", meaning:"you all understood", example:"Vocês entenderam a mensagem?" }
     ] },
-  { verb:"ouvir", group:"-ir verbs", batch:1,
+  { verb:"ouvir", group:"-ir verbs", batch:4,
     forms:[
       { form:"ouvi", pron:"oh-VEE", meaning:"I heard / listened", example:"Eu ouvi aquela música ontem." },
       { form:"ouviu", pron:"oh-VEE-oo", meaning:"you heard / listened", example:"Você ouviu o que ela disse?" },
       { form:"ouvimos", pron:"oh-VEE-moosh", meaning:"we heard / listened", example:"Nós ouvimos barulho na rua." },
       { form:"ouviram", pron:"oh-VEE-rahng", meaning:"you all heard / listened", example:"Vocês ouviram o podcast?" }
     ] },
-  { verb:"fechar", group:"-ar verbs", batch:1,
+  { verb:"fechar", group:"-ar verbs", batch:4,
     forms:[
       { form:"fechei", pron:"feh-SHAY", meaning:"I closed", example:"Eu fechei a porta ao sair." },
       { form:"fechou", pron:"feh-SHOH", meaning:"you closed", example:"Você fechou a janela?" },
       { form:"fechamos", pron:"feh-SHAH-moosh", meaning:"we closed", example:"Nós fechamos a loja às dez." },
       { form:"fecharam", pron:"feh-SHAH-rahng", meaning:"you all closed", example:"Vocês fecharam o acordo ontem?" }
     ] },
-  { verb:"usar", group:"-ar verbs", batch:1,
+  { verb:"usar", group:"-ar verbs", batch:4,
     forms:[
       { form:"usei", pron:"oo-ZAY", meaning:"I used", example:"Eu usei o cartão ontem." },
       { form:"usou", pron:"oo-ZOH", meaning:"you used", example:"Você usou o celular dele?" },
       { form:"usamos", pron:"oo-ZAH-moosh", meaning:"we used", example:"Nós usamos o aplicativo novo." },
       { form:"usaram", pron:"oo-ZAH-rahng", meaning:"you all used", example:"Vocês usaram o mesmo caminho?" }
     ] },
-  { verb:"dirigir", group:"-ir verbs", batch:1,
+  { verb:"dirigir", group:"-ir verbs", batch:4,
     forms:[
       { form:"dirigi", pron:"djee-REE-djee", meaning:"I drove", example:"Eu dirigi até Niterói ontem." },
       { form:"dirigiu", pron:"djee-REE-djee-oo", meaning:"you drove", example:"Você dirigiu a noite toda?" },
       { form:"dirigimos", pron:"djee-REE-djee-moosh", meaning:"we drove", example:"Nós dirigimos com cuidado na chuva." },
       { form:"dirigiram", pron:"djee-REE-djee-rahng", meaning:"you all drove", example:"Vocês dirigiram até tarde?" }
     ] },
-  { verb:"correr", group:"-er verbs", batch:1,
+  { verb:"correr", group:"-er verbs", batch:4,
     forms:[
       { form:"corri", pron:"koh-HEE", meaning:"I ran", example:"Eu corri no parque hoje cedo." },
       { form:"correu", pron:"koh-HEH-oo", meaning:"you ran", example:"Você correu na esteira ontem?" },
       { form:"corremos", pron:"koh-HEH-moosh", meaning:"we ran", example:"Nós corremos cinco quilômetros." },
       { form:"correram", pron:"koh-HEH-rahng", meaning:"you all ran", example:"Vocês correram no final de semana?" }
     ] },
-  { verb:"andar", group:"-ar verbs", batch:1,
+  { verb:"andar", group:"-ar verbs", batch:4,
     forms:[
       { form:"andei", pron:"an-DAY", meaning:"I walked", example:"Eu andei muito ontem." },
       { form:"andou", pron:"an-DOH", meaning:"you walked", example:"Você andou até a praia?" },
       { form:"andamos", pron:"an-DAH-moosh", meaning:"we walked", example:"Nós andamos pelo centro." },
       { form:"andaram", pron:"an-DAH-rahng", meaning:"you all walked", example:"Vocês andaram de ônibus?" }
     ] },
-  { verb:"curtir", group:"-ir verbs", batch:1,
+  { verb:"curtir", group:"-ir verbs", batch:4,
     forms:[
       { form:"curti", pron:"koor-CHEE", meaning:"I enjoyed", example:"Eu curti a festa ontem." },
       { form:"curtiu", pron:"koor-CHEE-oo", meaning:"you enjoyed", example:"Você curtiu o show?" },
       { form:"curtimos", pron:"koor-CHEE-moosh", meaning:"we enjoyed", example:"Nós curtimos o fim de semana na praia." },
       { form:"curtiram", pron:"koor-CHEE-rahng", meaning:"you all enjoyed", example:"Vocês curtiram a viagem?" }
     ] },
-  { verb:"ganhar", group:"-ar verbs", batch:1,
+  { verb:"ganhar", group:"-ar verbs", batch:4,
     forms:[
       { form:"ganhei", pron:"gah-NYAY", meaning:"I won / earned", example:"Eu ganhei bem no mês passado." },
       { form:"ganhou", pron:"gah-NYOH", meaning:"you won / earned", example:"Você ganhou o jogo?" },
       { form:"ganhamos", pron:"gah-NYAH-moosh", meaning:"we won / earned", example:"Nós ganhamos pontos extras." },
       { form:"ganharam", pron:"gah-NYAH-rahng", meaning:"you all won / earned", example:"Vocês ganharam o troféu?" }
     ] },
-  { verb:"perder", group:"-er verbs", batch:1,
+  { verb:"perder", group:"-er verbs", batch:4,
     forms:[
       { form:"perdi", pron:"pehr-DJEE", meaning:"I lost / missed", example:"Eu perdi o ônibus hoje cedo." },
       { form:"perdeu", pron:"pehr-DEH-oo", meaning:"you lost / missed", example:"Você perdeu o celular?" },
       { form:"perdemos", pron:"pehr-DEH-moosh", meaning:"we lost / missed", example:"Nós perdemos a partida ontem." },
       { form:"perderam", pron:"pehr-DEH-rahng", meaning:"you all lost / missed", example:"Vocês perderam o voo?" }
     ] },
-  { verb:"jogar", group:"-car / -gar / -çar", batch:1,
+  { verb:"jogar", group:"-ar verbs", batch:4,
     forms:[
       { form:"joguei", pron:"zhoh-GAY", meaning:"I played", example:"Eu joguei futebol ontem." },
       { form:"jogou", pron:"zhoh-GOH", meaning:"you played", example:"Você jogou videogame a noite toda?" },
       { form:"jogamos", pron:"zhoh-GAH-moosh", meaning:"we played", example:"Nós jogamos cartas no sábado." },
       { form:"jogaram", pron:"zhoh-GAH-rahng", meaning:"you all played", example:"Vocês jogaram no parque?" }
     ],
-    note:"g→gu before -ei to keep hard /g/." },
-  { verb:"nadar", group:"-ar verbs", batch:1,
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -gar's 'g' would soften before 'e', so you add a 'u': joguei (not *jogei*). The rest are regular: jogou, jogamos, jogaram." },
+  { verb:"nadar", group:"-ar verbs", batch:5,
     forms:[
       { form:"nadei", pron:"nah-DAY", meaning:"I swam", example:"Eu nadei na piscina ontem." },
       { form:"nadou", pron:"nah-DOH", meaning:"you swam", example:"Você nadou no mar?" },
       { form:"nadamos", pron:"nah-DAH-moosh", meaning:"we swam", example:"Nós nadamos no clube." },
       { form:"nadaram", pron:"nah-DAH-rahng", meaning:"you all swam", example:"Vocês nadaram de manhã?" }
     ] },
-  { verb:"viajar", group:"-ar verbs", batch:1,
+  { verb:"viajar", group:"-ar verbs", batch:5,
     forms:[
       { form:"viajei", pron:"vee-ah-ZHAY", meaning:"I traveled", example:"Eu viajei para São Paulo no mês passado." },
       { form:"viajou", pron:"vee-ah-ZHOH", meaning:"you traveled", example:"Você viajou de avião?" },
       { form:"viajamos", pron:"vee-ah-ZHAH-moosh", meaning:"we traveled", example:"Nós viajamos nas férias." },
       { form:"viajaram", pron:"vee-ah-ZHAH-rahng", meaning:"you all traveled", example:"Vocês viajaram juntos?" }
     ] },
-  { verb:"ajudar", group:"-ar verbs", batch:1,
+  { verb:"ajudar", group:"-ar verbs", batch:5,
     forms:[
       { form:"ajudei", pron:"ah-zhoo-DAY", meaning:"I helped", example:"Eu ajudei a Ana ontem." },
       { form:"ajudou", pron:"ah-zhoo-DOH", meaning:"you helped", example:"Você ajudou com a mudança?" },
       { form:"ajudamos", pron:"ah-zhoo-DAH-moosh", meaning:"we helped", example:"Nós ajudamos a montar tudo." },
       { form:"ajudaram", pron:"ah-zhoo-DAH-rahng", meaning:"you all helped", example:"Vocês ajudaram o vizinho?" }
     ] },
-  { verb:"esperar", group:"-ar verbs", batch:1,
+  { verb:"esperar", group:"-ar verbs", batch:5,
     forms:[
       { form:"esperei", pron:"es-peh-RAY", meaning:"I waited / hoped", example:"Eu esperei meia hora no ponto." },
       { form:"esperou", pron:"es-peh-ROH", meaning:"you waited / hoped", example:"Você esperou a resposta?" },
       { form:"esperamos", pron:"es-peh-RAH-moosh", meaning:"we waited / hoped", example:"Nós esperamos até tarde." },
       { form:"esperaram", pron:"es-peh-RAH-rahng", meaning:"you all waited / hoped", example:"Vocês esperaram na fila?" }
     ] },
-  { verb:"encontrar", group:"-ar verbs", batch:1,
+  { verb:"encontrar", group:"-ar verbs", batch:5,
     forms:[
       { form:"encontrei", pron:"en-kohn-TRAY", meaning:"I found / met", example:"Eu encontrei ela no mercado." },
       { form:"encontrou", pron:"en-kohn-TROH", meaning:"you found / met", example:"Você encontrou as chaves?" },
       { form:"encontramos", pron:"en-kohn-TRAH-moosh", meaning:"we found / met", example:"Nós encontramos um bom restaurante." },
       { form:"encontraram", pron:"en-kohn-TRAH-rahng", meaning:"you all found / met", example:"Vocês encontraram tempo para isso?" }
     ] },
-  { verb:"frequentar", group:"-ar verbs", batch:1,
+  { verb:"frequentar", group:"-ar verbs", batch:5,
     forms:[
       { form:"frequentei", pron:"freh-KEN-tay", meaning:"I attended / frequented", example:"Eu frequentei aquela academia no ano passado." },
       { form:"frequentou", pron:"freh-KEN-toh", meaning:"you attended / frequented", example:"Você frequentou as aulas todas?" },
       { form:"frequentamos", pron:"freh-KEN-tah-moosh", meaning:"we attended / frequented", example:"Nós frequentamos o mesmo bar." },
       { form:"frequentaram", pron:"freh-KEN-tah-rahng", meaning:"you all attended / frequented", example:"Vocês frequentaram a escola juntos?" }
     ] },
-  { verb:"odiar", group:"-ar verbs", batch:1,
+  { verb:"odiar", group:"-ar verbs", batch:5,
     forms:[
       { form:"odiei", pron:"oh-djee-AY", meaning:"I hated", example:"Eu odiei o trânsito ontem." },
       { form:"odiou", pron:"oh-djee-OH", meaning:"you hated", example:"Você odiou a comida?" },
       { form:"odiamos", pron:"oh-DJAH-moosh", meaning:"we hated", example:"Nós odiamos esperar na fila." },
       { form:"odiaram", pron:"oh-djee-AH-rahng", meaning:"you all hated", example:"Vocês odiaram o calor no verão?" }
     ] },
-  { verb:"sugerir", group:"-ir verbs", batch:1,
+  { verb:"sugerir", group:"-ir verbs", batch:5,
     forms:[
       { form:"sugeri", pron:"soo-ZHEH-ree", meaning:"I suggested", example:"Eu sugeri um restaurante novo." },
       { form:"sugeriu", pron:"soo-zhe-REE-oo", meaning:"you suggested", example:"Você sugeriu outro horário?" },
       { form:"sugerimos", pron:"soo-zhe-REE-moosh", meaning:"we suggested", example:"Nós sugerimos sair mais cedo." },
       { form:"sugeriram", pron:"soo-zhe-REE-rahng", meaning:"you all suggested", example:"Vocês sugeriram o mesmo lugar?" }
     ] },
-  { verb:"pôr", group:"irregular", batch:1,
+  { verb:"pôr", group:"irregular", batch:5,
     forms:[
       { form:"pus", pron:"POOS", meaning:"I put", example:"Eu pus a chave na mesa." },
       { form:"pôs", pron:"POHS", meaning:"you put", example:"Você pôs sal na comida?" },
       { form:"pusemos", pron:"poo-ZEH-moosh", meaning:"we put", example:"Nós pusemos as malas no carro." },
       { form:"puseram", pron:"poo-ZEH-rahng", meaning:"you all put", example:"Vocês puseram tudo no lugar?" }
     ] },
-  { verb:"ler", group:"irregular", batch:2,
+  { verb:"ler", group:"irregular", batch:3,
     forms:[
       { form:"li", pron:"LEE", meaning:"I read", example:"Eu li o livro todo ontem." },
       { form:"leu", pron:"LEH-oo", meaning:"you read", example:"Você leu o artigo que mandei?" },
       { form:"lemos", pron:"LEH-moosh", meaning:"we read", example:"Nós lemos o mesmo livro na escola." },
       { form:"leram", pron:"LEH-rahng", meaning:"you all read", example:"Vocês leram o e-mail que enviei?" }
     ] },
-  { verb:"pegar", group:"-car / -gar / -çar", batch:2,
+  { verb:"pegar", group:"-ar verbs", batch:6,
     forms:[
       { form:"peguei", pron:"peh-GAY", meaning:"I grabbed / got", example:"Eu peguei um táxi para o aeroporto." },
       { form:"pegou", pron:"peh-GOH", meaning:"you grabbed / got", example:"Você pegou o ônibus hoje?" },
       { form:"pegamos", pron:"peh-GAH-moosh", meaning:"we grabbed / got", example:"Nós pegamos a chave na recepção." },
       { form:"pegaram", pron:"peh-GAH-rahng", meaning:"you all grabbed / got", example:"Vocês pegaram os ingressos?" }
-    ] },
-  { verb:"botar", group:"-ar verbs", batch:2,
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -gar's 'g' would soften before 'e', so you add a 'u': peguei (not *pegei*). The rest are regular: pegou, pegamos, pegaram." },
+  { verb:"botar", group:"-ar verbs", batch:6,
     forms:[
       { form:"botei", pron:"boh-TAY", meaning:"I put / placed", example:"Eu botei o casaco na cadeira." },
       { form:"botou", pron:"boh-TOH", meaning:"you put / placed", example:"Você botou açúcar no café?" },
       { form:"botamos", pron:"boh-TAH-moosh", meaning:"we put / placed", example:"Nós botamos a mesa para o jantar." },
       { form:"botaram", pron:"boh-TAH-rahng", meaning:"you all put / placed", example:"Vocês botaram as coisas no lugar?" }
     ] },
-  { verb:"deixar", group:"-ar verbs", batch:2,
+  { verb:"deixar", group:"-ar verbs", batch:6,
     forms:[
       { form:"deixei", pron:"day-SHAY", meaning:"I left / let", example:"Eu deixei o celular em casa." },
       { form:"deixou", pron:"day-SHOH", meaning:"you left / let", example:"Você deixou a porta aberta?" },
       { form:"deixamos", pron:"day-SHAH-moosh", meaning:"we left / let", example:"Nós deixamos um recado na secretária." },
       { form:"deixaram", pron:"day-SHAH-rahng", meaning:"you all left / let", example:"Vocês deixaram as chaves na mesa?" }
     ] },
-  { verb:"tentar", group:"-ar verbs", batch:2,
+  { verb:"tentar", group:"-ar verbs", batch:6,
     forms:[
       { form:"tentei", pron:"ten-TAY", meaning:"I tried", example:"Eu tentei ligar várias vezes." },
       { form:"tentou", pron:"ten-TOH", meaning:"you tried", example:"Você tentou resolver o problema?" },
       { form:"tentamos", pron:"ten-TAH-moosh", meaning:"we tried", example:"Nós tentamos uma rota diferente." },
       { form:"tentaram", pron:"ten-TAH-rahng", meaning:"you all tried", example:"Vocês tentaram entrar em contato?" }
     ] },
-  { verb:"lembrar", group:"-ar verbs", batch:2,
+  { verb:"lembrar", group:"-ar verbs", batch:6,
     forms:[
       { form:"lembrei", pron:"lem-BRAY", meaning:"I remembered", example:"Eu lembrei do aniversário dela." },
       { form:"lembrou", pron:"lem-BROH", meaning:"you remembered", example:"Você lembrou de trazer o documento?" },
       { form:"lembramos", pron:"lem-BRAH-moosh", meaning:"we remembered", example:"Nós lembramos de fechar o gás." },
       { form:"lembraram", pron:"lem-BRAH-rahng", meaning:"you all remembered", example:"Vocês lembraram de confirmar a reserva?" }
     ] },
-  { verb:"tirar", group:"-ar verbs", batch:2,
+  { verb:"tirar", group:"-ar verbs", batch:6,
     forms:[
       { form:"tirei", pron:"chee-RAY", meaning:"I took / removed", example:"Eu tirei uma foto da paisagem." },
       { form:"tirou", pron:"chee-ROH", meaning:"you took / removed", example:"Você tirou o casaco antes de entrar?" },
       { form:"tiramos", pron:"chee-RAH-moosh", meaning:"we took / removed", example:"Nós tiramos uma selfie no parque." },
       { form:"tiraram", pron:"chee-RAH-rahng", meaning:"you all took / removed", example:"Vocês tiraram as malas do carro?" }
     ] },
-  { verb:"ligar", group:"-car / -gar / -çar", batch:2,
+  { verb:"ligar", group:"-ar verbs", batch:6,
     forms:[
       { form:"liguei", pron:"lee-GAY", meaning:"I called / turned on", example:"Eu liguei para a clínica de manhã." },
       { form:"ligou", pron:"lee-GOH", meaning:"you called / turned on", example:"Você ligou para o restaurante?" },
       { form:"ligamos", pron:"lee-GAH-moosh", meaning:"we called / turned on", example:"Nós ligamos o ar-condicionado." },
       { form:"ligaram", pron:"lee-GAH-rahng", meaning:"you all called / turned on", example:"Vocês ligaram para avisar?" }
-    ] },
-  { verb:"entrar", group:"-ar verbs", batch:2,
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -gar's 'g' would soften before 'e', so you add a 'u': liguei (not *ligei*). The rest are regular: ligou, ligamos, ligaram." },
+  { verb:"entrar", group:"-ar verbs", batch:6,
     forms:[
       { form:"entrei", pron:"en-TRAY", meaning:"I entered / came in", example:"Eu entrei pela porta dos fundos." },
       { form:"entrou", pron:"en-TROH", meaning:"you entered / came in", example:"Você entrou na reunião a tempo?" },
       { form:"entramos", pron:"en-TRAH-moosh", meaning:"we entered / came in", example:"Nós entramos no cinema juntos." },
       { form:"entraram", pron:"en-TRAH-rahng", meaning:"you all entered / came in", example:"Vocês entraram no sistema?" }
     ] },
-  { verb:"acordar", group:"-ar verbs", batch:2,
+  { verb:"acordar", group:"-ar verbs", batch:6,
     forms:[
       { form:"acordei", pron:"ah-kohr-DAY", meaning:"I woke up", example:"Eu acordei cedo hoje." },
       { form:"acordou", pron:"ah-kohr-DOH", meaning:"you woke up", example:"Você acordou com o barulho?" },
       { form:"acordamos", pron:"ah-kohr-DAH-moosh", meaning:"we woke up", example:"Nós acordamos antes do alarme." },
       { form:"acordaram", pron:"ah-kohr-DAH-rahng", meaning:"you all woke up", example:"Vocês acordaram na hora?" }
     ] },
-  { verb:"estudar", group:"-ar verbs", batch:2,
+  { verb:"estudar", group:"-ar verbs", batch:6,
     forms:[
       { form:"estudei", pron:"ess-too-DAY", meaning:"I studied", example:"Eu estudei para a prova ontem à noite." },
       { form:"estudou", pron:"ess-too-DOH", meaning:"you studied", example:"Você estudou com alguém?" },
       { form:"estudamos", pron:"ess-too-DAH-moosh", meaning:"we studied", example:"Nós estudamos na biblioteca." },
       { form:"estudaram", pron:"ess-too-DAH-rahng", meaning:"you all studied", example:"Vocês estudaram o capítulo todo?" }
     ] },
-  { verb:"chorar", group:"-ar verbs", batch:2,
+  { verb:"chorar", group:"-ar verbs", batch:6,
     forms:[
       { form:"chorei", pron:"shoh-RAY", meaning:"I cried", example:"Eu chorei no final do filme." },
       { form:"chorou", pron:"shoh-ROH", meaning:"you cried", example:"Você chorou quando soube?" },
       { form:"choramos", pron:"shoh-RAH-moosh", meaning:"we cried", example:"Nós choramos de tanto rir." },
       { form:"choraram", pron:"shoh-RAH-rahng", meaning:"you all cried", example:"Vocês choraram no casamento?" }
     ] },
-  { verb:"contar", group:"-ar verbs", batch:2,
+  { verb:"contar", group:"-ar verbs", batch:6,
     forms:[
       { form:"contei", pron:"kon-TAY", meaning:"I told / counted", example:"Eu contei tudo para ela." },
       { form:"contou", pron:"kon-TOH", meaning:"you told / counted", example:"Você contou a história direito?" },
       { form:"contamos", pron:"kon-TAH-moosh", meaning:"we told / counted", example:"Nós contamos os votos juntos." },
       { form:"contaram", pron:"kon-TAH-rahng", meaning:"you all told / counted", example:"Vocês contaram o que aconteceu?" }
     ] },
-  { verb:"marcar", group:"-car / -gar / -çar", batch:2,
+  { verb:"marcar", group:"-ar verbs", batch:7,
     forms:[
       { form:"marquei", pron:"mahr-KAY", meaning:"I scheduled / marked", example:"Eu marquei uma consulta para amanhã." },
       { form:"marcou", pron:"mahr-KOH", meaning:"you scheduled / marked", example:"Você marcou o encontro com o cliente?" },
       { form:"marcamos", pron:"mahr-KAH-moosh", meaning:"we scheduled / marked", example:"Nós marcamos o jantar para as oito." },
       { form:"marcaram", pron:"mahr-KAH-rahng", meaning:"you all scheduled / marked", example:"Vocês marcaram o lugar na agenda?" }
-    ] },
-  { verb:"passear", group:"-ar verbs", batch:2,
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -car's 'c' would soften to an 's' sound before 'e', so it becomes 'qu': marquei (not *marcei*). The rest are regular: marcou, marcamos, marcaram." },
+  { verb:"passear", group:"-ar verbs", batch:7,
     forms:[
       { form:"passeei", pron:"pah-see-AY", meaning:"I walked / strolled", example:"Eu passeei com o cachorro de manhã." },
       { form:"passeou", pron:"pah-see-OH", meaning:"you walked / strolled", example:"Você passeou pelo centro histórico?" },
@@ -1260,119 +1322,120 @@ const VERB_ENTRIES = [
       { form:"passearam", pron:"pah-see-AH-rahng", meaning:"you all walked / strolled", example:"Vocês passearam no parque hoje?" }
     ],
     note:"eu form doubles the e: passeei (not *passei). The stem ends in -e, so adding -ei gives -eei, written passeei." },
-  { verb:"cozinhar", group:"-ar verbs", batch:2,
+  { verb:"cozinhar", group:"-ar verbs", batch:7,
     forms:[
       { form:"cozinhei", pron:"koh-zee-NYAY", meaning:"I cooked", example:"Eu cozinhei macarrão para o jantar." },
       { form:"cozinhou", pron:"koh-zee-NYOH", meaning:"you cooked", example:"Você cozinhou hoje?" },
       { form:"cozinhamos", pron:"koh-zee-NYAH-moosh", meaning:"we cooked", example:"Nós cozinhamos juntos no fim de semana." },
       { form:"cozinharam", pron:"koh-zee-NYAH-rahng", meaning:"you all cooked", example:"Vocês cozinharam algo diferente?" }
     ] },
-  { verb:"limpar", group:"-ar verbs", batch:2,
+  { verb:"limpar", group:"-ar verbs", batch:7,
     forms:[
       { form:"limpei", pron:"lim-PAY", meaning:"I cleaned", example:"Eu limpei a casa inteira ontem." },
       { form:"limpou", pron:"lim-POH", meaning:"you cleaned", example:"Você limpou o banheiro?" },
       { form:"limpamos", pron:"lim-PAH-moosh", meaning:"we cleaned", example:"Nós limpamos o apartamento antes da festa." },
       { form:"limparam", pron:"lim-PAH-rahng", meaning:"you all cleaned", example:"Vocês limparam a sala antes?" }
     ] },
-  { verb:"mostrar", group:"-ar verbs", batch:2,
+  { verb:"mostrar", group:"-ar verbs", batch:7,
     forms:[
       { form:"mostrei", pron:"mohs-TRAY", meaning:"I showed", example:"Eu mostrei as fotos para a família." },
       { form:"mostrou", pron:"mohs-TROH", meaning:"you showed", example:"Você mostrou o projeto para o chefe?" },
       { form:"mostramos", pron:"mohs-TRAH-moosh", meaning:"we showed", example:"Nós mostramos o caminho para eles." },
       { form:"mostraram", pron:"mohs-TRAH-rahng", meaning:"you all showed", example:"Vocês mostraram o resultado final?" }
     ] },
-  { verb:"explicar", group:"-car / -gar / -çar", batch:2,
+  { verb:"explicar", group:"-ar verbs", batch:7,
     forms:[
       { form:"expliquei", pron:"ess-plee-KAY", meaning:"I explained", example:"Eu expliquei tudo com calma." },
       { form:"explicou", pron:"ess-plee-KOH", meaning:"you explained", example:"Você explicou o motivo para ela?" },
       { form:"explicamos", pron:"ess-plee-KAH-moosh", meaning:"we explained", example:"Nós explicamos a situação." },
       { form:"explicaram", pron:"ess-plee-KAH-rahng", meaning:"you all explained", example:"Vocês explicaram como funciona?" }
-    ] },
-  { verb:"perguntar", group:"-ar verbs", batch:2,
+    ],
+    note:"In the pretérito perfeito, verbs ending in -car, -gar and -çar tweak their spelling in the eu form to preserve their original sound. Here, -car's 'c' would soften to an 's' sound before 'e', so it becomes 'qu': expliquei (not *explicei*). The rest are regular: explicou, explicamos, explicaram." },
+  { verb:"perguntar", group:"-ar verbs", batch:7,
     forms:[
       { form:"perguntei", pron:"pehr-goon-TAY", meaning:"I asked", example:"Eu perguntei o preço antes de comprar." },
       { form:"perguntou", pron:"pehr-goon-TOH", meaning:"you asked", example:"Você perguntou o endereço?" },
       { form:"perguntamos", pron:"pehr-goon-TAH-moosh", meaning:"we asked", example:"Nós perguntamos ao garçom." },
       { form:"perguntaram", pron:"pehr-goon-TAH-rahng", meaning:"you all asked", example:"Vocês perguntaram se tinha vaga?" }
     ] },
-  { verb:"mudar", group:"-ar verbs", batch:2,
+  { verb:"mudar", group:"-ar verbs", batch:7,
     forms:[
       { form:"mudei", pron:"moo-DAY", meaning:"I changed", example:"Eu mudei de ideia na última hora." },
       { form:"mudou", pron:"moo-DOH", meaning:"you changed", example:"Você mudou o plano?" },
       { form:"mudamos", pron:"moo-DAH-moosh", meaning:"we changed", example:"Nós mudamos de apartamento no ano passado." },
       { form:"mudaram", pron:"moo-DAH-rahng", meaning:"you all changed", example:"Vocês mudaram de opinião?" }
     ] },
-  { verb:"terminar", group:"-ar verbs", batch:2,
+  { verb:"terminar", group:"-ar verbs", batch:7,
     forms:[
       { form:"terminei", pron:"tehr-mee-NAY", meaning:"I finished", example:"Eu terminei o relatório antes do prazo." },
       { form:"terminou", pron:"tehr-mee-NOH", meaning:"you finished", example:"Você terminou a tarefa?" },
       { form:"terminamos", pron:"tehr-mee-NAH-moosh", meaning:"we finished", example:"Nós terminamos a reunião mais cedo." },
       { form:"terminaram", pron:"tehr-mee-NAH-rahng", meaning:"you all finished", example:"Vocês terminaram o exercício?" }
     ] },
-  { verb:"continuar", group:"-ar verbs", batch:2,
+  { verb:"continuar", group:"-ar verbs", batch:7,
     forms:[
       { form:"continuei", pron:"kon-chee-noo-AY", meaning:"I continued", example:"Eu continuei o trabalho depois do almoço." },
       { form:"continuou", pron:"kon-chee-noo-OH", meaning:"you continued", example:"Você continuou assistindo a série?" },
       { form:"continuamos", pron:"kon-chee-noo-AH-moosh", meaning:"we continued", example:"Nós continuamos a conversa no café." },
       { form:"continuaram", pron:"kon-chee-noo-AH-rahng", meaning:"you all continued", example:"Vocês continuaram o projeto sem mim?" }
     ] },
-  { verb:"pensar", group:"-ar verbs", batch:2,
+  { verb:"pensar", group:"-ar verbs", batch:7,
     forms:[
       { form:"pensei", pron:"pen-SAY", meaning:"I thought", example:"Eu pensei bem antes de decidir." },
       { form:"pensou", pron:"pen-SOH", meaning:"you thought", example:"Você pensou na proposta?" },
       { form:"pensamos", pron:"pen-SAH-moosh", meaning:"we thought", example:"Nós pensamos em mudar o plano." },
       { form:"pensaram", pron:"pen-SAH-rahng", meaning:"you all thought", example:"Vocês pensaram no custo?" }
     ] },
-  { verb:"dever", group:"-er verbs", batch:2,
+  { verb:"dever", group:"-er verbs", batch:7,
     forms:[
       { form:"devi", pron:"deh-VEE", meaning:"I owed", example:"Eu devi dinheiro para o banco." },
       { form:"deveu", pron:"deh-VAY-oo", meaning:"you owed", example:"Você deveu uma explicação a ela." },
       { form:"devemos", pron:"deh-VEH-moosh", meaning:"we owed", example:"Nós devemos muito a eles naquela época." },
       { form:"deveram", pron:"deh-VEH-rahng", meaning:"you all owed", example:"Vocês deveram uma resposta antes?" }
     ] },
-  { verb:"resolver", group:"-er verbs", batch:2,
+  { verb:"resolver", group:"-er verbs", batch:8,
     forms:[
       { form:"resolvi", pron:"heh-zohl-VEE", meaning:"I solved / resolved", example:"Eu resolvi o problema rapidamente." },
       { form:"resolveu", pron:"heh-zohl-VAY-oo", meaning:"you solved / resolved", example:"Você resolveu a questão com o banco?" },
       { form:"resolvemos", pron:"heh-zohl-VEH-moosh", meaning:"we solved / resolved", example:"Nós resolvemos tudo antes de sair." },
       { form:"resolveram", pron:"heh-zohl-VEH-rahng", meaning:"you all solved / resolved", example:"Vocês resolveram a situação?" }
     ] },
-  { verb:"depender", group:"-er verbs", batch:2,
+  { verb:"depender", group:"-er verbs", batch:8,
     forms:[
       { form:"dependi", pron:"deh-pen-DJEE", meaning:"I depended", example:"Eu dependi muito dos colegas no início." },
       { form:"dependeu", pron:"deh-pen-DAY-oo", meaning:"you depended", example:"Você dependeu dessa decisão?" },
       { form:"dependemos", pron:"deh-pen-DEH-moosh", meaning:"we depended", example:"Nós dependemos do ônibus para chegar." },
       { form:"dependeram", pron:"deh-pen-DEH-rahng", meaning:"you all depended", example:"Vocês dependeram de mim o tempo todo?" }
     ] },
-  { verb:"responder", group:"-er verbs", batch:2,
+  { verb:"responder", group:"-er verbs", batch:8,
     forms:[
       { form:"respondi", pron:"hess-pon-DJEE", meaning:"I answered / replied", example:"Eu respondi o e-mail assim que vi." },
       { form:"respondeu", pron:"hess-pon-DAY-oo", meaning:"you answered / replied", example:"Você respondeu a mensagem dela?" },
       { form:"respondemos", pron:"hess-pon-DEH-moosh", meaning:"we answered / replied", example:"Nós respondemos todas as perguntas." },
       { form:"responderam", pron:"hess-pon-DEH-rahng", meaning:"you all answered / replied", example:"Vocês responderam ao convite?" }
     ] },
-  { verb:"esquecer", group:"-er verbs", batch:2,
+  { verb:"esquecer", group:"-er verbs", batch:8,
     forms:[
       { form:"esqueci", pron:"ess-keh-SEE", meaning:"I forgot", example:"Eu esqueci o guarda-chuva no ônibus." },
       { form:"esqueceu", pron:"ess-keh-SAY-oo", meaning:"you forgot", example:"Você esqueceu a senha de novo?" },
       { form:"esquecemos", pron:"ess-keh-SEH-moosh", meaning:"we forgot", example:"Nós esquecemos de levar o carregador." },
       { form:"esqueceram", pron:"ess-keh-SEH-rahng", meaning:"you all forgot", example:"Vocês esqueceram o horário da reunião?" }
     ] },
-  { verb:"descer", group:"-er verbs", batch:2,
+  { verb:"descer", group:"-er verbs", batch:8,
     forms:[
       { form:"desci", pron:"dess-SEE", meaning:"I went down / descended", example:"Eu desci as escadas correndo." },
       { form:"desceu", pron:"dess-SAY-oo", meaning:"you went down / descended", example:"Você desceu na parada certa?" },
       { form:"descemos", pron:"dess-SEH-moosh", meaning:"we went down / descended", example:"Nós descemos juntos do elevador." },
       { form:"desceram", pron:"dess-SEH-rahng", meaning:"you all went down / descended", example:"Vocês desceram antes ou depois?" }
     ] },
-  { verb:"conseguir", group:"-ir verbs", batch:2,
+  { verb:"conseguir", group:"-ir verbs", batch:8,
     forms:[
       { form:"consegui", pron:"kon-seh-GEE", meaning:"I managed / got", example:"Eu consegui um ingresso de última hora." },
       { form:"conseguiu", pron:"kon-seh-GEE-oo", meaning:"you managed / got", example:"Você conseguiu falar com ele?" },
       { form:"conseguimos", pron:"kon-seh-GEE-moosh", meaning:"we managed / got", example:"Nós conseguimos chegar antes do fechamento." },
       { form:"conseguiram", pron:"kon-seh-GEE-rahng", meaning:"you all managed / got", example:"Vocês conseguiram resolver o problema?" }
     ] },
-  { verb:"preferir", group:"-ir verbs", batch:2,
+  { verb:"preferir", group:"-ir verbs", batch:8,
     forms:[
       { form:"preferi", pron:"preh-feh-REE", meaning:"I preferred", example:"Eu preferi ficar em casa ontem." },
       { form:"preferiu", pron:"preh-feh-REE-oo", meaning:"you preferred", example:"Você preferiu sair ou ficar?" },
@@ -1380,14 +1443,14 @@ const VERB_ENTRIES = [
       { form:"preferiram", pron:"preh-feh-REE-rahng", meaning:"you all preferred", example:"Vocês preferiram outro caminho?" }
     ],
     note:"3rd person shows e→i stem change: preferiu (not *prefereu). Common for -erir/-etir/-edir verbs." },
-  { verb:"seguir", group:"-ir verbs", batch:2,
+  { verb:"seguir", group:"-ir verbs", batch:8,
     forms:[
       { form:"segui", pron:"seh-GEE", meaning:"I followed", example:"Eu segui as instruções do manual." },
       { form:"seguiu", pron:"seh-GEE-oo", meaning:"you followed", example:"Você seguiu o conselho dela?" },
       { form:"seguimos", pron:"seh-GEE-moosh", meaning:"we followed", example:"Nós seguimos o grupo pela trilha." },
       { form:"seguiram", pron:"seh-GEE-rahng", meaning:"you all followed", example:"Vocês seguiram o roteiro planejado?" }
     ] },
-  { verb:"sentir", group:"-ir verbs", batch:2,
+  { verb:"sentir", group:"-ir verbs", batch:8,
     forms:[
       { form:"senti", pron:"sen-CHEE", meaning:"I felt", example:"Eu senti um frio de repente." },
       { form:"sentiu", pron:"sen-CHEE-oo", meaning:"you felt", example:"Você sentiu a diferença?" },
@@ -1395,14 +1458,14 @@ const VERB_ENTRIES = [
       { form:"sentiram", pron:"sen-CHEE-rahng", meaning:"you all felt", example:"Vocês sentiram o cheiro de fumaça?" }
     ],
     note:"3rd person shows e→i stem change: sentiu (not *senteu)." },
-  { verb:"subir", group:"-ir verbs", batch:2,
+  { verb:"subir", group:"-ir verbs", batch:8,
     forms:[
       { form:"subi", pron:"soo-BEE", meaning:"I went up / climbed", example:"Eu subi as escadas até o quinto andar." },
       { form:"subiu", pron:"soo-BEE-oo", meaning:"you went up / climbed", example:"Você subiu de pé ou de elevador?" },
       { form:"subimos", pron:"soo-BEE-moosh", meaning:"we went up / climbed", example:"Nós subimos o morro juntos." },
       { form:"subiram", pron:"soo-BEE-rahng", meaning:"you all went up / climbed", example:"Vocês subiram até o topo?" }
     ] },
-  { verb:"rir", group:"irregular", batch:2,
+  { verb:"rir", group:"irregular", batch:8,
     forms:[
       { form:"ri", pron:"HEE", meaning:"I laughed", example:"Eu ri tanto que chorei." },
       { form:"riu", pron:"HEE-oo", meaning:"you laughed", example:"Você riu do que eu disse?" },
@@ -1414,10 +1477,37 @@ const VERB_ENTRIES = [
 
 const ALL_CARDS = expandVerbEntries(VERB_ENTRIES);
 
-const GROUPS = ["-ar verbs", "-er verbs", "-ir verbs", "ser / ir", "irregular", "-car / -gar / -çar"];
-const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
+const GROUPS = ["-ar verbs", "-er verbs", "-ir verbs", "irregular"];
+const BATCHES = [...new Set(ALL_CARDS.map(c => c.batch))].sort((a, b) => a - b);
+
+// Card keys (verb+person) that make up each batch — used to detect batch completion.
+const batchCardKeys = {};
+BATCHES.forEach(b => { batchCardKeys[b] = new Set(); });
+ALL_CARDS.forEach(c => batchCardKeys[c.batch].add(cardKey(c)));
+
 let activeGroups = new Set(GROUPS);
-let showOnlyLatestBatch = false;
+let activeBatches = new Set([BATCHES[0]]);
+
+// Per-batch completion saved in the browser (no backend; works on GitHub Pages).
+// Value: 'done' = all cleared, 'perfect' = cleared with no misses/skips.
+const PROGRESS_KEY = 'verbBatchProgress:passado';
+let batchProgress = loadBatchProgress();
+
+// Cards missed or skipped in the current practice run (for the crown / completion check).
+let runMissed = new Set();
+let runSkipped = new Set();
+
+function cardKey(c) { return c.verb + '|' + c.person; }
+
+function loadBatchProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+
+function saveBatchProgress() {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(batchProgress)); }
+  catch (e) {}
+}
 let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
 let hardMode = false;
 let practiceStats = createRunStats();
@@ -1803,8 +1893,15 @@ function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
 function getFilteredCards() {
   return ALL_CARDS.filter(card =>
-    activeGroups.has(card.group) && (!showOnlyLatestBatch || card.batch === LATEST_BATCH)
+    activeBatches.has(card.batch) && activeGroups.has(card.group)
   );
+}
+
+// Categories that have at least one card in the currently selected batches.
+function availableGroups() {
+  const s = new Set();
+  ALL_CARDS.forEach(c => { if (activeBatches.has(c.batch)) s.add(c.group); });
+  return s;
 }
 
 function buildDeck() {
@@ -1813,6 +1910,8 @@ function buildDeck() {
   known = new Set();
   answered = false;
   perfect = true;
+  runMissed = new Set();
+  runSkipped = new Set();
   practiceStats = createRunStats();
   render();
 }
@@ -1834,19 +1933,17 @@ function render() {
   const remaining = deck.filter((_, i) => !known.has(i));
 
   if (deck.length === 0) {
-    const subtitle = showOnlyLatestBatch
-      ? 'No cards match the current categories in the latest batch.'
-      : 'No cards match the current filters.';
     area.innerHTML = `
       <div class="card done-screen">
         <h2>No matching cards</h2>
-        <p>${subtitle}</p>
+        <p>No cards match the current batch and category filters.</p>
       </div>
     `;
     return;
   }
 
   if (remaining.length === 0 && deck.length > 0) {
+    recordBatchCompletion();
     const title = perfect ? 'Perfeito!' : 'Deck complete!';
     const subtitle = perfect
       ? `You cleared all ${deck.length} cards.`
@@ -1920,6 +2017,7 @@ function checkAnswer() {
   } else {
     practiceStats.errors++;
     perfect = false;
+    runMissed.add(cardKey(card));
     input.classList.add('wrong');
     btn.classList.add('go-red');
     feedback.className = 'feedback err';
@@ -1957,28 +2055,71 @@ function nextCard() {
 }
 
 function skipCard() {
+  runSkipped.add(cardKey(deck[current]));
   known.add(current);
   updateStats();
   advanceToNextUnknown();
 }
 
-function renderFilters() {
-  const groupTags = GROUPS.map(g =>
-    `<div class="fc-tag${activeGroups.has(g) ? ' active' : ''}" onclick="toggleGroup('${g}')">${g}</div>`
-  ).join('');
-  const latestTag = `<div class="fc-tag${showOnlyLatestBatch ? ' active' : ''}" onclick="toggleLatestBatch()">Only new verbs</div>`;
-  document.getElementById('filterRow').innerHTML = groupTags + latestTag;
+// On deck completion, mark every batch fully covered by this deck as done/perfect.
+function recordBatchCompletion() {
+  const deckKeys = new Set(deck.map(cardKey));
+  let changed = false;
+  BATCHES.forEach(b => {
+    const keys = batchCardKeys[b];
+    const fullyCovered = [...keys].every(k => deckKeys.has(k));
+    if (!fullyCovered) return;
+    const clean = [...keys].every(k => !runMissed.has(k) && !runSkipped.has(k));
+    const status = clean ? 'perfect' : 'done';
+    // Never downgrade an existing perfect to done.
+    if (batchProgress[b] === 'perfect') return;
+    if (batchProgress[b] !== status) { batchProgress[b] = status; changed = true; }
+  });
+  if (changed) { saveBatchProgress(); renderFilters(); }
 }
 
-function toggleLatestBatch() {
-  showOnlyLatestBatch = !showOnlyLatestBatch;
+function renderFilters() {
+  const batchTags = BATCHES.map(b => {
+    const status = batchProgress[b];
+    const cls = ['fc-tag', 'batch-chip'];
+    if (activeBatches.has(b)) cls.push('active');
+    if (status) cls.push('done');
+    const crown = status === 'perfect' ? '<span class="crown">👑</span>' : '';
+    return `<div class="${cls.join(' ')}" onclick="toggleBatch(${b})">${crown}${b}</div>`;
+  }).join('');
+
+  const avail = availableGroups();
+  const groupTags = GROUPS.map(g => {
+    const disabled = !avail.has(g);
+    const cls = ['fc-tag'];
+    if (!disabled && activeGroups.has(g)) cls.push('active');
+    if (disabled) cls.push('disabled');
+    const handler = disabled ? '' : ` onclick="toggleGroup('${g}')"`;
+    return `<div class="${cls.join(' ')}"${handler}>${g}</div>`;
+  }).join('');
+
+  document.getElementById('filterRow').innerHTML = `
+    <div class="filter-section"><span class="filter-label">Batches</span><div class="filter-chips">${batchTags}</div></div>
+    <div class="filter-section"><span class="filter-label">Categories</span><div class="filter-chips">${groupTags}</div></div>`;
+}
+
+function toggleBatch(b) {
+  if (activeBatches.has(b)) {
+    if (activeBatches.size === 1) return;
+    activeBatches.delete(b);
+  } else {
+    activeBatches.add(b);
+  }
   renderFilters();
   buildDeck();
 }
 
 function toggleGroup(g) {
   if (activeGroups.has(g)) {
-    if (activeGroups.size === 1) return;
+    // Keep at least one selectable category active for the current batches.
+    const avail = availableGroups();
+    const activeAvail = GROUPS.filter(x => activeGroups.has(x) && avail.has(x));
+    if (activeAvail.length <= 1 && activeAvail[0] === g) return;
     activeGroups.delete(g);
   } else {
     activeGroups.add(g);
