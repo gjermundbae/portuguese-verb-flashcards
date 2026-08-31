@@ -1978,7 +1978,7 @@ function render() {
       <div id="revealArea"></div>
     </div>
     <div class="controls">
-      <button class="ctrl-btn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" id="practiceSkipBtn" onclick="skipCard()">Skip →</button>
       <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
     </div>
   `;
@@ -2057,10 +2057,31 @@ function nextCard() {
 }
 
 function skipCard() {
-  runSkipped.add(cardKey(deck[current]));
+  // Already revealed: the Skip button doubles as "next card".
+  if (answered) { nextCard(); return; }
+
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+
+  // Reveal the answer before moving on, so a skipped card still teaches the verb.
+  answered = true;
+  input.disabled = true;
+  btn.classList.add('go-red');
+  feedback.className = 'feedback err';
+  feedback.innerHTML = `↷ Skipped — the answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  revealArea.innerHTML = buildRevealContent(card, 'err');
+  animateConjugationTable();
+
+  runSkipped.add(cardKey(card));
   known.add(current);
   updateStats();
-  advanceToNextUnknown();
+
+  const skipBtn = document.getElementById('practiceSkipBtn');
+  if (skipBtn) skipBtn.textContent = 'Next →';
+  setTimeout(() => btn.focus(), 0);
 }
 
 // On deck completion, mark every batch fully covered by this deck as done/perfect.

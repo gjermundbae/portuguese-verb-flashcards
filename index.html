@@ -349,6 +349,13 @@
     border-top: 1px dashed var(--border);
   }
 
+  .note {
+    font-size: 0.72rem;
+    color: var(--text2);
+    margin-top: 0.65rem;
+    line-height: 1.5;
+  }
+
   .controls {
     display: flex;
     gap: 8px;
@@ -422,12 +429,10 @@
     z-index: 9999;
   }
 
-  /* Conjugation table (wrong-answer reveal) */
+  /* Conjugation table (answer reveal) */
   .conj-table-wrapper {
     margin-top: 1rem;
     padding: 1rem 1.1rem;
-    background: var(--red-bg);
-    border: 1px solid var(--red-light);
     border-radius: var(--radius-sm);
     opacity: 0;
     transform: translateY(6px);
@@ -439,13 +444,32 @@
     transform: translateY(0);
   }
 
+  .conj-table-wrapper.ok {
+    background: var(--green-bg);
+    border: 1px solid var(--green-light);
+  }
+
+  .conj-table-wrapper.err {
+    background: var(--red-bg);
+    border: 1px solid var(--red-light);
+  }
+
   .conj-table-label {
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--red);
     margin-bottom: 0.6rem;
     font-weight: 500;
+  }
+
+  .conj-table-wrapper.ok .conj-table-label,
+  .conj-table-wrapper.ok .conj-form {
+    color: var(--green);
+  }
+
+  .conj-table-wrapper.err .conj-table-label,
+  .conj-table-wrapper.err .conj-form {
+    color: var(--red);
   }
 
   .conj-table {
@@ -455,7 +479,8 @@
     font-size: 0.8rem;
   }
 
-  .conj-table tr + tr { border-top: 1px dashed var(--red-light); }
+  .conj-table-wrapper.ok .conj-table tr + tr { border-top: 1px dashed var(--green-light); }
+  .conj-table-wrapper.err .conj-table tr + tr { border-top: 1px dashed var(--red-light); }
 
   .conj-table td { padding: 0.35rem 0; }
 
@@ -465,7 +490,6 @@
   }
 
   .conj-form {
-    color: var(--red);
     font-weight: 500;
   }
 
@@ -1706,7 +1730,8 @@ function checkDailyAnswer() {
     const tries = dailyAttempts[dailyCurrent];
     const tryText = tries === 1 ? '1st try!' : `${tries} tries`;
     feedback.innerHTML = `✓ Correct — ${tryText} <span class="pron-tag">${card.pron}</span>`;
-    revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+    revealArea.innerHTML = buildRevealContent(card, 'ok');
+    animateConjugationTable();
     renderDailyDots();
     setTimeout(() => btn.focus(), 0);
   } else {
@@ -1745,7 +1770,8 @@ function failDailyCard(skipped) {
   feedback.className = 'feedback err';
   feedback.innerHTML = (skipped ? '↷ Skipped — the answer is ' : '✗ The answer was ') +
     `<strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
-  revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+  revealArea.innerHTML = buildRevealContent(card, 'err');
+  animateConjugationTable();
   const skipBtn = document.getElementById('dailySkipBtn');
   if (skipBtn) skipBtn.textContent = 'Next →';
   renderDailyDots();
@@ -1945,7 +1971,7 @@ function render() {
       <div id="revealArea"></div>
     </div>
     <div class="controls">
-      <button class="ctrl-btn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" id="practiceSkipBtn" onclick="skipCard()">Skip →</button>
       <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
     </div>
   `;
@@ -1980,7 +2006,7 @@ function checkAnswer() {
     btn.classList.add('go-green');
     feedback.className = 'feedback ok';
     feedback.innerHTML = `✓ Correct! <span class="pron-tag">${card.pron}</span>`;
-    revealArea.innerHTML = `<div class="example">"${card.example}"</div>`;
+    revealArea.innerHTML = buildRevealContent(card, 'ok');
     known.add(current);
     updateStats();
   } else {
@@ -1991,22 +2017,31 @@ function checkAnswer() {
     btn.classList.add('go-red');
     feedback.className = 'feedback err';
     feedback.innerHTML = `✗ The answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
-    revealArea.innerHTML = `<div class="example">"${card.example}"</div>` + buildConjugationTable(card.verb);
-    requestAnimationFrame(() => {
-      const el = document.querySelector('.conj-table-wrapper');
-      if (el) el.classList.add('visible');
-    });
+    revealArea.innerHTML = buildRevealContent(card, 'err');
   }
 
+  animateConjugationTable();
   setTimeout(() => btn.focus(), 0);
 }
 
-function buildConjugationTable(verb) {
+function buildConjugationTable(verb, tone) {
   const forms = ALL_CARDS.filter(c => c.verb === verb);
   const rows = forms.map(f =>
     `<tr><td class="conj-pronoun">${f.person}</td><td class="conj-form">${f.form}</td><td class="conj-pron">${f.pron}</td></tr>`
   ).join('');
-  return `<div class="conj-table-wrapper"><div class="conj-table-label">${verb} — present tense</div><table class="conj-table">${rows}</table></div>`;
+  return `<div class="conj-table-wrapper ${tone}"><div class="conj-table-label">${verb} — present tense</div><table class="conj-table">${rows}</table></div>`;
+}
+
+function buildRevealContent(card, tone) {
+  const note = card.note ? `<div class="note">${card.note}</div>` : '';
+  return `<div class="example">"${card.example}"</div>${note}${buildConjugationTable(card.verb, tone)}`;
+}
+
+function animateConjugationTable() {
+  requestAnimationFrame(() => {
+    const el = document.querySelector('.conj-table-wrapper');
+    if (el) el.classList.add('visible');
+  });
 }
 
 function advanceToNextUnknown() {
@@ -2027,10 +2062,31 @@ function nextCard() {
 }
 
 function skipCard() {
-  runSkipped.add(cardKey(deck[current]));
+  // Already revealed: the Skip button doubles as "next card".
+  if (answered) { nextCard(); return; }
+
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+
+  // Reveal the answer before moving on, so a skipped card still teaches the verb.
+  answered = true;
+  input.disabled = true;
+  btn.classList.add('go-red');
+  feedback.className = 'feedback err';
+  feedback.innerHTML = `↷ Skipped — the answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  revealArea.innerHTML = buildRevealContent(card, 'err');
+  animateConjugationTable();
+
+  runSkipped.add(cardKey(card));
   known.add(current);
   updateStats();
-  advanceToNextUnknown();
+
+  const skipBtn = document.getElementById('practiceSkipBtn');
+  if (skipBtn) skipBtn.textContent = 'Next →';
+  setTimeout(() => btn.focus(), 0);
 }
 
 // On deck completion, mark every batch fully covered by this deck as done/perfect.
