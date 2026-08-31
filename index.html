@@ -158,14 +158,20 @@
     color: var(--bg);
   }
 
-  .batch-chip .crown {
+  .batch-chip .chip-badges {
     position: absolute;
     top: -10px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.78rem;
+    display: flex;
+    gap: 1px;
     line-height: 1;
     pointer-events: none;
+  }
+
+  .batch-chip .chip-badges span {
+    font-size: 0.78rem;
+    line-height: 1;
     filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
   }
 
@@ -1503,15 +1509,28 @@ let activeBatches = new Set([BATCHES[0]]);
 const PROGRESS_KEY = 'verbBatchProgress:present';
 let batchProgress = loadBatchProgress();
 
-// Cards missed or skipped in the current practice run (for the crown / completion check).
+// Per-run card bookkeeping behind the batch badges: a clean run earns the crown,
+// a run played entirely in hard mode earns the ninja.
 let runMissed = new Set();
 let runSkipped = new Set();
+let runHardCards = new Set();
 
 function cardKey(c) { return c.verb + '|' + c.person; }
 
 function loadBatchProgress() {
-  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
-  catch (e) { return {}; }
+  try {
+    const raw = JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+    const progress = {};
+    Object.keys(raw).forEach(b => {
+      const v = raw[b];
+      if (!v) return;
+      // Older saves stored a 'done' | 'perfect' string, from before hard mode was tracked.
+      progress[b] = typeof v === 'string'
+        ? { perfect: v === 'perfect', hard: false }
+        : { perfect: !!v.perfect, hard: !!v.hard };
+    });
+    return progress;
+  } catch (e) { return {}; }
 }
 
 function saveBatchProgress() {
@@ -1613,8 +1632,22 @@ function toggleHardMode() {
   hardMode = !hardMode;
   updateHardModeButton();
   if (hardMode) launchHardModeConfetti();
-  if (dailyMode) renderDailyCard();
-  else render();
+  if (dailyMode) { renderDailyCard(); return; }
+  // Switching into hard mode re-shuffles what's left, so the run can't coast on a
+  // card order you have already half-memorised. The daily deck is fixed, so it is exempt.
+  if (hardMode) reshuffleRemaining();
+  render();
+}
+
+// Re-order the cards still in play, keeping cleared ones (and so the stats) intact.
+// `known` holds deck indices, so the deck is rebuilt as [cleared..., reshuffled remainder].
+function reshuffleRemaining() {
+  const cleared = deck.filter((_, i) => known.has(i));
+  const remaining = shuffle(deck.filter((_, i) => !known.has(i)));
+  deck = cleared.concat(remaining);
+  known = new Set(cleared.map((_, i) => i));
+  current = cleared.length;
+  answered = false;
 }
 
 function startDaily() {
@@ -1907,7 +1940,7 @@ function availableGroups() {
 function buildDeck() {
   deck = shuffle(getFilteredCards());
   current = 0; known = new Set(); answered = false; perfect = true;
-  runMissed = new Set(); runSkipped = new Set();
+  runMissed = new Set(); runSkipped = new Set(); runHardCards = new Set();
   practiceStats = createRunStats();
   render();
 }
@@ -2001,7 +2034,7 @@ function checkAnswer() {
   input.disabled = true;
 
   if (isVerbConjugationCorrect(card, input.value, normalize)) {
-    if (hardMode) practiceStats.hardModeSolved++;
+    if (hardMode) { practiceStats.hardModeSolved++; runHardCards.add(cardKey(card)); }
     input.classList.add('correct');
     btn.classList.add('go-green');
     feedback.className = 'feedback ok';
@@ -2081,6 +2114,7 @@ function skipCard() {
   animateConjugationTable();
 
   runSkipped.add(cardKey(card));
+  if (hardMode) runHardCards.add(cardKey(card));
   known.add(current);
   updateStats();
 
@@ -2098,10 +2132,14 @@ function recordBatchCompletion() {
     const fullyCovered = [...keys].every(k => deckKeys.has(k));
     if (!fullyCovered) return;
     const clean = [...keys].every(k => !runMissed.has(k) && !runSkipped.has(k));
-    const status = clean ? 'perfect' : 'done';
-    // Never downgrade an existing perfect to done.
-    if (batchProgress[b] === 'perfect') return;
-    if (batchProgress[b] !== status) { batchProgress[b] = status; changed = true; }
+    const hard = [...keys].every(k => runHardCards.has(k));
+    // Badges are sticky: an earned crown or ninja is never taken away by a sloppier run.
+    const prev = batchProgress[b] || { perfect: false, hard: false };
+    const next = { perfect: prev.perfect || clean, hard: prev.hard || hard };
+    if (!batchProgress[b] || next.perfect !== prev.perfect || next.hard !== prev.hard) {
+      batchProgress[b] = next;
+      changed = true;
+    }
   });
   if (changed) { saveBatchProgress(); renderFilters(); }
 }
@@ -2112,8 +2150,10 @@ function renderFilters() {
     const cls = ['fc-tag', 'batch-chip'];
     if (activeBatches.has(b)) cls.push('active');
     if (status) cls.push('done');
-    const crown = status === 'perfect' ? '<span class="crown">👑</span>' : '';
-    return `<div class="${cls.join(' ')}" onclick="toggleBatch(${b})">${crown}${b}</div>`;
+    const badges = (status && status.perfect ? '<span>👑</span>' : '')
+      + (status && status.hard ? '<span>🥷</span>' : '');
+    const badgeRow = badges ? `<span class="chip-badges">${badges}</span>` : '';
+    return `<div class="${cls.join(' ')}" onclick="toggleBatch(${b})">${badgeRow}${b}</div>`;
   }).join('');
 
   const avail = availableGroups();

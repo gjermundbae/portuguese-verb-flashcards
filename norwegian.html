@@ -836,8 +836,22 @@ function toggleHardMode() {
   hardMode = !hardMode;
   updateHardModeButton();
   if (hardMode) launchHardModeConfetti();
-  if (dailyMode) renderDailyCard();
-  else render();
+  if (dailyMode) { renderDailyCard(); return; }
+  // Switching into hard mode re-shuffles what's left, so the run can't coast on a
+  // card order you have already half-memorised. The daily deck is fixed, so it is exempt.
+  if (hardMode) reshuffleRemaining();
+  render();
+}
+
+// Re-order the cards still in play, keeping cleared ones (and so the stats) intact.
+// `known` holds deck indices, so the deck is rebuilt as [cleared..., reshuffled remainder].
+function reshuffleRemaining() {
+  const cleared = deck.filter((_, i) => known.has(i));
+  const remaining = shuffle(deck.filter((_, i) => !known.has(i)));
+  deck = cleared.concat(remaining);
+  known = new Set(cleared.map((_, i) => i));
+  current = cleared.length;
+  answered = false;
 }
 
 function startDaily() {
