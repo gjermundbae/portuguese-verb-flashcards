@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portuguese Presente Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F0E8;
+    --surface: #FFFDF7;
+    --surface2: #EDE8DC;
+    --border: #D4CCBA;
+    --border2: #BEB5A0;
+    --text: #1A1712;
+    --text2: #6B6456;
+    --text3: #9E9485;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --green-light: #B7E4C7;
+    --red: #7D2B2B;
+    --red-bg: #FFE8E8;
+    --red-light: #FFCACA;
+    --accent: #C4922A;
+    --accent-bg: #FFF3DC;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  header p {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  header p a {
+    color: var(--text3);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, color 0.15s;
+    padding-bottom: 1px;
+  }
+
+  header p a:hover { color: var(--text2); border-bottom-color: var(--border2); }
+
+  header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
+
+  header p a.home-link {
+    color: var(--text2);
+    border-bottom-color: transparent;
+  }
+
+  header p a.home-link:hover { color: var(--text); border-bottom-color: var(--border2); }
+
+  header p .nav-div {
+    display: inline-block;
+    width: 1px;
+    height: 9px;
+    background: var(--border);
+    margin: 0 0.7rem;
+    vertical-align: -1px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* Filter tabs */
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    width: 64px;
+    flex-shrink: 0;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .fc-tag {
+    position: relative;
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .fc-tag:hover { border-color: var(--border2); }
+
+  .fc-tag.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  .fc-tag.disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .fc-tag .chip-count {
+    margin-left: 6px;
+    font-size: 0.62rem;
+    opacity: 0.5;
+  }
+
+  .fc-tag.all-chip { font-weight: 500; }
+
+  /* Batch chips carry completion status */
+  .batch-chip { min-width: 34px; text-align: center; }
+
+  .batch-chip.done {
+    border-color: var(--green-light);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .batch-chip.done.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--bg);
+  }
+
+  .batch-chip .chip-badges {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .batch-chip .chip-badges span {
+    font-size: 0.78rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+
+  .stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+
+  .progress-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 0.7rem;
+    color: var(--text3);
+    min-width: 32px;
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.75rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-meta {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-prompt {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .answer-input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .answer-input:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .answer-input.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .answer-input.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .answer-input:disabled { opacity: 1; }
+
+  .check-btn {
+    font-size: 1.15rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn.go-green { background: var(--green); border-color: var(--green); }
+  .check-btn.go-red { background: var(--red); border-color: var(--red); }
+
+  .feedback {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    min-height: 18px;
+    line-height: 1.5;
+  }
+
+  .feedback.ok { color: var(--green); }
+  .feedback.err { color: var(--red); }
+
+  .example {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-style: italic;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+  }
+
+  .note {
+    font-size: 0.72rem;
+    color: var(--text2);
+    margin-top: 0.65rem;
+    line-height: 1.5;
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
+
+  /* Done screen */
+  .done-screen {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .done-screen .trophy {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .done-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .done-screen p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Pronunciation tag */
+  .pron-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid #E8C97A;
+    border-radius: 999px;
+    padding: 2px 10px;
+    letter-spacing: 0.04em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* Fireworks */
+  .fireworks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Conjugation table (answer reveal) */
+  .conj-table-wrapper {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .conj-table-wrapper.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .conj-table-wrapper.ok {
+    background: var(--green-bg);
+    border: 1px solid var(--green-light);
+  }
+
+  .conj-table-wrapper.err {
+    background: var(--red-bg);
+    border: 1px solid var(--red-light);
+  }
+
+  .conj-table-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .conj-table-wrapper.ok .conj-table-label,
+  .conj-table-wrapper.ok .conj-form {
+    color: var(--green);
+  }
+
+  .conj-table-wrapper.err .conj-table-label,
+  .conj-table-wrapper.err .conj-form {
+    color: var(--red);
+  }
+
+  .conj-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .conj-table-wrapper.ok .conj-table tr + tr { border-top: 1px dashed var(--green-light); }
+  .conj-table-wrapper.err .conj-table tr + tr { border-top: 1px dashed var(--red-light); }
+
+  .conj-table td { padding: 0.35rem 0; }
+
+  .conj-pronoun {
+    color: var(--text3);
+    width: 60px;
+  }
+
+  .conj-form {
+    font-weight: 500;
+  }
+
+  .conj-pron {
+    color: var(--text3);
+    font-size: 0.7rem;
+    text-align: right;
+  }
+
+  /* Daily challenge */
+  .daily-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .daily-btn:hover { background: var(--accent); color: var(--surface); }
+
+  .mode-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .mode-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+    box-shadow: 0 8px 20px rgba(26, 23, 18, 0.04);
+  }
+
+  .mode-btn:hover {
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .mode-btn.active {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+    box-shadow: 0 12px 24px rgba(26, 23, 18, 0.12);
+  }
+
+  .daily-header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .daily-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+
+  .daily-header .daily-date {
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .daily-progress-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .daily-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .daily-dot.current {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.25);
+  }
+
+  .daily-dot.done {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .daily-dot.done-multi {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .daily-dot.done-fail {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  .daily-counter {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .answer-input.shake {
+    animation: shake 0.4s ease;
+  }
+
+  .daily-results {
+    text-align: left;
+    margin: 1.5rem 0;
+  }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  .result-context {
+    font-size: 0.64rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: -0.9rem 0 1rem;
+  }
+
+  .result-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 0.75rem;
+  }
+
+  .result-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.55rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .result-stat-num.accent { color: var(--accent); }
+  .result-stat-num.red { color: var(--red); }
+
+  .result-stat-lbl {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.35rem;
+  }
+
+  .result-badges {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 1.25rem;
+  }
+
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .daily-result-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 0.82rem;
+  }
+
+  .daily-result-row + .daily-result-row {
+    border-top: 1px dashed var(--border);
+  }
+
+  .daily-result-num {
+    color: var(--text3);
+    font-size: 0.7rem;
+    min-width: 18px;
+  }
+
+  .daily-result-verb {
+    color: var(--text2);
+    min-width: 80px;
+  }
+
+  .daily-result-dots {
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.65rem 1.6rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--surface);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { opacity: 0.85; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 10000;
+    letter-spacing: 0.04em;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Presente em <em>Português</em></h1>
+  <p><a class="home-link" href="index.html">&larr; all decks</a><span class="nav-div"></span><a class="active" href="presente.html">presente</a> &middot; <a href="passado.html">passado</a> &middot; <a href="imperfeito.html">imperfeito</a></p>
+</header>
+
+<div class="container">
+  <div class="mode-row">
+    <button class="mode-btn" id="hardModeBtn" type="button" onclick="toggleHardMode()" aria-pressed="false">Hard mode</button>
+  </div>
+  <div id="dailyBtnRow" style="text-align:center;">
+    <button class="daily-btn" onclick="startDaily()">&#9733; Daily Challenge</button>
+  </div>
+
+  <div id="dailyHeader" class="daily-header" style="display:none;"></div>
+  <div id="dailyDots" class="daily-progress-dots" style="display:none;"></div>
+
+  <div id="practiceChrome">
+    <div class="filters" id="filterRow"></div>
+
+    <div class="stats" id="statsRow">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-num green" id="statKnown">0</div><div class="stat-lbl">Known</div></div>
+      <div class="stat"><div class="stat-num red" id="statLeft">0</div><div class="stat-lbl">Left</div></div>
+    </div>
+
+    <div class="progress-row">
+      <div class="progress-bg"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+  </div>
+
+  <div id="cardArea"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="drill-common.js"></script>
+<script>
+// One block per verb; forms are eu → você → nós → vocês (expanded to ALL_CARDS at load).
+const VERB_ENTRIES = [
+  { verb:"ser", group:"irregular", batch:1,
+    forms:[
+      { form:"sou", pron:"SOH", meaning:"I am (permanent)", example:"Eu sou brasileiro." },
+      { form:"é", pron:"EH", meaning:"you are (permanent)", example:"Você é inteligente." },
+      { form:"somos", pron:"SOH-moosh", meaning:"we are (permanent)", example:"Nós somos amigos." },
+      { form:"são", pron:"SOWng", meaning:"you all are (permanent)", example:"Vocês são muito gentis." }
+    ] },
+  { verb:"estar", group:"irregular", batch:1,
+    forms:[
+      { form:"estou", pron:"ish-TOH", meaning:"I am (temporary)", example:"Eu estou bem." },
+      { form:"está", pron:"ish-TAH", meaning:"you are (temporary)", example:"Você está cansado?" },
+      { form:"estamos", pron:"ish-TAH-moosh", meaning:"we are (temporary)", example:"Nós estamos em casa." },
+      { form:"estão", pron:"ish-TOWng", meaning:"you all are (temporary)", example:"Vocês estão prontos?" }
+    ] },
+  { verb:"ter", group:"irregular", batch:1,
+    forms:[
+      { form:"tenho", pron:"TEN-yoo", meaning:"I have", example:"Eu tenho fome." },
+      { form:"tem", pron:"TAYNG", meaning:"you have", example:"Você tem tempo?" },
+      { form:"temos", pron:"TEH-moosh", meaning:"we have", example:"Nós temos aula." },
+      { form:"têm", pron:"TAYNG", meaning:"you all have", example:"Vocês têm uma reserva?" }
+    ] },
+  { verb:"fazer", group:"irregular", batch:1,
+    forms:[
+      { form:"faço", pron:"FAH-soo", meaning:"I do / make", example:"Eu faço o jantar." },
+      { form:"faz", pron:"FAHSH", meaning:"you do / make", example:"Você faz exercício?" },
+      { form:"fazemos", pron:"fah-ZEH-moosh", meaning:"we do / make", example:"Nós fazemos café em casa." },
+      { form:"fazem", pron:"FAH-zeng", meaning:"you all do / make", example:"Vocês fazem isso todo dia?" }
+    ] },
+  { verb:"ir", group:"irregular", batch:1,
+    forms:[
+      { form:"vou", pron:"VOH", meaning:"I go", example:"Eu vou ao mercado." },
+      { form:"vai", pron:"VY", meaning:"you go", example:"Você vai ao trabalho?" },
+      { form:"vamos", pron:"VAH-moosh", meaning:"we go / let's go", example:"Nós vamos à praia." },
+      { form:"vão", pron:"VOWng", meaning:"you all go", example:"Vocês vão de carro?" }
+    ] },
+  { verb:"poder", group:"irregular", batch:1,
+    forms:[
+      { form:"posso", pron:"POH-soo", meaning:"I can", example:"Eu posso ajudar." },
+      { form:"pode", pron:"POH-djee", meaning:"you can", example:"Você pode falar devagar?" },
+      { form:"podemos", pron:"poh-DEH-moosh", meaning:"we can", example:"Nós podemos tentar de novo." },
+      { form:"podem", pron:"POH-deng", meaning:"you all can", example:"Vocês podem entrar agora." }
+    ] },
+  { verb:"querer", group:"irregular", batch:1,
+    forms:[
+      { form:"quero", pron:"KEH-roo", meaning:"I want", example:"Eu quero água." },
+      { form:"quer", pron:"KEHR", meaning:"you want", example:"Você quer café?" },
+      { form:"queremos", pron:"keh-REH-moosh", meaning:"we want", example:"Nós queremos aprender mais." },
+      { form:"querem", pron:"KEH-reng", meaning:"you all want", example:"Vocês querem sobremesa?" }
+    ] },
+  { verb:"saber", group:"irregular", batch:1,
+    forms:[
+      { form:"sei", pron:"SAY", meaning:"I know (a fact)", example:"Eu sei a resposta." },
+      { form:"sabe", pron:"SAH-bee", meaning:"you know", example:"Você sabe onde fica?" },
+      { form:"sabemos", pron:"sah-BEH-moosh", meaning:"we know", example:"Nós sabemos a verdade." },
+      { form:"sabem", pron:"SAH-beng", meaning:"you all know", example:"Vocês sabem a resposta?" }
+    ] },
+  { verb:"falar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"falo", pron:"FAH-loo", meaning:"I speak / talk", example:"Eu falo português." },
+      { form:"fala", pron:"FAH-lah", meaning:"you speak", example:"Você fala inglês?" },
+      { form:"falamos", pron:"fah-LAH-moosh", meaning:"we speak / talk", example:"Nós falamos no telefone." },
+      { form:"falam", pron:"FAH-lahng", meaning:"you all speak / talk", example:"Vocês falam muito rápido." }
+    ] },
+  { verb:"trabalhar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"trabalho", pron:"trah-BAH-lyoo", meaning:"I work", example:"Eu trabalho muito." },
+      { form:"trabalha", pron:"trah-BAH-lyah", meaning:"you work", example:"Você trabalha aqui?" },
+      { form:"trabalhamos", pron:"trah-bah-LYAH-moosh", meaning:"we work", example:"Nós trabalhamos juntos." },
+      { form:"trabalham", pron:"trah-BAH-lyahng", meaning:"you all work", example:"Vocês trabalham aos sábados?" }
+    ] },
+  { verb:"gostar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"gosto", pron:"GOH-stoo", meaning:"I like", example:"Eu gosto de música." },
+      { form:"gosta", pron:"GOH-stah", meaning:"you like", example:"Você gosta de café?" },
+      { form:"gostamos", pron:"goh-STAH-moosh", meaning:"we like", example:"Nós gostamos deste lugar." },
+      { form:"gostam", pron:"GOH-stahng", meaning:"you all like", example:"Vocês gostam de viajar?" }
+    ] },
+  { verb:"morar", group:"-ar verbs", batch:1,
+    forms:[
+      { form:"moro", pron:"MOH-roo", meaning:"I live (reside)", example:"Eu moro no Rio." },
+      { form:"mora", pron:"MOH-rah", meaning:"you live (reside)", example:"Você mora perto daqui?" },
+      { form:"moramos", pron:"moh-RAH-moosh", meaning:"we live (reside)", example:"Nós moramos no centro." },
+      { form:"moram", pron:"MOH-rahng", meaning:"you all live (reside)", example:"Vocês moram no Brasil?" }
+    ] },
+  { verb:"comer", group:"-er verbs", batch:2,
+    forms:[
+      { form:"como", pron:"KOH-moo", meaning:"I eat", example:"Eu como arroz." },
+      { form:"come", pron:"KOH-mee", meaning:"you eat", example:"Você come carne?" },
+      { form:"comemos", pron:"koh-MEH-moosh", meaning:"we eat", example:"Nós comemos cedo." },
+      { form:"comem", pron:"KOH-meng", meaning:"you all eat", example:"Vocês comem aqui?" }
+    ] },
+  { verb:"beber", group:"-er verbs", batch:2,
+    forms:[
+      { form:"bebo", pron:"BEH-boo", meaning:"I drink", example:"Eu bebo suco." },
+      { form:"bebe", pron:"BEH-bee", meaning:"you drink", example:"Você bebe café?" },
+      { form:"bebemos", pron:"beh-BEH-moosh", meaning:"we drink", example:"Nós bebemos muita água." },
+      { form:"bebem", pron:"BEH-beng", meaning:"you all drink", example:"Vocês bebem chá?" }
+    ] },
+  { verb:"conhecer", group:"-er verbs", batch:2,
+    forms:[
+      { form:"conheço", pron:"koo-NEH-soo", meaning:"I know (a person/place)", example:"Eu conheço esse lugar." },
+      { form:"conhece", pron:"koo-NEH-see", meaning:"you know (a person/place)", example:"Você conhece a Ana?" },
+      { form:"conhecemos", pron:"koh-nyeh-SEH-moosh", meaning:"we know (a person/place)", example:"Nós conhecemos bem a cidade." },
+      { form:"conhecem", pron:"koo-NEH-seng", meaning:"you all know (a person/place)", example:"Vocês conhecem este restaurante?" }
+    ] },
+  { verb:"abrir", group:"-ir verbs", batch:2,
+    forms:[
+      { form:"abro", pron:"AH-broo", meaning:"I open", example:"Eu abro a porta." },
+      { form:"abre", pron:"AH-bree", meaning:"you open", example:"Você abre a janela?" },
+      { form:"abrimos", pron:"ah-BREE-moosh", meaning:"we open", example:"Nós abrimos a loja às nove." },
+      { form:"abrem", pron:"AH-breng", meaning:"you all open", example:"Vocês abrem os livros na página dez." }
+    ] },
+  { verb:"partir", group:"-ir verbs", batch:2,
+    forms:[
+      { form:"parto", pron:"PAHR-too", meaning:"I leave / depart", example:"Eu parto amanhã cedo." },
+      { form:"parte", pron:"PAHR-chee", meaning:"you leave / depart", example:"Você parte hoje à noite?" },
+      { form:"partimos", pron:"pahr-CHEE-moosh", meaning:"we leave / depart", example:"Nós partimos às oito." },
+      { form:"partem", pron:"PAHR-teng", meaning:"you all leave / depart", example:"Vocês partem juntos?" }
+    ] },
+  { verb:"decidir", group:"-ir verbs", batch:2,
+    forms:[
+      { form:"decido", pron:"deh-SEE-doo", meaning:"I decide", example:"Eu decido depois." },
+      { form:"decide", pron:"deh-SEE-djee", meaning:"you decide", example:"Você decide o que comer?" },
+      { form:"decidimos", pron:"deh-see-DJEE-moosh", meaning:"we decide", example:"Nós decidimos juntos." },
+      { form:"decidem", pron:"deh-SEE-deng", meaning:"you all decide", example:"Vocês decidem aonde ir?" }
+    ] },
+  { verb:"assistir", group:"-ir verbs", batch:2,
+    forms:[
+      { form:"assisto", pron:"ah-SEES-too", meaning:"I watch", example:"Eu assisto televisão." },
+      { form:"assiste", pron:"ah-SEES-chee", meaning:"you watch", example:"Você assiste futebol?" },
+      { form:"assistimos", pron:"ah-sees-CHEE-moosh", meaning:"we watch", example:"Nós assistimos ao filme." },
+      { form:"assistem", pron:"ah-SEES-teng", meaning:"you all watch", example:"Vocês assistem à novela?" }
+    ] },
+  { verb:"vir", group:"irregular", batch:2,
+    forms:[
+      { form:"venho", pron:"VEN-yoo", meaning:"I come", example:"Eu venho de São Paulo." },
+      { form:"vem", pron:"VAYNG", meaning:"you come", example:"Você vem comigo?" },
+      { form:"vimos", pron:"VEE-moosh", meaning:"we come", example:"Nós vimos cedo hoje." },
+      { form:"vêm", pron:"VAYNG", meaning:"you all come", example:"Vocês vêm amanhã?" }
+    ] },
+  { verb:"ver", group:"irregular", batch:2,
+    forms:[
+      { form:"vejo", pron:"VEH-zhoo", meaning:"I see", example:"Eu vejo um táxi." },
+      { form:"vê", pron:"VEH", meaning:"you see", example:"Você vê a montanha?" },
+      { form:"vemos", pron:"VEH-moosh", meaning:"we see", example:"Nós vemos tudo daqui." },
+      { form:"veem", pron:"VEH-eng", meaning:"you all see", example:"Vocês veem aquele prédio?" }
+    ] },
+  { verb:"dar", group:"irregular", batch:2,
+    forms:[
+      { form:"dou", pron:"DOH", meaning:"I give", example:"Eu dou um presente." },
+      { form:"dá", pron:"DAH", meaning:"you give", example:"Você dá gorjeta?" },
+      { form:"damos", pron:"DAH-moosh", meaning:"we give", example:"Nós damos aula de inglês." },
+      { form:"dão", pron:"DOWng", meaning:"you all give", example:"Vocês dão conta?" }
+    ] },
+  { verb:"dizer", group:"irregular", batch:2,
+    forms:[
+      { form:"digo", pron:"DJEE-goo", meaning:"I say / tell", example:"Eu digo a verdade." },
+      { form:"diz", pron:"DJEESS", meaning:"you say / tell", example:"Você diz que sim?" },
+      { form:"dizemos", pron:"djee-ZEH-moosh", meaning:"we say / tell", example:"Nós dizemos obrigado." },
+      { form:"dizem", pron:"DJEE-zeng", meaning:"you all say / tell", example:"Vocês dizem isso sempre?" }
+    ] },
+  { verb:"precisar", group:"-ar verbs", batch:2,
+    forms:[
+      { form:"preciso", pron:"preh-SEE-zoo", meaning:"I need", example:"Eu preciso de ajuda." },
+      { form:"precisa", pron:"preh-SEE-zah", meaning:"you need", example:"Você precisa sair agora?" },
+      { form:"precisamos", pron:"preh-see-ZAH-moosh", meaning:"we need", example:"Nós precisamos comprar comida." },
+      { form:"precisam", pron:"preh-SEE-zahng", meaning:"you all need", example:"Vocês precisam de mais tempo?" }
+    ] },
+  { verb:"ficar", group:"-ar verbs", batch:3,
+    forms:[
+      { form:"fico", pron:"FEE-koo", meaning:"I stay / become", example:"Eu fico em casa hoje." },
+      { form:"fica", pron:"FEE-kah", meaning:"you stay / become", example:"Você fica aqui comigo?" },
+      { form:"ficamos", pron:"fee-KAH-moosh", meaning:"we stay / become", example:"Nós ficamos até o fim." },
+      { form:"ficam", pron:"FEE-kahng", meaning:"you all stay / become", example:"Vocês ficam para o jantar?" }
+    ] },
+  { verb:"achar", group:"-ar verbs", batch:3,
+    forms:[
+      { form:"acho", pron:"AH-shoo", meaning:"I think / find", example:"Eu acho que sim." },
+      { form:"acha", pron:"AH-shah", meaning:"you think / find", example:"Você acha isso normal?" },
+      { form:"achamos", pron:"ah-SHAH-moosh", meaning:"we think / find", example:"Nós achamos a ideia boa." },
+      { form:"acham", pron:"AH-shahng", meaning:"you all think / find", example:"Vocês acham esse lugar bonito?" }
+    ] },
+  { verb:"chegar", group:"-ar verbs", batch:3,
+    forms:[
+      { form:"chego", pron:"SHEH-goo", meaning:"I arrive", example:"Eu chego às oito." },
+      { form:"chega", pron:"SHEH-gah", meaning:"you arrive", example:"Você chega cedo ao trabalho?" },
+      { form:"chegamos", pron:"sheh-GAH-moosh", meaning:"we arrive", example:"Nós chegamos amanhã de manhã." },
+      { form:"chegam", pron:"SHEH-gahng", meaning:"you all arrive", example:"Vocês chegam juntos?" }
+    ] },
+  { verb:"sair", group:"irregular", batch:3,
+    forms:[
+      { form:"saio", pron:"SAH-yoo", meaning:"I leave / go out", example:"Eu saio do trabalho às seis." },
+      { form:"sai", pron:"sah-EE", meaning:"you leave / go out", example:"Você sai hoje à noite?" },
+      { form:"saímos", pron:"sah-EE-moosh", meaning:"we leave / go out", example:"Nós saímos cedo de casa." },
+      { form:"saem", pron:"SAH-eng", meaning:"you all leave / go out", example:"Vocês saem agora ou depois?" }
+    ] },
+  { verb:"levar", group:"-ar verbs", batch:3,
+    forms:[
+      { form:"levo", pron:"LEH-voo", meaning:"I take / carry", example:"Eu levo meu filho à escola." },
+      { form:"leva", pron:"LEH-vah", meaning:"you take / carry", example:"Você leva carteira com você?" },
+      { form:"levamos", pron:"leh-VAH-moosh", meaning:"we take / carry", example:"Nós levamos água para a praia." },
+      { form:"levam", pron:"LEH-vahng", meaning:"you all take / carry", example:"Vocês levam as crianças à escola?" }
+    ] },
+  { verb:"chamar", group:"-ar verbs", batch:3,
+    forms:[
+      { form:"chamo", pron:"SHAH-moo", meaning:"I call / am called", example:"Eu chamo um táxi." },
+      { form:"chama", pron:"SHAH-mah", meaning:"you call / are called", example:"Como você se chama?" },
+      { form:"chamamos", pron:"shah-MAH-moosh", meaning:"we call", example:"Nós chamamos o garçom." },
+      { form:"chamam", pron:"SHAH-mahng", meaning:"you all call", example:"Vocês chamam um médico?" }
+    ] },
+  { verb:"pedir", group:"irregular", batch:3,
+    forms:[
+      { form:"peço", pron:"PEH-soo", meaning:"I ask for / order", example:"Eu peço um café." },
+      { form:"pede", pron:"PEH-djee", meaning:"you ask for / order", example:"Você pede a conta?" },
+      { form:"pedimos", pron:"peh-DJEE-moosh", meaning:"we ask for / order", example:"Nós pedimos pizza." },
+      { form:"pedem", pron:"PEH-deng", meaning:"you all ask for / order", example:"Vocês pedem desconto?" }
+    ] },
+  { verb:"dormir", group:"irregular", batch:3,
+    forms:[
+      { form:"durmo", pron:"DOOR-moo", meaning:"I sleep", example:"Eu durmo cedo." },
+      { form:"dorme", pron:"DOHR-mee", meaning:"you sleep", example:"Você dorme bem?" },
+      { form:"dormimos", pron:"dohr-MEE-moosh", meaning:"we sleep", example:"Nós dormimos oito horas." },
+      { form:"dormem", pron:"DOHR-meng", meaning:"you all sleep", example:"Vocês dormem tarde?" }
+    ] },
+  { verb:"aprender", group:"-er verbs", batch:3,
+    forms:[
+      { form:"aprendo", pron:"ah-PREN-doo", meaning:"I learn", example:"Eu aprendo português todos os dias." },
+      { form:"aprende", pron:"ah-PREN-djee", meaning:"you learn", example:"Você aprende rápido?" },
+      { form:"aprendemos", pron:"ah-pren-DEH-moosh", meaning:"we learn", example:"Nós aprendemos juntos." },
+      { form:"aprendem", pron:"ah-PREN-deng", meaning:"you all learn", example:"Vocês aprendem com a prática." }
+    ] },
+  { verb:"entender", group:"-er verbs", batch:3,
+    forms:[
+      { form:"entendo", pron:"en-TEN-doo", meaning:"I understand", example:"Eu entendo a pergunta." },
+      { form:"entende", pron:"en-TEN-djee", meaning:"you understand", example:"Você entende português?" },
+      { form:"entendemos", pron:"en-ten-DEH-moosh", meaning:"we understand", example:"Nós entendemos a ideia." },
+      { form:"entendem", pron:"en-TEN-deng", meaning:"you all understand", example:"Vocês entendem o professor?" }
+    ] },
+  { verb:"comprar", group:"-ar verbs", batch:3,
+    forms:[
+      { form:"compro", pron:"KOHM-proo", meaning:"I buy", example:"Eu compro pão." },
+      { form:"compra", pron:"KOHM-prah", meaning:"you buy", example:"Você compra fruta na feira?" },
+      { form:"compramos", pron:"kohm-PRAH-moosh", meaning:"we buy", example:"Nós compramos comida para a semana." },
+      { form:"compram", pron:"KOHM-prahng", meaning:"you all buy", example:"Vocês compram online?" }
+    ] },
+  { verb:"ler", group:"irregular", batch:3,
+    forms:[
+      { form:"leio", pron:"LEH-yoo", meaning:"I read", example:"Eu leio o jornal." },
+      { form:"lê", pron:"LEH", meaning:"you read", example:"Você lê em português?" },
+      { form:"lemos", pron:"LEH-moosh", meaning:"we read", example:"Nós lemos antes de dormir." },
+      { form:"leem", pron:"LEH-eng", meaning:"you all read", example:"Vocês leem muito?" }
+    ] },
+  { verb:"escrever", group:"-er verbs", batch:4,
+    forms:[
+      { form:"escrevo", pron:"es-KREH-voo", meaning:"I write", example:"Eu escrevo mensagens em português." },
+      { form:"escreve", pron:"es-KREH-vee", meaning:"you write", example:"Você escreve no caderno?" },
+      { form:"escrevemos", pron:"es-kreh-VEH-moosh", meaning:"we write", example:"Nós escrevemos e-mails no trabalho." },
+      { form:"escrevem", pron:"es-KREH-veng", meaning:"you all write", example:"Vocês escrevem cartas?" }
+    ] },
+  { verb:"ouvir", group:"irregular", batch:4,
+    forms:[
+      { form:"ouço", pron:"oh-OO-soo", meaning:"I hear / listen", example:"Eu ouço música no carro." },
+      { form:"ouve", pron:"oh-OO-vee", meaning:"you hear / listen", example:"Você ouve esse barulho?" },
+      { form:"ouvimos", pron:"oh-oo-VEE-moosh", meaning:"we hear / listen", example:"Nós ouvimos o professor com atenção." },
+      { form:"ouvem", pron:"oh-OO-veng", meaning:"you all hear / listen", example:"Vocês ouvem podcasts em português?" }
+    ] },
+  { verb:"fechar", group:"-ar verbs", batch:4,
+    forms:[
+      { form:"fecho", pron:"FEH-shoo", meaning:"I close", example:"Eu fecho a porta." },
+      { form:"fecha", pron:"FEH-shah", meaning:"you close", example:"Você fecha a janela?" },
+      { form:"fechamos", pron:"feh-SHAH-moosh", meaning:"we close", example:"Nós fechamos a loja às seis." },
+      { form:"fecham", pron:"FEH-shahng", meaning:"you all close", example:"Vocês fecham o restaurante tarde?" }
+    ] },
+  { verb:"usar", group:"-ar verbs", batch:4,
+    forms:[
+      { form:"uso", pron:"OO-zoo", meaning:"I use", example:"Eu uso o celular para estudar." },
+      { form:"usa", pron:"OO-zah", meaning:"you use", example:"Você usa esse aplicativo?" },
+      { form:"usamos", pron:"oo-ZAH-moosh", meaning:"we use", example:"Nós usamos o ônibus todos os dias." },
+      { form:"usam", pron:"OO-zahng", meaning:"you all use", example:"Vocês usam dicionário?" }
+    ] },
+  { verb:"dirigir", group:"irregular", batch:4,
+    forms:[
+      { form:"dirijo", pron:"djee-REE-zhoo", meaning:"I drive", example:"Eu dirijo para o trabalho." },
+      { form:"dirige", pron:"djee-REE-zhee", meaning:"you drive", example:"Você dirige bem?" },
+      { form:"dirigimos", pron:"djee-ree-JEE-moosh", meaning:"we drive", example:"Nós dirigimos até a praia." },
+      { form:"dirigem", pron:"djee-REE-zheng", meaning:"you all drive", example:"Vocês dirigem à noite?" }
+    ] },
+  { verb:"voltar", group:"-ar verbs", batch:4,
+    forms:[
+      { form:"volto", pron:"VOHL-too", meaning:"I return / come back", example:"Eu volto amanhã." },
+      { form:"volta", pron:"VOHL-tah", meaning:"you return / come back", example:"Você volta cedo para casa?" },
+      { form:"voltamos", pron:"vohl-TAH-moosh", meaning:"we return / come back", example:"Nós voltamos depois do almoço." },
+      { form:"voltam", pron:"VOHL-tahng", meaning:"you all return / come back", example:"Vocês voltam na segunda-feira?" }
+    ] },
+  { verb:"correr", group:"-er verbs", batch:4,
+    forms:[
+      { form:"corro", pron:"KOH-hoo", meaning:"I run", example:"Eu corro no parque." },
+      { form:"corre", pron:"KOH-hee", meaning:"you run", example:"Você corre de manhã?" },
+      { form:"corremos", pron:"koh-HEH-moosh", meaning:"we run", example:"Nós corremos na praia." },
+      { form:"correm", pron:"KOH-heng", meaning:"you all run", example:"Vocês correm juntos?" }
+    ] },
+  { verb:"andar", group:"-ar verbs", batch:4,
+    forms:[
+      { form:"ando", pron:"AHN-doo", meaning:"I walk", example:"Eu ando até a estação." },
+      { form:"anda", pron:"AHN-dah", meaning:"you walk", example:"Você anda muito no centro?" },
+      { form:"andamos", pron:"ahn-DAH-moosh", meaning:"we walk", example:"Nós andamos pelo bairro à tarde." },
+      { form:"andam", pron:"AHN-dahng", meaning:"you all walk", example:"Vocês andam até a escola?" }
+    ] },
+  { verb:"curtir", group:"-ir verbs", batch:4,
+    forms:[
+      { form:"curto", pron:"KOOR-too", meaning:"I enjoy / like", example:"Eu curto essa música." },
+      { form:"curte", pron:"KOOR-chee", meaning:"you enjoy / like", example:"Você curte praia?" },
+      { form:"curtimos", pron:"koor-CHEE-moosh", meaning:"we enjoy / like", example:"Nós curtimos o fim de semana na praia." },
+      { form:"curtem", pron:"KOOR-teng", meaning:"you all enjoy / like", example:"Vocês curtem viajar?" }
+    ] },
+  { verb:"ganhar", group:"-ar verbs", batch:4,
+    forms:[
+      { form:"ganho", pron:"GAHN-yoo", meaning:"I win / earn", example:"Eu ganho bem no trabalho." },
+      { form:"ganha", pron:"GAHN-yah", meaning:"you win / earn", example:"Você ganha quanto por mês?" },
+      { form:"ganhamos", pron:"gahn-YAH-moosh", meaning:"we win / earn", example:"Nós ganhamos o campeonato." },
+      { form:"ganham", pron:"GAHN-yahng", meaning:"you all win / earn", example:"Vocês ganham sempre quando jogam juntos?" }
+    ] },
+  { verb:"perder", group:"irregular", batch:4,
+    forms:[
+      { form:"perco", pron:"PEHR-koo", meaning:"I lose", example:"Eu perco o ônibus toda manhã." },
+      { form:"perde", pron:"PEHR-djee", meaning:"you lose", example:"Você perde quando não treina?" },
+      { form:"perdemos", pron:"pehr-DEH-moosh", meaning:"we lose", example:"Nós perdemos o jogo por um gol." },
+      { form:"perdem", pron:"PEHR-deng", meaning:"you all lose", example:"Vocês perdem a paciência rápido?" }
+    ] },
+  { verb:"jogar", group:"-ar verbs", batch:4,
+    forms:[
+      { form:"jogo", pron:"ZHOH-goo", meaning:"I play (sport / game)", example:"Eu jogo futebol no fim de semana." },
+      { form:"joga", pron:"ZHOH-gah", meaning:"you play (sport / game)", example:"Você joga vôlei na praia?" },
+      { form:"jogamos", pron:"zhoh-GAH-moosh", meaning:"we play (sport / game)", example:"Nós jogamos futebol toda semana." },
+      { form:"jogam", pron:"ZHOH-gahng", meaning:"you all play (sport / game)", example:"Vocês jogam no mesmo time?" }
+    ] },
+  { verb:"nadar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"nado", pron:"NAH-doo", meaning:"I swim", example:"Eu nado na praia de manhã." },
+      { form:"nada", pron:"NAH-dah", meaning:"you swim", example:"Você nada bem?" },
+      { form:"nadamos", pron:"nah-DAH-moosh", meaning:"we swim", example:"Nós nadamos na piscina todo dia." },
+      { form:"nadam", pron:"NAH-dahng", meaning:"you all swim", example:"Vocês nadam no mar?" }
+    ] },
+  { verb:"viajar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"viajo", pron:"vee-AH-zhoo", meaning:"I travel", example:"Eu viajo muito a trabalho." },
+      { form:"viaja", pron:"vee-AH-zhah", meaning:"you travel", example:"Você viaja com frequência?" },
+      { form:"viajamos", pron:"vee-ah-ZHAH-moosh", meaning:"we travel", example:"Nós viajamos para o Nordeste todo ano." },
+      { form:"viajam", pron:"vee-AH-zhahng", meaning:"you all travel", example:"Vocês viajam juntos?" }
+    ] },
+  { verb:"ajudar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"ajudo", pron:"ah-ZHOO-doo", meaning:"I help", example:"Eu ajudo minha mãe em casa." },
+      { form:"ajuda", pron:"ah-ZHOO-dah", meaning:"you help", example:"Você ajuda seus amigos?" },
+      { form:"ajudamos", pron:"ah-zhoo-DAH-moosh", meaning:"we help", example:"Nós ajudamos os vizinhos." },
+      { form:"ajudam", pron:"ah-ZHOO-dahng", meaning:"you all help", example:"Vocês ajudam quando precisam?" }
+    ] },
+  { verb:"esperar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"espero", pron:"esh-PEH-roo", meaning:"I wait / hope", example:"Eu espero o ônibus na esquina." },
+      { form:"espera", pron:"esh-PEH-rah", meaning:"you wait / hope", example:"Você espera muito tempo aqui?" },
+      { form:"esperamos", pron:"esh-peh-RAH-moosh", meaning:"we wait / hope", example:"Nós esperamos uma hora na fila." },
+      { form:"esperam", pron:"esh-PEH-rahng", meaning:"you all wait / hope", example:"Vocês esperam aqui ou lá fora?" }
+    ] },
+  { verb:"encontrar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"encontro", pron:"en-KOHN-troo", meaning:"I find / meet", example:"Eu encontro meus amigos no boteco." },
+      { form:"encontra", pron:"en-KOHN-trah", meaning:"you find / meet", example:"Você encontra tudo no mercado?" },
+      { form:"encontramos", pron:"en-kohn-TRAH-moosh", meaning:"we find / meet", example:"Nós encontramos um ótimo restaurante." },
+      { form:"encontram", pron:"en-KOHN-trahng", meaning:"you all find / meet", example:"Vocês se encontram depois do trabalho?" }
+    ] },
+  { verb:"trazer", group:"irregular", batch:5,
+    forms:[
+      { form:"trago", pron:"TRAH-goo", meaning:"I bring", example:"Eu trago o vinho para a festa." },
+      { form:"traz", pron:"TRAHSH", meaning:"you bring", example:"Você traz a comida?" },
+      { form:"trazemos", pron:"trah-ZEH-moosh", meaning:"we bring", example:"Nós trazemos os documentos amanhã." },
+      { form:"trazem", pron:"TRAH-zeng", meaning:"you all bring", example:"Vocês trazem os amigos também?" }
+    ] },
+  { verb:"pagar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"pago", pron:"PAH-goo", meaning:"I pay", example:"Eu pago com cartão." },
+      { form:"paga", pron:"PAH-gah", meaning:"you pay", example:"Você paga a conta?" },
+      { form:"pagamos", pron:"pah-GAH-moosh", meaning:"we pay", example:"Nós pagamos a metade cada um." },
+      { form:"pagam", pron:"PAH-gahng", meaning:"you all pay", example:"Vocês pagam junto ou separado?" }
+    ] },
+  { verb:"começar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"começo", pron:"koh-MEN-soo", meaning:"I start / begin", example:"Eu começo o trabalho às oito." },
+      { form:"começa", pron:"koh-MEN-sah", meaning:"you start / begin", example:"Você começa quando?" },
+      { form:"começamos", pron:"koh-men-SAH-moosh", meaning:"we start / begin", example:"Nós começamos o curso semana que vem." },
+      { form:"começam", pron:"koh-MEN-sahng", meaning:"you all start / begin", example:"Vocês começam às nove?" }
+    ] },
+  { verb:"frequentar", group:"-ar verbs", batch:5,
+    forms:[
+      { form:"frequento", pron:"freh-KWEN-too", meaning:"I attend / go to often", example:"Eu frequento a academia três vezes por semana." },
+      { form:"frequenta", pron:"freh-KWEN-tah", meaning:"you attend / go to often", example:"Você frequenta a mesma padaria?" },
+      { form:"frequentamos", pron:"freh-kwen-TAH-moosh", meaning:"we attend / go to often", example:"Nós frequentamos este restaurante." },
+      { form:"frequentam", pron:"freh-KWEN-tahng", meaning:"you all attend / go to often", example:"Vocês frequentam a aula de português?" }
+    ] },
+  { verb:"odiar", group:"irregular", batch:5,
+    forms:[
+      { form:"odeio", pron:"oh-DAY-oo", meaning:"I hate", example:"Eu odeio trânsito." },
+      { form:"odeia", pron:"oh-DAY-ah", meaning:"you hate", example:"Você odeia calor?" },
+      { form:"odiamos", pron:"oh-DJAH-moosh", meaning:"we hate", example:"Nós odiamos acordar cedo." },
+      { form:"odeiam", pron:"oh-DJAY-ahng", meaning:"you all hate", example:"Vocês odeiam fila?" }
+    ],
+    note:"Stem-changing: eu/você/vocês use odei-; nós keeps odi-." },
+  { verb:"sugerir", group:"irregular", batch:5,
+    forms:[
+      { form:"sugiro", pron:"soo-ZHEE-roo", meaning:"I suggest", example:"Eu sugiro um restaurante perto daqui." },
+      { form:"sugere", pron:"soo-ZHEH-ree", meaning:"you suggest", example:"Você sugere algum lugar?" },
+      { form:"sugerimos", pron:"soo-zhe-REE-moosh", meaning:"we suggest", example:"Nós sugerimos sair mais cedo." },
+      { form:"sugerem", pron:"soo-ZHEH-reng", meaning:"you all suggest", example:"Vocês sugerem outro dia?" }
+    ],
+    note:"e→i in the eu form (sugiro)." },
+  { verb:"pôr", group:"irregular", batch:5,
+    forms:[
+      { form:"ponho", pron:"POHN-yoo", meaning:"I put", example:"Eu ponho a comida na mesa." },
+      { form:"põe", pron:"POHNG", meaning:"you put", example:"Você põe sal?" },
+      { form:"pomos", pron:"POH-moosh", meaning:"we put", example:"Nós pomos as malas no carro." },
+      { form:"põem", pron:"POHNG", meaning:"you all put", example:"Vocês põem a mesa?" }
+    ] },
+  { verb:"pegar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"pego",    pron:"PEH-goo",       meaning:"I grab",         example:"Eu pego o ônibus todo dia." },
+      { form:"pega",    pron:"PEH-gah",       meaning:"you grab",       example:"Você pega o café da manhã aqui?" },
+      { form:"pegamos", pron:"peh-GAH-moosh", meaning:"we grab",        example:"Nós pegamos um táxi pra ir." },
+      { form:"pegam",   pron:"PEH-gahng",     meaning:"you all grab",   example:"Vocês pegam a chave na recepção?" }
+    ] },
+  { verb:"botar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"boto",    pron:"BOH-too",       meaning:"I put",         example:"Eu boto o celular na bolsa." },
+      { form:"bota",    pron:"BOH-tah",       meaning:"you put",       example:"Você bota açúcar no café?" },
+      { form:"botamos", pron:"boh-TAH-moosh", meaning:"we put",        example:"Nós botamos tudo no carro." },
+      { form:"botam",   pron:"BOH-tahng",     meaning:"you all put",   example:"Vocês botam a mesa antes do jantar?" }
+    ],
+    note:"Carioca everyday word for 'put/place'; standard textbooks teach pôr instead, but botar is what you'll hear in Rio." },
+  { verb:"deixar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"deixo",    pron:"DAY-shoo",       meaning:"I leave",         example:"Eu deixo a chave na porta." },
+      { form:"deixa",    pron:"DAY-shah",       meaning:"you leave",       example:"Você deixa a janela aberta?" },
+      { form:"deixamos", pron:"day-SHAH-moosh", meaning:"we leave",        example:"Nós deixamos a gorjeta na mesa." },
+      { form:"deixam",   pron:"DAY-shahng",     meaning:"you all leave",   example:"Vocês deixam as malas aqui?" }
+    ] },
+  { verb:"tentar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"tento",    pron:"TEN-too",       meaning:"I try",         example:"Eu tento falar português todo dia." },
+      { form:"tenta",    pron:"TEN-tah",       meaning:"you try",       example:"Você tenta de novo?" },
+      { form:"tentamos", pron:"ten-TAH-moosh", meaning:"we try",        example:"Nós tentamos achar um jeito." },
+      { form:"tentam",   pron:"TEN-tahng",     meaning:"you all try",   example:"Vocês tentam uma outra hora?" }
+    ] },
+  { verb:"lembrar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"lembro",    pron:"LEM-broo",       meaning:"I remember",         example:"Eu lembro do endereço." },
+      { form:"lembra",    pron:"LEM-brah",       meaning:"you remember",       example:"Você lembra do nome dele?" },
+      { form:"lembramos", pron:"lem-BRAH-moosh", meaning:"we remember",        example:"Nós lembramos de tudo que aconteceu." },
+      { form:"lembram",   pron:"LEM-brahng",     meaning:"you all remember",   example:"Vocês lembram do dia que se conheceram?" }
+    ] },
+  { verb:"tirar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"tiro",    pron:"CHEE-roo",       meaning:"I take",         example:"Eu tiro uma foto." },
+      { form:"tira",    pron:"CHEE-rah",       meaning:"you take",       example:"Você tira o casaco?" },
+      { form:"tiramos", pron:"chee-RAH-moosh", meaning:"we take",        example:"Nós tiramos uma selfie ali." },
+      { form:"tiram",   pron:"CHEE-rahng",     meaning:"you all take",   example:"Vocês tiram os sapatos na entrada?" }
+    ] },
+  { verb:"ligar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"ligo",    pron:"LEE-goo",       meaning:"I call",         example:"Eu ligo pra você mais tarde." },
+      { form:"liga",    pron:"LEE-gah",       meaning:"you call",       example:"Você liga o ar-condicionado?" },
+      { form:"ligamos", pron:"lee-GAH-moosh", meaning:"we call",        example:"Nós ligamos pra marcar a mesa." },
+      { form:"ligam",   pron:"LEE-gahng",     meaning:"you all call",   example:"Vocês ligam antes de chegar?" }
+    ] },
+  { verb:"entrar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"entro",    pron:"EN-troo",       meaning:"I enter",         example:"Eu entro pela porta dos fundos." },
+      { form:"entra",    pron:"EN-trah",       meaning:"you enter",       example:"Você entra ou fica aqui fora?" },
+      { form:"entramos", pron:"en-TRAH-moosh", meaning:"we enter",        example:"Nós entramos juntos no show." },
+      { form:"entram",   pron:"EN-trahng",     meaning:"you all enter",   example:"Vocês entram sem pagar?" }
+    ] },
+  { verb:"acordar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"acordo",    pron:"ah-KOR-doo",       meaning:"I wake up",         example:"Eu acordo cedo toda semana." },
+      { form:"acorda",    pron:"ah-KOR-dah",       meaning:"you wake up",       example:"Você acorda antes das sete?" },
+      { form:"acordamos", pron:"ah-kor-DAH-moosh", meaning:"we wake up",        example:"Nós acordamos com o barulho da rua." },
+      { form:"acordam",   pron:"ah-KOR-dahng",     meaning:"you all wake up",   example:"Vocês acordam cedo no fim de semana?" }
+    ] },
+  { verb:"estudar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"estudo",    pron:"esh-TOO-doo",       meaning:"I study",         example:"Eu estudo português toda noite." },
+      { form:"estuda",    pron:"esh-TOO-dah",       meaning:"you study",       example:"Você estuda onde?" },
+      { form:"estudamos", pron:"esh-too-DAH-moosh", meaning:"we study",        example:"Nós estudamos juntos na biblioteca." },
+      { form:"estudam",   pron:"esh-TOO-dahng",     meaning:"you all study",   example:"Vocês estudam pra prova amanhã?" }
+    ] },
+  { verb:"chorar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"choro",    pron:"SHOH-roo",       meaning:"I cry",         example:"Eu choro de rir às vezes." },
+      { form:"chora",    pron:"SHOH-rah",       meaning:"you cry",       example:"Você chora no cinema?" },
+      { form:"choramos", pron:"shoh-RAH-moosh", meaning:"we cry",        example:"Nós choramos no final do filme." },
+      { form:"choram",   pron:"SHOH-rahng",     meaning:"you all cry",   example:"Vocês choram com filmes tristes?" }
+    ] },
+  { verb:"contar", group:"-ar verbs", batch:6,
+    forms:[
+      { form:"conto",    pron:"KOHN-too",       meaning:"I tell",         example:"Eu conto uma história pra dormir." },
+      { form:"conta",    pron:"KOHN-tah",       meaning:"you tell",       example:"Você conta com a gente?" },
+      { form:"contamos", pron:"kohn-TAH-moosh", meaning:"we tell",        example:"Nós contamos os dias que faltam." },
+      { form:"contam",   pron:"KOHN-tahng",     meaning:"you all tell",   example:"Vocês contam o que aconteceu?" }
+    ] },
+  { verb:"marcar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"marco",    pron:"MAR-koo",       meaning:"I schedule",         example:"Eu marco uma consulta hoje." },
+      { form:"marca",    pron:"MAR-kah",       meaning:"you schedule",       example:"Você marca um horário lá?" },
+      { form:"marcamos", pron:"mar-KAH-moosh", meaning:"we schedule",        example:"Nós marcamos pra sexta-feira." },
+      { form:"marcam",   pron:"MAR-kahng",     meaning:"you all schedule",   example:"Vocês marcam o encontro hoje?" }
+    ] },
+  { verb:"passear", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"passeio",   pron:"pah-SAY-oo",       meaning:"I stroll",         example:"Eu passeio pelo parque no fim de semana." },
+      { form:"passeia",   pron:"pah-SAY-ah",       meaning:"you stroll",       example:"Você passeia com o cachorro todos os dias?" },
+      { form:"passeamos", pron:"pah-say-AH-moosh", meaning:"we stroll",        example:"Nós passeamos pela orla de tarde." },
+      { form:"passeiam",  pron:"pah-SAY-ahng",     meaning:"you all stroll",   example:"Vocês passeiam no Aterro do Flamengo?" }
+    ],
+    note:"Stem-changing -ear verb: eu/você/vocês add the diphthong (passeio, passeia, passeiam); nós keeps the plain stem (passeamos)." },
+  { verb:"cozinhar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"cozinho",    pron:"koh-ZEEN-yoo",       meaning:"I cook",         example:"Eu cozinho em casa toda semana." },
+      { form:"cozinha",    pron:"koh-ZEEN-yah",       meaning:"you cook",       example:"Você cozinha ou pede comida?" },
+      { form:"cozinhamos", pron:"koh-zeen-YAH-moosh", meaning:"we cook",        example:"Nós cozinhamos pra família no domingo." },
+      { form:"cozinham",   pron:"koh-ZEEN-yahng",     meaning:"you all cook",   example:"Vocês cozinham juntos?" }
+    ] },
+  { verb:"limpar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"limpo",    pron:"LEEM-poo",       meaning:"I clean",         example:"Eu limpo a casa todo sábado." },
+      { form:"limpa",    pron:"LEEM-pah",       meaning:"you clean",       example:"Você limpa o apartamento sozinho?" },
+      { form:"limpamos", pron:"leem-PAH-moosh", meaning:"we clean",        example:"Nós limpamos antes dos convidados chegarem." },
+      { form:"limpam",   pron:"LEEM-pahng",     meaning:"you all clean",   example:"Vocês limpam antes de sair?" }
+    ] },
+  { verb:"mostrar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"mostro",    pron:"MOHS-troo",       meaning:"I show",         example:"Eu mostro o caminho." },
+      { form:"mostra",    pron:"MOHS-trah",       meaning:"you show",       example:"Você mostra o ingresso na entrada?" },
+      { form:"mostramos", pron:"mohs-TRAH-moosh", meaning:"we show",        example:"Nós mostramos o apartamento pra eles." },
+      { form:"mostram",   pron:"MOHS-trahng",     meaning:"you all show",   example:"Vocês mostram o que aprenderam?" }
+    ] },
+  { verb:"explicar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"explico",    pron:"esh-PLEE-koo",       meaning:"I explain",         example:"Eu explico de novo se precisar." },
+      { form:"explica",    pron:"esh-PLEE-kah",       meaning:"you explain",       example:"Você explica a situação pra mim?" },
+      { form:"explicamos", pron:"esh-plee-KAH-moosh", meaning:"we explain",        example:"Nós explicamos o projeto na reunião." },
+      { form:"explicam",   pron:"esh-PLEE-kahng",     meaning:"you all explain",   example:"Vocês explicam como funciona?" }
+    ] },
+  { verb:"perguntar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"pergunto",    pron:"per-GOON-too",       meaning:"I ask",         example:"Eu pergunto o caminho pra alguém." },
+      { form:"pergunta",    pron:"per-GOON-tah",       meaning:"you ask",       example:"Você pergunta pro garçom?" },
+      { form:"perguntamos", pron:"per-goon-TAH-moosh", meaning:"we ask",        example:"Nós perguntamos antes de entrar." },
+      { form:"perguntam",   pron:"per-GOON-tahng",     meaning:"you all ask",   example:"Vocês perguntam se não sabem?" }
+    ] },
+  { verb:"mudar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"mudo",    pron:"MOO-doo",       meaning:"I change",         example:"Eu mudo de assunto às vezes." },
+      { form:"muda",    pron:"MOO-dah",       meaning:"you change",       example:"Você muda de ideia com frequência?" },
+      { form:"mudamos", pron:"moo-DAH-moosh", meaning:"we change",        example:"Nós mudamos pra um apartamento novo." },
+      { form:"mudam",   pron:"MOO-dahng",     meaning:"you all change",   example:"Vocês mudam de trabalho logo?" }
+    ] },
+  { verb:"terminar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"termino",    pron:"ter-MEE-noo",       meaning:"I finish",         example:"Eu termino o trabalho até amanhã." },
+      { form:"termina",    pron:"ter-MEE-nah",       meaning:"you finish",       example:"Você termina cedo hoje?" },
+      { form:"terminamos", pron:"ter-mee-NAH-moosh", meaning:"we finish",        example:"Nós terminamos o projeto na sexta." },
+      { form:"terminam",   pron:"ter-MEE-nahng",     meaning:"you all finish",   example:"Vocês terminam antes do prazo?" }
+    ] },
+  { verb:"continuar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"continuo",    pron:"kohn-CHEE-noo-oo",       meaning:"I continue",         example:"Eu continuo estudando mesmo assim." },
+      { form:"continua",    pron:"kohn-CHEE-noo-ah",       meaning:"you continue",       example:"Você continua aqui amanhã?" },
+      { form:"continuamos", pron:"kohn-chee-noo-AH-moosh", meaning:"we continue",        example:"Nós continuamos a viagem depois." },
+      { form:"continuam",   pron:"kohn-CHEE-noo-ahng",     meaning:"you all continue",   example:"Vocês continuam trabalhando nisso?" }
+    ] },
+  { verb:"pensar", group:"-ar verbs", batch:7,
+    forms:[
+      { form:"penso",    pron:"PEN-soo",       meaning:"I think",         example:"Eu penso bem antes de responder." },
+      { form:"pensa",    pron:"PEN-sah",       meaning:"you think",       example:"Você pensa que é uma boa ideia?" },
+      { form:"pensamos", pron:"pen-SAH-moosh", meaning:"we think",        example:"Nós pensamos em viajar no carnaval." },
+      { form:"pensam",   pron:"PEN-sahng",     meaning:"you all think",   example:"Vocês pensam igual sobre isso?" }
+    ] },
+  { verb:"dever", group:"-er verbs", batch:7,
+    forms:[
+      { form:"devo",    pron:"DEH-voo",       meaning:"I owe",         example:"Eu devo uma resposta pra ele." },
+      { form:"deve",    pron:"DEH-vee",       meaning:"you owe",       example:"Você deve ligar mais cedo." },
+      { form:"devemos", pron:"deh-VEH-moosh", meaning:"we owe",        example:"Nós devemos tomar uma decisão." },
+      { form:"devem",   pron:"DEH-veng",      meaning:"you all owe",   example:"Vocês devem chegar antes das dez?" }
+    ] },
+  { verb:"resolver", group:"-er verbs", batch:8,
+    forms:[
+      { form:"resolvo",    pron:"heh-ZOHL-voo",       meaning:"I solve",         example:"Eu resolvo esse problema agora." },
+      { form:"resolve",    pron:"heh-ZOHL-vee",       meaning:"you solve",       example:"Você resolve essa questão com ele?" },
+      { form:"resolvemos", pron:"heh-zohl-VEH-moosh", meaning:"we solve",        example:"Nós resolvemos tudo entre nós." },
+      { form:"resolvem",   pron:"heh-ZOHL-veng",      meaning:"you all solve",   example:"Vocês resolvem isso hoje?" }
+    ] },
+  { verb:"depender", group:"-er verbs", batch:8,
+    forms:[
+      { form:"dependo",    pron:"deh-PEN-doo",       meaning:"I depend",         example:"Eu dependo do ônibus pra trabalhar." },
+      { form:"depende",    pron:"deh-PEN-dee",       meaning:"you depend",       example:"Você depende do tempo que faz?" },
+      { form:"dependemos", pron:"deh-pen-DEH-moosh", meaning:"we depend",        example:"Nós dependemos da wifi aqui." },
+      { form:"dependem",   pron:"deh-PEN-deng",      meaning:"you all depend",   example:"Vocês dependem do carro pra tudo?" }
+    ] },
+  { verb:"responder", group:"-er verbs", batch:8,
+    forms:[
+      { form:"respondo",    pron:"hesh-POHN-doo",       meaning:"I answer",         example:"Eu respondo os emails de manhã." },
+      { form:"responde",    pron:"hesh-POHN-dee",       meaning:"you answer",       example:"Você responde a mensagem?" },
+      { form:"respondemos", pron:"hesh-pohn-DEH-moosh", meaning:"we answer",        example:"Nós respondemos todas as perguntas." },
+      { form:"respondem",   pron:"hesh-POHN-deng",      meaning:"you all answer",   example:"Vocês respondem juntos?" }
+    ] },
+  { verb:"esquecer", group:"irregular", batch:8,
+    forms:[
+      { form:"esqueço",    pron:"esh-KEH-soo",       meaning:"I forget",         example:"Eu esqueço o guarda-chuva sempre." },
+      { form:"esquece",    pron:"esh-KEH-see",       meaning:"you forget",       example:"Você esquece onde deixou?" },
+      { form:"esquecemos", pron:"esh-keh-SEH-moosh", meaning:"we forget",        example:"Nós esquecemos de reservar mesa." },
+      { form:"esquecem",   pron:"esh-KEH-seng",      meaning:"you all forget",   example:"Vocês esquecem de avisar?" }
+    ],
+    note:"eu form: esqueço (c→ç before o to preserve the /s/ sound)." },
+  { verb:"descer", group:"irregular", batch:8,
+    forms:[
+      { form:"desço",    pron:"DEH-soo",       meaning:"I go down",         example:"Eu desço na próxima estação." },
+      { form:"desce",    pron:"DEH-see",       meaning:"you go down",       example:"Você desce aqui?" },
+      { form:"descemos", pron:"deh-SEH-moosh", meaning:"we go down",        example:"Nós descemos a escada juntos." },
+      { form:"descem",   pron:"DEH-seng",      meaning:"you all go down",   example:"Vocês descem agora?" }
+    ],
+    note:"eu form: desço (c→ç before o)." },
+  { verb:"conseguir", group:"irregular", batch:8,
+    forms:[
+      { form:"consigo",     pron:"kohn-SEE-goo",        meaning:"I manage",         example:"Eu consigo fazer isso sozinho." },
+      { form:"consegue",    pron:"kohn-SEH-ghee",       meaning:"you manage",       example:"Você consegue abrir esse pote?" },
+      { form:"conseguimos", pron:"kohn-seh-GHEE-moosh", meaning:"we manage",        example:"Nós conseguimos chegar a tempo." },
+      { form:"conseguem",   pron:"kohn-SEH-gheng",      meaning:"you all manage",   example:"Vocês conseguem vir amanhã?" }
+    ],
+    note:"eu form: consigo (not *conseguo) — the g shifts to keep the hard /g/; means 'to manage to do' and often replaces poder in spoken BR." },
+  { verb:"preferir", group:"irregular", batch:8,
+    forms:[
+      { form:"prefiro",    pron:"preh-FEE-roo",       meaning:"I prefer",         example:"Eu prefiro café sem açúcar." },
+      { form:"prefere",    pron:"preh-FEH-ree",       meaning:"you prefer",       example:"Você prefere praia ou montanha?" },
+      { form:"preferimos", pron:"preh-feh-REE-moosh", meaning:"we prefer",        example:"Nós preferimos comer em casa." },
+      { form:"preferem",   pron:"preh-FEH-reng",      meaning:"you all prefer",   example:"Vocês preferem ir de carro?" }
+    ],
+    note:"eu form: prefiro (e→i stem change). Applies only to eu." },
+  { verb:"seguir", group:"irregular", batch:8,
+    forms:[
+      { form:"sigo",    pron:"SEE-goo",        meaning:"I follow",         example:"Eu sigo reto até o sinal." },
+      { form:"segue",   pron:"SEH-ghee",       meaning:"you follow",       example:"Você segue ele nas redes sociais?" },
+      { form:"seguimos",pron:"seh-GHEE-moosh", meaning:"we follow",        example:"Nós seguimos o caminho errado." },
+      { form:"seguem",  pron:"SEH-gheng",      meaning:"you all follow",   example:"Vocês seguem as instruções?" }
+    ],
+    note:"eu form: sigo (not *seguo)." },
+  { verb:"sentir", group:"irregular", batch:8,
+    forms:[
+      { form:"sinto",    pron:"SEEN-too",       meaning:"I feel",         example:"Eu sinto muito calor aqui." },
+      { form:"sente",    pron:"SEN-chee",       meaning:"you feel",       example:"Você sente o cheiro de café?" },
+      { form:"sentimos", pron:"sen-CHEE-moosh", meaning:"we feel",        example:"Nós sentimos falta da cidade." },
+      { form:"sentem",   pron:"SEN-teng",       meaning:"you all feel",   example:"Vocês sentem frio assim?" }
+    ],
+    note:"eu form: sinto (e→i stem change). Applies only to eu." },
+  { verb:"subir", group:"-ir verbs", batch:8,
+    forms:[
+      { form:"subo",    pron:"SOO-boo",       meaning:"I go up",         example:"Eu subo pelo elevador." },
+      { form:"sobe",    pron:"SOH-bee",       meaning:"you go up",       example:"Você sobe a pé ou de elevador?" },
+      { form:"subimos", pron:"soo-BEE-moosh", meaning:"we go up",        example:"Nós subimos a escada juntos." },
+      { form:"sobem",   pron:"SOH-beng",      meaning:"you all go up",   example:"Vocês sobem até o último andar?" }
+    ] },
+  { verb:"rir", group:"irregular", batch:8,
+    forms:[
+      { form:"rio",   pron:"HEE-oo",    meaning:"I laugh",         example:"Eu rio com os meus amigos." },
+      { form:"ri",    pron:"HEE",       meaning:"you laugh",       example:"Você ri muito nas festas?" },
+      { form:"rimos", pron:"HEE-moosh", meaning:"we laugh",        example:"Nós rimos de tudo à toa." },
+      { form:"riem",  pron:"HEE-eng",   meaning:"you all laugh",   example:"Vocês riem sempre juntos?" }
+    ],
+    note:"Highly irregular: rio / ri / rimos / riem. The 'r' sounds like English 'h' at the start of each form." }
+];
+
+const ALL_CARDS = expandVerbEntries(VERB_ENTRIES);
+
+const GROUPS = ["-ar verbs", "-er verbs", "-ir verbs", "irregular"];
+const BATCHES = [...new Set(ALL_CARDS.map(c => c.batch))].sort((a, b) => a - b);
+
+// Card keys (verb+person) that make up each batch — used to detect batch completion.
+const batchCardKeys = {};
+BATCHES.forEach(b => { batchCardKeys[b] = new Set(); });
+ALL_CARDS.forEach(c => batchCardKeys[c.batch].add(cardKey(c)));
+
+let activeGroups = new Set(GROUPS);
+let activeBatches = new Set([BATCHES[0]]);
+
+// Per-batch completion saved in the browser (no backend; works on GitHub Pages).
+// Value: 'done' = all cleared, 'perfect' = cleared with no misses/skips.
+const PROGRESS_KEY = 'verbBatchProgress:present';
+let batchProgress = loadBatchProgress();
+
+// Per-run card bookkeeping behind the batch badges: a clean run earns the crown,
+// a run played entirely in hard mode earns the ninja.
+let runMissed = new Set();
+let runSkipped = new Set();
+let runHardCards = new Set();
+
+function cardKey(c) { return c.verb + '|' + c.person; }
+
+function loadBatchProgress() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+    const progress = {};
+    Object.keys(raw).forEach(b => {
+      const v = raw[b];
+      if (!v) return;
+      // Older saves stored a 'done' | 'perfect' string, from before hard mode was tracked.
+      progress[b] = typeof v === 'string'
+        ? { perfect: v === 'perfect', hard: false }
+        : { perfect: !!v.perfect, hard: !!v.hard };
+    });
+    return progress;
+  } catch (e) { return {}; }
+}
+
+function saveBatchProgress() {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(batchProgress)); }
+  catch (e) {}
+}
+let deck = [], current = 0, known = new Set(), answered = false, perfect = true;
+let hardMode = false;
+let practiceStats = createRunStats();
+
+let dailyMode = false;
+let dailyAttempts = [];
+let dailyFailed = [];
+let dailyCurrent = 0;
+let dailyDeck = [];
+let dailyStats = createRunStats();
+const DAILY_MAX_ATTEMPTS = 5;
+
+const DAILY_EPOCH = new Date(2026, 4, 8);
+
+function dailySeed() {
+  const d = new Date();
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+function seededRandom(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function getDailyCards() {
+  const rng = seededRandom(dailySeed());
+  const indices = [];
+  while (indices.length < 7) {
+    const idx = Math.floor(rng() * ALL_CARDS.length);
+    if (!indices.includes(idx)) indices.push(idx);
+  }
+  return indices.map(i => ALL_CARDS[i]);
+}
+
+function getDailyNumber() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.floor((today - DAILY_EPOCH) / 86400000);
+}
+
+function formatDailyDate() {
+  return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function createRunStats() {
+  return { errors: 0, hardModeSolved: 0 };
+}
+
+function formatCount(count, singular, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function buildPracticeStatsMarkup(stats) {
+  return `
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-num accent">${stats.hardModeSolved}</div>
+        <div class="result-stat-lbl">Hard mode cards</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-num red">${stats.errors}</div>
+        <div class="result-stat-lbl">Errors made</div>
+      </div>
+    </div>
+  `;
+}
+
+function buildDailyHardModeBadge(stats) {
+  if (!stats.hardModeSolved) return '';
+  return `
+    <div class="result-badges">
+      <div class="result-badge">🥷 ${formatCount(stats.hardModeSolved, 'hard mode card')}</div>
+    </div>
+  `;
+}
+
+function getCardMeta(card) {
+  return hardMode ? 'hard mode &mdash; present tense' : `${card.verb} &mdash; present tense`;
+}
+
+function updateHardModeButton() {
+  const btn = document.getElementById('hardModeBtn');
+  if (!btn) return;
+  btn.classList.toggle('active', hardMode);
+  btn.setAttribute('aria-pressed', hardMode ? 'true' : 'false');
+}
+
+function toggleHardMode() {
+  hardMode = !hardMode;
+  updateHardModeButton();
+  if (hardMode) launchHardModeConfetti();
+  if (dailyMode) { renderDailyCard(); return; }
+  // Switching into hard mode re-shuffles what's left, so the run can't coast on a
+  // card order you have already half-memorised. The daily deck is fixed, so it is exempt.
+  if (hardMode) reshuffleRemaining();
+  render();
+}
+
+// Re-order the cards still in play, keeping cleared ones (and so the stats) intact.
+// `known` holds deck indices, so the deck is rebuilt as [cleared..., reshuffled remainder].
+function reshuffleRemaining() {
+  const cleared = deck.filter((_, i) => known.has(i));
+  const remaining = shuffle(deck.filter((_, i) => !known.has(i)));
+  deck = cleared.concat(remaining);
+  known = new Set(cleared.map((_, i) => i));
+  current = cleared.length;
+  answered = false;
+}
+
+function startDaily() {
+  dailyMode = true;
+  dailyDeck = getDailyCards();
+  dailyAttempts = new Array(7).fill(0);
+  dailyFailed = new Array(7).fill(false);
+  dailyCurrent = 0;
+  dailyStats = createRunStats();
+
+  document.getElementById('dailyBtnRow').style.display = 'none';
+  document.getElementById('practiceChrome').style.display = 'none';
+  document.getElementById('dailyHeader').style.display = '';
+  document.getElementById('dailyDots').style.display = '';
+
+  document.getElementById('dailyHeader').innerHTML =
+    `<h2>&#9733; Daily Challenge #${getDailyNumber()}</h2>` +
+    `<div class="daily-date">${formatDailyDate()}</div>`;
+
+  renderDailyCard();
+}
+
+function exitDaily() {
+  dailyMode = false;
+  document.getElementById('dailyBtnRow').style.display = '';
+  document.getElementById('practiceChrome').style.display = '';
+  document.getElementById('dailyHeader').style.display = 'none';
+  document.getElementById('dailyDots').style.display = 'none';
+  buildDeck();
+}
+
+function renderDailyDots() {
+  const dots = document.getElementById('dailyDots');
+  dots.innerHTML = dailyDeck.map((_, i) => {
+    let cls = 'daily-dot';
+    if (i < dailyCurrent) {
+      if (dailyFailed[i]) cls += ' done-fail';
+      else if (dailyAttempts[i] === 1) cls += ' done';
+      else cls += ' done-multi';
+    } else if (i === dailyCurrent) {
+      cls += ' current';
+    }
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function renderDailyCard() {
+  renderDailyDots();
+  const area = document.getElementById('cardArea');
+
+  if (dailyCurrent >= 7) {
+    renderDailyComplete();
+    return;
+  }
+
+  const card = dailyDeck[dailyCurrent];
+  const attemptsLeft = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
+  area.innerHTML = `
+    <div class="daily-counter">Card ${dailyCurrent + 1} of 7 · ${attemptsLeft} ${attemptsLeft === 1 ? 'try' : 'tries'} left</div>
+    <div class="card">
+      <div class="card-meta">${getCardMeta(card)}</div>
+      <div class="card-prompt">${card.meaning}</div>
+      <div class="card-sub">Type the conjugation (e.g. eu falo or falo)</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here\u2026" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleDailyAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" id="dailySkipBtn" onclick="skipDailyCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="exitDaily()">← Back to practice</button>
+    </div>
+  `;
+
+  const input = document.getElementById('answerInput');
+  focusAnswerInput(input);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleDailyAction();
+  });
+}
+
+let dailyAnswered = false;
+
+function handleDailyAction() {
+  if (dailyAnswered) {
+    dailyCurrent++;
+    dailyAnswered = false;
+    renderDailyCard();
+    return;
+  }
+  checkDailyAnswer();
+}
+
+function checkDailyAnswer() {
+  const card = dailyDeck[dailyCurrent];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  if (!input.value.trim()) return;
+
+  dailyAttempts[dailyCurrent]++;
+
+  if (isVerbConjugationCorrect(card, input.value, normalize)) {
+    if (hardMode) dailyStats.hardModeSolved++;
+    dailyAnswered = true;
+    input.disabled = true;
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    const tries = dailyAttempts[dailyCurrent];
+    const tryText = tries === 1 ? '1st try!' : `${tries} tries`;
+    feedback.innerHTML = `✓ Correct — ${tryText} <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = buildRevealContent(card, 'ok');
+    animateConjugationTable();
+    renderDailyDots();
+    setTimeout(() => btn.focus(), 0);
+  } else {
+    dailyStats.errors++;
+    if (dailyAttempts[dailyCurrent] >= DAILY_MAX_ATTEMPTS) {
+      failDailyCard();
+    } else {
+      input.classList.add('shake');
+      input.classList.add('wrong');
+      feedback.className = 'feedback err';
+      const left = DAILY_MAX_ATTEMPTS - dailyAttempts[dailyCurrent];
+      feedback.textContent = `✗ Not quite — ${left} ${left === 1 ? 'try' : 'tries'} left`;
+      setTimeout(() => {
+        input.classList.remove('shake', 'wrong');
+        input.value = '';
+        focusAnswerInput(input);
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+      }, 700);
+    }
+  }
+}
+
+function failDailyCard(skipped) {
+  const card = dailyDeck[dailyCurrent];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+
+  dailyFailed[dailyCurrent] = true;
+  dailyAnswered = true;
+  input.disabled = true;
+  if (!skipped) input.classList.add('wrong');
+  btn.classList.add('go-red');
+  feedback.className = 'feedback err';
+  feedback.innerHTML = (skipped ? '↷ Skipped — the answer is ' : '✗ The answer was ') +
+    `<strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  revealArea.innerHTML = buildRevealContent(card, 'err');
+  animateConjugationTable();
+  const skipBtn = document.getElementById('dailySkipBtn');
+  if (skipBtn) skipBtn.textContent = 'Next →';
+  renderDailyDots();
+  setTimeout(() => btn.focus(), 0);
+}
+
+function skipDailyCard() {
+  // Already revealed: the Skip button doubles as "next card".
+  if (dailyAnswered) { handleDailyAction(); return; }
+  failDailyCard(true);
+}
+
+function buildShareString() {
+  const num = getDailyNumber();
+  const date = formatDailyDate();
+  let lines = [`Portugese verbs! Daily #${num}`, date, 'Present tense', ''];
+
+  dailyDeck.forEach((card, i) => {
+    const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
+    lines.push(`${card.verb} \u2192 ${dots}`);
+  });
+
+  const solved = dailyFailed.filter(f => !f).length;
+  const firstTry = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
+  lines.push('');
+  lines.push(`${solved}/7 solved \u00b7 ${firstTry} first try!`);
+  if (dailyStats.hardModeSolved > 0) {
+    lines.push(`🥷 ${formatCount(dailyStats.hardModeSolved, 'hard mode card')}`);
+  }
+  lines.push('');
+  lines.push('Play \u2192 gjermundbae.github.io/portuguese-verb-flashcards#daily');
+  return lines.join('\n');
+}
+
+function buildResultDots(attempts, failed) {
+  if (failed) {
+    return '\uD83D\uDFE1'.repeat(attempts) + '\uD83D\uDD34';
+  } else if (attempts === 1) {
+    return '\uD83D\uDFE2';
+  } else {
+    return '\uD83D\uDFE1'.repeat(attempts - 1) + '\uD83D\uDFE2';
+  }
+}
+
+function renderDailyComplete() {
+  renderDailyDots();
+  const area = document.getElementById('cardArea');
+  const allFirstTry = dailyAttempts.every(a => a === 1) && dailyFailed.every(f => !f);
+  const solvedCount = dailyFailed.filter(f => !f).length;
+  const firstTryCount = dailyAttempts.filter((a, i) => a === 1 && !dailyFailed[i]).length;
+  const usedHardMode = dailyStats.hardModeSolved > 0;
+
+  const rows = dailyDeck.map((card, i) => {
+    const dots = buildResultDots(dailyAttempts[i], dailyFailed[i]);
+    return `<div class="daily-result-row">
+      <span class="daily-result-num">${i + 1}.</span>
+      <span class="daily-result-verb">${card.verb}</span>
+      <span class="daily-result-dots">${dots}</span>
+    </div>`;
+  }).join('');
+
+  const allSolved = solvedCount === 7;
+  let title, trophy, subtitle;
+  if (allFirstTry) {
+    title = 'Perfeito!';
+    trophy = usedHardMode ? '🥷' : '\uD83C\uDF86';
+    subtitle = 'All 7 on the first try. Incredible!';
+  } else if (allSolved) {
+    title = 'Challenge Complete!';
+    trophy = usedHardMode ? '🥷' : '\uD83C\uDFC6';
+    subtitle = `${solvedCount}/7 solved \u00b7 ${firstTryCount} first try`;
+  } else {
+    title = 'Challenge Complete';
+    trophy = usedHardMode ? '🥷' : '\uD83D\uDCAA';
+    subtitle = `${solvedCount}/7 solved \u00b7 ${firstTryCount} first try`;
+  }
+
+  area.innerHTML = `
+    <div class="card done-screen">
+      <div class="trophy">${trophy}</div>
+      <h2>${title}</h2>
+      <p>${subtitle}</p>
+      <div class="result-context">Present tense</div>
+      ${buildDailyHardModeBadge(dailyStats)}
+      <div class="daily-results">${rows}</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="copy-btn" onclick="copyDailyResults()">Copy results</button>
+        <button class="ctrl-btn" onclick="exitDaily()" style="font-size:0.78rem;padding:0.6rem 1.2rem;">Practice all cards</button>
+      </div>
+    </div>
+  `;
+
+  if (allFirstTry) launchFireworks();
+}
+
+function copyDailyResults() {
+  const text = buildShareString();
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard!');
+  }).catch(() => {
+    showToast('Could not copy');
+  });
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function normalize(str) {
+  return str.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function getFilteredCards() {
+  return ALL_CARDS.filter(card =>
+    activeBatches.has(card.batch) && activeGroups.has(card.group)
+  );
+}
+
+// Categories that have at least one card in the currently selected batches.
+function availableGroups() {
+  const s = new Set();
+  ALL_CARDS.forEach(c => { if (activeBatches.has(c.batch)) s.add(c.group); });
+  return s;
+}
+
+function buildDeck() {
+  deck = shuffle(getFilteredCards());
+  current = 0; known = new Set(); answered = false; perfect = true;
+  runMissed = new Set(); runSkipped = new Set(); runHardCards = new Set();
+  practiceStats = createRunStats();
+  render();
+}
+
+function updateStats() {
+  const total = deck.length, knownCount = known.size;
+  const pct = total > 0 ? Math.round((knownCount / total) * 100) : 0;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statKnown').textContent = knownCount;
+  document.getElementById('statLeft').textContent = total - knownCount;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function render() {
+  updateStats();
+  const area = document.getElementById('cardArea');
+  const remaining = deck.filter((_, i) => !known.has(i));
+
+  if (deck.length === 0) {
+    area.innerHTML = `
+      <div class="card done-screen">
+        <h2>No matching cards</h2>
+        <p>No cards match the current batch and category filters.</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (remaining.length === 0 && deck.length > 0) {
+    recordBatchCompletion();
+    const title = perfect ? 'Perfeito!' : 'Deck complete!';
+    const subtitle = perfect
+      ? `You cleared all ${deck.length} cards.`
+      : `You finished all ${deck.length} cards.`;
+    area.innerHTML = `
+      <div class="card done-screen">
+        <div class="trophy">${perfect ? '🎆' : '🏆'}</div>
+        <h2>${title}</h2>
+        <p>${subtitle}</p>
+        ${buildPracticeStatsMarkup(practiceStats)}
+        <button class="ctrl-btn" onclick="buildDeck()" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Start over ↺</button>
+      </div>`;
+    if (perfect) launchFireworks();
+    return;
+  }
+
+  while (known.has(current)) current = (current + 1) % deck.length;
+  const card = deck[current];
+
+  area.innerHTML = `
+    <div class="card">
+      <div class="card-meta">${getCardMeta(card)}</div>
+      <div class="card-prompt">${card.meaning}</div>
+      <div class="card-sub">Type the conjugation (e.g. eu falo or falo)</div>
+      <div class="input-row">
+        <input class="answer-input" id="answerInput" type="text" placeholder="type here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="revealArea"></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" id="practiceSkipBtn" onclick="skipCard()">Skip →</button>
+      <button class="ctrl-btn" onclick="buildDeck()">Restart ↺</button>
+    </div>
+  `;
+
+  answered = false;
+  const input = document.getElementById('answerInput');
+  focusAnswerInput(input);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAction();
+  });
+}
+
+function handleAction() {
+  if (answered) { nextCard(); return; }
+  checkAnswer();
+}
+
+function checkAnswer() {
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+  if (!input.value.trim()) return;
+
+  answered = true;
+  input.disabled = true;
+
+  if (isVerbConjugationCorrect(card, input.value, normalize)) {
+    if (hardMode) { practiceStats.hardModeSolved++; runHardCards.add(cardKey(card)); }
+    input.classList.add('correct');
+    btn.classList.add('go-green');
+    feedback.className = 'feedback ok';
+    feedback.innerHTML = `✓ Correct! <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = buildRevealContent(card, 'ok');
+    known.add(current);
+    updateStats();
+  } else {
+    practiceStats.errors++;
+    perfect = false;
+    runMissed.add(cardKey(card));
+    input.classList.add('wrong');
+    btn.classList.add('go-red');
+    feedback.className = 'feedback err';
+    feedback.innerHTML = `✗ The answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+    revealArea.innerHTML = buildRevealContent(card, 'err');
+  }
+
+  animateConjugationTable();
+  setTimeout(() => btn.focus(), 0);
+}
+
+function buildConjugationTable(verb, tone) {
+  const forms = ALL_CARDS.filter(c => c.verb === verb);
+  const rows = forms.map(f =>
+    `<tr><td class="conj-pronoun">${f.person}</td><td class="conj-form">${f.form}</td><td class="conj-pron">${f.pron}</td></tr>`
+  ).join('');
+  return `<div class="conj-table-wrapper ${tone}"><div class="conj-table-label">${verb} — present tense</div><table class="conj-table">${rows}</table></div>`;
+}
+
+function buildRevealContent(card, tone) {
+  const note = card.note ? `<div class="note">${card.note}</div>` : '';
+  return `<div class="example">"${card.example}"</div>${note}${buildConjugationTable(card.verb, tone)}`;
+}
+
+function animateConjugationTable() {
+  requestAnimationFrame(() => {
+    const el = document.querySelector('.conj-table-wrapper');
+    if (el) el.classList.add('visible');
+  });
+}
+
+function advanceToNextUnknown() {
+  if (deck.length === 0 || known.size === deck.length) {
+    answered = false;
+    render();
+    return;
+  }
+
+  current = (current + 1) % deck.length;
+  while (known.has(current)) current = (current + 1) % deck.length;
+  answered = false;
+  render();
+}
+
+function nextCard() {
+  advanceToNextUnknown();
+}
+
+function skipCard() {
+  // Already revealed: the Skip button doubles as "next card".
+  if (answered) { nextCard(); return; }
+
+  const card = deck[current];
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+  const btn = document.getElementById('actionBtn');
+
+  // Reveal the answer before moving on, so a skipped card still teaches the verb.
+  answered = true;
+  input.disabled = true;
+  btn.classList.add('go-red');
+  feedback.className = 'feedback err';
+  feedback.innerHTML = `↷ Skipped — the answer is <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  revealArea.innerHTML = buildRevealContent(card, 'err');
+  animateConjugationTable();
+
+  runSkipped.add(cardKey(card));
+  if (hardMode) runHardCards.add(cardKey(card));
+  known.add(current);
+  updateStats();
+
+  const skipBtn = document.getElementById('practiceSkipBtn');
+  if (skipBtn) skipBtn.textContent = 'Next →';
+  setTimeout(() => btn.focus(), 0);
+}
+
+// On deck completion, mark every batch fully covered by this deck as done/perfect.
+function recordBatchCompletion() {
+  const deckKeys = new Set(deck.map(cardKey));
+  let changed = false;
+  BATCHES.forEach(b => {
+    const keys = batchCardKeys[b];
+    const fullyCovered = [...keys].every(k => deckKeys.has(k));
+    if (!fullyCovered) return;
+    const clean = [...keys].every(k => !runMissed.has(k) && !runSkipped.has(k));
+    const hard = [...keys].every(k => runHardCards.has(k));
+    // Badges are sticky: an earned crown or ninja is never taken away by a sloppier run.
+    const prev = batchProgress[b] || { perfect: false, hard: false };
+    const next = { perfect: prev.perfect || clean, hard: prev.hard || hard };
+    if (!batchProgress[b] || next.perfect !== prev.perfect || next.hard !== prev.hard) {
+      batchProgress[b] = next;
+      changed = true;
+    }
+  });
+  if (changed) { saveBatchProgress(); renderFilters(); }
+}
+
+function renderFilters() {
+  const batchTags = BATCHES.map(b => {
+    const status = batchProgress[b];
+    const cls = ['fc-tag', 'batch-chip'];
+    if (activeBatches.has(b)) cls.push('active');
+    if (status) cls.push('done');
+    const badges = (status && status.perfect ? '<span>\u{1F451}</span>' : '')
+      + (status && status.hard ? '<span>\u{1F977}</span>' : '');
+    const badgeRow = badges ? `<span class="chip-badges">${badges}</span>` : '';
+    return `<div class="${cls.join(' ')}" onclick="toggleBatch(${b})">${badgeRow}${b}</div>`;
+  }).join('');
+
+  const avail = availableGroups();
+  const counts = groupVerbCounts();
+  const allOn = GROUPS.every(g => !avail.has(g) || activeGroups.has(g));
+  const allTag = `<div class="fc-tag all-chip${allOn ? ' active' : ''}" onclick="selectAllGroups()">All</div>`;
+
+  const groupTags = GROUPS.map(g => {
+    const disabled = !avail.has(g);
+    const cls = ['fc-tag'];
+    if (!disabled && activeGroups.has(g)) cls.push('active');
+    if (disabled) cls.push('disabled');
+    const handler = disabled ? '' : ` onclick="toggleGroup('${g}')"`;
+    return `<div class="${cls.join(' ')}"${handler}>${g}<span class="chip-count">${counts[g] || 0}</span></div>`;
+  }).join('');
+
+  document.getElementById('filterRow').innerHTML = `
+    <div class="filter-section"><span class="filter-label">Batches</span><div class="filter-chips">${batchTags}</div></div>
+    <div class="filter-section"><span class="filter-label">Categories</span><div class="filter-chips">${allTag}${groupTags}</div></div>`;
+}
+
+// Verbs (not cards) per category within the selected batches, for the chip counts.
+function groupVerbCounts() {
+  const seen = {}, counts = {};
+  GROUPS.forEach(g => { seen[g] = new Set(); counts[g] = 0; });
+  ALL_CARDS.forEach(c => {
+    if (!activeBatches.has(c.batch) || !seen[c.group] || seen[c.group].has(c.verb)) return;
+    seen[c.group].add(c.verb);
+    counts[c.group]++;
+  });
+  return counts;
+}
+
+function selectAllGroups() {
+  const avail = availableGroups();
+  activeGroups = new Set(GROUPS.filter(g => avail.has(g)));
+  renderFilters();
+  buildDeck();
+}
+
+function toggleBatch(b) {
+  if (activeBatches.has(b)) {
+    if (activeBatches.size === 1) return;
+    activeBatches.delete(b);
+  } else {
+    activeBatches.add(b);
+  }
+  renderFilters();
+  buildDeck();
+}
+
+function toggleGroup(g) {
+  if (activeGroups.has(g)) {
+    // Keep at least one selectable category active for the current batches.
+    const avail = availableGroups();
+    const activeAvail = GROUPS.filter(x => activeGroups.has(x) && avail.has(x));
+    if (activeAvail.length <= 1 && activeAvail[0] === g) return;
+    activeGroups.delete(g);
+  } else {
+    activeGroups.add(g);
+  }
+  renderFilters();
+  buildDeck();
+}
+
+function launchFireworks() {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'fireworks-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = [];
+  const colors = ['#C4922A','#2D6A4F','#7D2B2B','#E8C97A','#B7E4C7','#FFCACA','#6B6456','#F5F0E8'];
+
+  function burst(x, y) {
+    const count = 50 + Math.random() * 30;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.012,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+
+  let bursts = 0, maxBursts = 6;
+  function scheduleBurst() {
+    if (bursts >= maxBursts) return;
+    burst(W * (0.2 + Math.random() * 0.6), H * (0.15 + Math.random() * 0.45));
+    bursts++;
+    setTimeout(scheduleBurst, 250 + Math.random() * 350);
+  }
+  scheduleBurst();
+
+  let raf;
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.vx *= 0.99;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (particles.length > 0 || bursts < maxBursts) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+  raf = requestAnimationFrame(frame);
+}
+
+function launchHardModeConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'fireworks-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = [];
+  const colors = ['#C4922A', '#E8C97A', '#2D6A4F', '#B7E4C7', '#FFF3DC'];
+
+  for (let burst = 0; burst < 3; burst++) {
+    const originX = W * (0.25 + Math.random() * 0.5);
+    const originY = H * (0.16 + Math.random() * 0.18);
+    for (let i = 0; i < 36; i++) {
+      const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
+      const speed = 2 + Math.random() * 4;
+      particles.push({
+        x: originX,
+        y: originY,
+        vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 2,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.015 + Math.random() * 0.015,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 5 + Math.random() * 6,
+        tilt: Math.random() * Math.PI,
+        spin: (Math.random() - 0.5) * 0.25,
+      });
+    }
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.09;
+      p.vx *= 0.992;
+      p.life -= p.decay;
+      p.tilt += p.spin;
+
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.tilt);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.66);
+      ctx.restore();
+    }
+
+    if (particles.length > 0) {
+      requestAnimationFrame(frame);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+renderFilters();
+updateHardModeButton();
+buildDeck();
+if (window.location.hash === '#daily') startDaily();
+</script>
+</body>
+</html>

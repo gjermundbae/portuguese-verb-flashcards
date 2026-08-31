@@ -78,6 +78,22 @@
 
   header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
 
+  header p a.home-link {
+    color: var(--text2);
+    border-bottom-color: transparent;
+  }
+
+  header p a.home-link:hover { color: var(--text); border-bottom-color: var(--border2); }
+
+  header p .nav-div {
+    display: inline-block;
+    width: 1px;
+    height: 9px;
+    background: var(--border);
+    margin: 0 0.7rem;
+    vertical-align: -1px;
+  }
+
   .container {
     width: 100%;
     max-width: 520px;
@@ -141,6 +157,14 @@
     cursor: not-allowed;
     pointer-events: none;
   }
+
+  .fc-tag .chip-count {
+    margin-left: 6px;
+    font-size: 0.62rem;
+    opacity: 0.5;
+  }
+
+  .fc-tag.all-chip { font-weight: 500; }
 
   .batch-chip { min-width: 34px; text-align: center; }
 
@@ -761,7 +785,7 @@
 
 <header>
   <h1>Imperfeito em <em>Português</em></h1>
-  <p><a href="index.html">verbs</a> · <a href="passado.html">passado</a> · <a class="active" href="imperfeito.html">imperfeito</a> · <a href="numbers_dates.html">numbers &amp; dates</a> · <a href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a> · <a href="sentences.html">sentences</a></p>
+  <p><a class="home-link" href="index.html">&larr; all decks</a><span class="nav-div"></span><a href="presente.html">presente</a> &middot; <a href="passado.html">passado</a> &middot; <a class="active" href="imperfeito.html">imperfeito</a></p>
 </header>
 
 <div class="container">
@@ -2134,25 +2158,48 @@ function renderFilters() {
     const cls = ['fc-tag', 'batch-chip'];
     if (activeBatches.has(b)) cls.push('active');
     if (status) cls.push('done');
-    const badges = (status && status.perfect ? '<span>👑</span>' : '')
-      + (status && status.hard ? '<span>🥷</span>' : '');
+    const badges = (status && status.perfect ? '<span>\u{1F451}</span>' : '')
+      + (status && status.hard ? '<span>\u{1F977}</span>' : '');
     const badgeRow = badges ? `<span class="chip-badges">${badges}</span>` : '';
     return `<div class="${cls.join(' ')}" onclick="toggleBatch(${b})">${badgeRow}${b}</div>`;
   }).join('');
 
   const avail = availableGroups();
+  const counts = groupVerbCounts();
+  const allOn = GROUPS.every(g => !avail.has(g) || activeGroups.has(g));
+  const allTag = `<div class="fc-tag all-chip${allOn ? ' active' : ''}" onclick="selectAllGroups()">All</div>`;
+
   const groupTags = GROUPS.map(g => {
     const disabled = !avail.has(g);
     const cls = ['fc-tag'];
     if (!disabled && activeGroups.has(g)) cls.push('active');
     if (disabled) cls.push('disabled');
     const handler = disabled ? '' : ` onclick="toggleGroup('${g}')"`;
-    return `<div class="${cls.join(' ')}"${handler}>${g}</div>`;
+    return `<div class="${cls.join(' ')}"${handler}>${g}<span class="chip-count">${counts[g] || 0}</span></div>`;
   }).join('');
 
   document.getElementById('filterRow').innerHTML = `
     <div class="filter-section"><span class="filter-label">Batches</span><div class="filter-chips">${batchTags}</div></div>
-    <div class="filter-section"><span class="filter-label">Categories</span><div class="filter-chips">${groupTags}</div></div>`;
+    <div class="filter-section"><span class="filter-label">Categories</span><div class="filter-chips">${allTag}${groupTags}</div></div>`;
+}
+
+// Verbs (not cards) per category within the selected batches, for the chip counts.
+function groupVerbCounts() {
+  const seen = {}, counts = {};
+  GROUPS.forEach(g => { seen[g] = new Set(); counts[g] = 0; });
+  ALL_CARDS.forEach(c => {
+    if (!activeBatches.has(c.batch) || !seen[c.group] || seen[c.group].has(c.verb)) return;
+    seen[c.group].add(c.verb);
+    counts[c.group]++;
+  });
+  return counts;
+}
+
+function selectAllGroups() {
+  const avail = availableGroups();
+  activeGroups = new Set(GROUPS.filter(g => avail.has(g)));
+  renderFilters();
+  buildDeck();
 }
 
 function toggleBatch(b) {

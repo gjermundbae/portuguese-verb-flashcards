@@ -25,7 +25,7 @@ This project is a set of self-contained HTML drill pages for **everyday Brazilia
 ## Workflow
 
 1. **Identify the target file** from the topic:
-   - Verbs (present): `index.html`
+   - Verbs (present): `presente.html`
    - Verbs (pretérito perfeito): `passado.html`
    - Full sentences / phrases / constructions: `sentences.html`
    - Nouns: `nouns.html`
@@ -39,12 +39,14 @@ This project is a set of self-contained HTML drill pages for **everyday Brazilia
 4. **Decide the batch.** If your cards belong to the existing latest drop, reuse `LATEST_BATCH`. If this is a fresh, separate drop, bump `LATEST_BATCH` by 1 in the same edit.
 5. **Draft each card** following the file's schema (see `Schemas by file` below). Keep canonical answers spoken-BR. Add `note` only if rule 4 above is met. Set `batch` directly on the card; `LATEST_BATCH` is derived and updates itself.
 6. **If the file doesn't yet have batch-system UI**, retrofit it (see `Retrofitting the batch system`).
-7. **Sanity-check** before finishing:
+7. **Update the card count on the home page.** `index.html` is the deck picker, not a drill — it hard-codes each deck's card count (`<div class="deck-count">83 cards</div>`). Bump the count for the deck you touched so the overview stays honest. The verb decks are counted in *verbs*, not cards.
+8. **Sanity-check** before finishing:
    - Translation: am I sure this is what a carioca would say?
    - Pronunciation (where applicable): does IPA match the hint?
    - Slot/alt expansion still ≤ `MAX_CARTESIAN` (sentences.html validates at load).
    - Group exists in `GROUPS`.
    - `batch` is set.
+   - Home-page count updated.
 
 ## Batch system
 
@@ -65,9 +67,9 @@ Rules:
 
 ## Retrofitting the batch system
 
-Pages with the batch system already wired: `index.html`, `sentences.html`. Pages retrofitted to the standard pattern below: `adjectives.html`, `adverbs.html`, `connecting.html`, `nouns.html`, `numbers_dates.html`. Pages still without it:
+Pages with the batch system already wired: `presente.html`, `sentences.html`. Pages retrofitted to the standard pattern below: `adjectives.html`, `adverbs.html`, `connecting.html`, `nouns.html`, `numbers_dates.html`. Pages still without it:
 
-- `passado.html` — `expandVerbEntries` already propagates a `batch` field from `VERB_ENTRIES` (see `drill-common.js`), so adding the UI is straightforward: mirror `index.html`'s `LATEST_BATCH`, `showOnlyLatestBatch`, `getFilteredCards`, `toggleLatestBatch`, and append a "Only new verbs" tag in `renderFilters`. Skipped here only because of the daily-mode coupling — make sure the toggle doesn't fight `dailyMode`.
+- `passado.html` — `expandVerbEntries` already propagates a `batch` field from `VERB_ENTRIES` (see `drill-common.js`), so adding the UI is straightforward: mirror `presente.html`'s `LATEST_BATCH`, `showOnlyLatestBatch`, `getFilteredCards`, `toggleLatestBatch`, and append a "Only new verbs" tag in `renderFilters`. Skipped here only because of the daily-mode coupling — make sure the toggle doesn't fight `dailyMode`.
 - `glossary.html` — has no filter row, no `.fc-tag` CSS, and no group filtering today. Retrofit requires adding the `.filters` / `.fc-tag` CSS block (copy from `nouns.html`), a `<div class="filters" id="filterRow"></div>` inside `#practiceChrome`, plus the standard JS plumbing. Worth doing on the next glossary drop.
 
 Standard retrofit (for a "flat `ALL_CARDS`" page):
@@ -173,7 +175,7 @@ Cardinal/ordinal numbers, weekdays, months, colors. Read the file — group labe
 ### `glossary.html`
 Connector / discourse glossary cards. Read the file before adding.
 
-### `index.html` (verbs, present)
+### `presente.html` (verbs, present)
 ```js
 const VERB_ENTRIES = [
   { verb: "falar",
@@ -191,7 +193,7 @@ const VERB_ENTRIES = [
 - `batch` on the entry propagates to every generated card automatically.
 
 ### `passado.html` (verbs, pretérito perfeito)
-Same `VERB_ENTRIES` shape as `index.html`. Persons: `eu`, `você`, `nós`, `vocês`.
+Same `VERB_ENTRIES` shape as `presente.html`. Persons: `eu`, `você`, `nós`, `vocês`.
 
 ## Note-writing checklist
 

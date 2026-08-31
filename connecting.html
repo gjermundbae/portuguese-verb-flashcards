@@ -72,6 +72,22 @@
 
   header p a.active { color: var(--text2); border-bottom-color: var(--text3); }
 
+  header p a.home-link {
+    color: var(--text2);
+    border-bottom-color: transparent;
+  }
+
+  header p a.home-link:hover { color: var(--text); border-bottom-color: var(--border2); }
+
+  header p .nav-div {
+    display: inline-block;
+    width: 1px;
+    height: 9px;
+    background: var(--border);
+    margin: 0 0.7rem;
+    vertical-align: -1px;
+  }
+
   .container { width: 100%; max-width: 520px; }
 
   .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
@@ -97,6 +113,20 @@
     color: var(--bg);
     border-color: var(--text);
   }
+
+  .fc-tag.disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .fc-tag .chip-count {
+    margin-left: 6px;
+    font-size: 0.62rem;
+    opacity: 0.5;
+  }
+
+  .fc-tag.all-chip { font-weight: 500; }
 
   .stats {
     display: grid;
@@ -394,7 +424,7 @@
 
 <header>
   <h1>Palavras de <em>Conexão</em></h1>
-  <p><a href="index.html">verbs</a> · <a href="passado.html">passado</a> · <a href="imperfeito.html">imperfeito</a> · <a href="numbers_dates.html">numbers &amp; dates</a> · <a class="active" href="connecting.html">connecting words</a> · <a href="glossary.html">glossary</a> · <a href="nouns.html">nouns</a> · <a href="adjectives.html">adjectives</a> · <a href="adverbs.html">adverbs</a> · <a href="sentences.html">sentences</a></p>
+  <p><a class="home-link" href="index.html">&larr; all decks</a><span class="nav-div"></span><a class="active" href="connecting.html">connecting words</a> &middot; <a href="sentences.html">sentences</a> &middot; <a href="glossary.html">glossary</a></p>
 </header>
 
 <div class="container">
@@ -639,6 +669,17 @@ function render() {
   const area = document.getElementById('cardArea');
   const remaining = deck.filter((_, i) => !known.has(i));
 
+  if (deck.length === 0) {
+    area.innerHTML = `
+      <div class="card done-screen">
+        <h2>No matching cards</h2>
+        <p>${showOnlyLatestBatch
+          ? "No cards match the current categories in the latest batch."
+          : "Pick at least one category to keep practicing."}</p>
+      </div>`;
+    return;
+  }
+
   if (remaining.length === 0 && deck.length > 0) {
     const title = perfect ? 'Perfeito!' : 'Deck complete!';
     const subtitle = perfect
@@ -768,11 +809,36 @@ function skipCard() {
 }
 
 function renderFilters() {
-  const groupTags = GROUPS.map(g =>
-    `<div class="fc-tag${activeGroups.has(g) ? ' active' : ''}" onclick="toggleGroup(this,'${g}')">${g}</div>`
-  ).join('');
+  const counts = groupCounts();
+  const allOn = GROUPS.every(g => !counts[g] || activeGroups.has(g));
+  const allTag = `<div class="fc-tag all-chip${allOn ? ' active' : ''}" onclick="selectAllGroups()">All</div>`;
+  const groupTags = GROUPS.map(group => {
+    const empty = !counts[group];
+    const cls = ['fc-tag'];
+    if (!empty && activeGroups.has(group)) cls.push('active');
+    if (empty) cls.push('disabled');
+    const handler = empty ? '' : ` onclick="toggleGroup('${group}')"`;
+    return `<div class="${cls.join(' ')}"${handler}>${group}<span class="chip-count">${counts[group] || 0}</span></div>`;
+  }).join("");
   const latestTag = `<div class="fc-tag${showOnlyLatestBatch ? ' active' : ''}" onclick="toggleLatestBatch()">Only new cards</div>`;
-  document.getElementById('filterRow').innerHTML = groupTags + latestTag;
+  document.getElementById("filterRow").innerHTML = allTag + groupTags + latestTag;
+}
+
+// Cards per category under the current batch filter, for the chip counts.
+function groupCounts() {
+  const counts = {};
+  GROUPS.forEach(g => { counts[g] = 0; });
+  ALL_CARDS.forEach(c => {
+    if (showOnlyLatestBatch && c.batch !== LATEST_BATCH) return;
+    if (counts[c.group] !== undefined) counts[c.group]++;
+  });
+  return counts;
+}
+
+function selectAllGroups() {
+  activeGroups = new Set(GROUPS);
+  renderFilters();
+  buildDeck();
 }
 
 function toggleLatestBatch() {
@@ -781,13 +847,14 @@ function toggleLatestBatch() {
   buildDeck();
 }
 
-function toggleGroup(el, g) {
-  if (activeGroups.has(g)) {
+function toggleGroup(group) {
+  if (activeGroups.has(group)) {
     if (activeGroups.size === 1) return;
-    activeGroups.delete(g); el.classList.remove('active');
+    activeGroups.delete(group);
   } else {
-    activeGroups.add(g); el.classList.add('active');
+    activeGroups.add(group);
   }
+  renderFilters();
   buildDeck();
 }
 

@@ -39,7 +39,7 @@ function extractEntries(html) {
   return eval(m[1]);
 }
 
-for (const file of ['index.html', 'passado.html']) {
+for (const file of ['presente.html', 'passado.html']) {
   const entries = extractEntries(fs.readFileSync(path.join(root, file), 'utf8'));
   const cards = expandVerbEntries(entries);
   console.log(`${file}: ${entries.length} verbs → ${cards.length} cards`);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * One-off: read flat ALL_CARDS from index.html / passado.html and emit compact VERB_ENTRIES.
+ * One-off: read flat ALL_CARDS from presente.html / passado.html and emit compact VERB_ENTRIES.
  */
 import fs from 'fs';
 import path from 'path';
@@ -112,11 +112,11 @@ function applyToHtml(file) {
 const args = process.argv.slice(2);
 if (args.includes('--write')) {
   const files = args.filter((a) => a.endsWith('.html'));
-  for (const f of files.length ? files : ['index.html', 'passado.html']) applyToHtml(f);
+  for (const f of files.length ? files : ['presente.html', 'passado.html']) applyToHtml(f);
 } else if (args[0] === '--both') {
-  run('index.html');
+  run('presente.html');
   console.log('\n// --- passado ---\n');
   run('passado.html');
 } else {
-  run(args[0] === 'passado.html' ? 'passado.html' : 'index.html');
+  run(args[0] === 'passado.html' ? 'passado.html' : 'presente.html');
 }
