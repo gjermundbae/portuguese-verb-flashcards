@@ -1676,7 +1676,7 @@ function renderDailyCard() {
       <div id="revealArea"></div>
     </div>
     <div class="controls">
-      <button class="ctrl-btn" onclick="skipDailyCard()">Skip →</button>
+      <button class="ctrl-btn" id="dailySkipBtn" onclick="skipDailyCard()">Skip →</button>
       <button class="ctrl-btn" onclick="exitDaily()">← Back to practice</button>
     </div>
   `;
@@ -1745,7 +1745,7 @@ function checkDailyAnswer() {
   }
 }
 
-function failDailyCard() {
+function failDailyCard(skipped) {
   const card = dailyDeck[dailyCurrent];
   const input = document.getElementById('answerInput');
   const feedback = document.getElementById('feedback');
@@ -1755,21 +1755,23 @@ function failDailyCard() {
   dailyFailed[dailyCurrent] = true;
   dailyAnswered = true;
   input.disabled = true;
-  input.classList.add('wrong');
+  if (!skipped) input.classList.add('wrong');
   btn.classList.add('go-red');
   feedback.className = 'feedback err';
-  feedback.innerHTML = `✗ The answer was <strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
+  feedback.innerHTML = (skipped ? '↷ Skipped — the answer is ' : '✗ The answer was ') +
+    `<strong>${card.conj}</strong> <span class="pron-tag">${card.pron}</span>`;
   revealArea.innerHTML = buildRevealContent(card, 'err');
   animateConjugationTable();
+  const skipBtn = document.getElementById('dailySkipBtn');
+  if (skipBtn) skipBtn.textContent = 'Next →';
   renderDailyDots();
   setTimeout(() => btn.focus(), 0);
 }
 
 function skipDailyCard() {
-  dailyFailed[dailyCurrent] = true;
-  dailyCurrent++;
-  dailyAnswered = false;
-  renderDailyCard();
+  // Already revealed: the Skip button doubles as "next card".
+  if (dailyAnswered) { handleDailyAction(); return; }
+  failDailyCard(true);
 }
 
 function buildShareString() {
