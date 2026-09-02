@@ -435,8 +435,11 @@
 <script src="drill-common.js"></script>
 <script>
 // Sentence cards. Conventions:
-//   - Always use explicit subject pronouns (eu, voce, nos, ele, ela, eles, elas).
-//   - Canonical form = neutral spoken BR (no a gente / ta / to in v1).
+//   - Always use explicit subject pronouns (eu, voce, nos, ele, ela, eles, elas),
+//     except in commands, which have no subject: "Me passa o sal."
+//   - Canonical form = neutral spoken BR. No "a gente" / "ta" / "to" as a subject,
+//     but "pra gente" IS canonical as an object - "nos" is not what a carioca says.
+//   - `sub` overrides the per-card hint under the English prompt (imperatives have no subject).
 //   - {slotId} placeholders in pt are resolved against `slots`; first variant per
 //     slot is the displayed canonical. All cartesian combinations are accepted.
 const ALL_CARDS = [
@@ -621,10 +624,104 @@ const ALL_CARDS = [
     pt: "Eu vou ficar até o fim de agosto.",
     group: "Time expressions",
     batch: 3,
-    note: "'Até' = until / through. 'Fim de + month' = end of [month]. The article goes with 'fim' (o fim), not with the month name (de agosto, no article)." }
+    note: "'Até' = until / through. 'Fim de + month' = end of [month]. The article goes with 'fim' (o fim), not with the month name (de agosto, no article)." },
+  // Object pronouns (me / te / pra ele / pra gente)
+  { en: "Give me that.", pt: "Me dá isso.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "In spoken BR the object pronoun goes BEFORE the verb, even at the very start of a sentence: 'Me dá'. School grammar forbids that and wants 'Dá-me' — but the hyphenated form is Portugal. In Brazil everyone says 'Me dá'." },
+  { en: "Pass me the salt.", pt: "{pass_salt}.",
+    slots: { pass_salt: ["Me passa o sal", "Passa o sal pra mim"] },
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "Two natural places for 'me': the short pronoun in front of the verb ('Me passa'), or the full phrase after the object ('pra mim'). Same meaning — 'pra mim' just puts a little more weight on who gets it." },
+  { en: "Can you send me the address?", pt: "Você pode {send_address}?",
+    slots: { send_address: ["me mandar o endereço", "mandar o endereço pra mim"] },
+    group: "Object pronouns", batch: 4,
+    note: "With two verbs (pode + mandar) the pronoun slides in between them: 'pode me mandar'. Don't stick it on the end — 'pode mandar-me' is PT-PT." },
+  { en: "She gave me the money.", pt: "Ela me deu o dinheiro.",
+    group: "Object pronouns", batch: 4,
+    note: "'Me' does double duty: it's both 'me' and 'to me'. Portuguese only splits the direct and indirect object apart in the 3rd person." },
+  { en: "Lend me your phone.", pt: "Me empresta seu celular.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "The spoken-BR imperative is simply the você present tense: empresta, passa, manda, liga, traz, avisa. The textbook imperative (empreste, mande, traga) sounds official or written in Rio." },
+  { en: "Call me later.", pt: "Me liga depois.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "'Me liga' is one of the highest-mileage phrases in Brazil, and the shape reuses endlessly: Me avisa (let me know), Me manda (send me), Me espera (wait for me), Me ajuda (help me)." },
+  { en: "Bring me a beer, please.", pt: "{bring_beer}, por favor.",
+    slots: { bring_beer: ["Me traz uma cerveja", "Me vê uma cerveja"] },
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "'Me vê uma cerveja' — literally 'see me a beer' — is how you order at a bar or a botequim in Rio. It only works for ordering; anywhere else use 'me traz'." },
+  { en: "He didn't tell me the truth.", pt: "Ele não me falou a verdade.",
+    group: "Object pronouns", batch: 4,
+    note: "With 'não' the pronoun sits between the negation and the verb: não + me + falou. It never jumps in front of 'não'." },
+  { en: "I'll send you the photos.", pt: "Eu {send_photos}.",
+    slots: { send_photos: ["vou te mandar as fotos", "vou mandar as fotos pra você"] },
+    group: "Object pronouns", batch: 4,
+    note: "'Te' is the everyday object form of 'você'. Strictly speaking 'te' belongs to 'tu', but Brazilians pair it with 'você' without blinking — mixing them is the norm, not a mistake." },
+  { en: "I love you.", pt: "Eu {love_you}.",
+    slots: { love_you: ["te amo", "amo você"] },
+    group: "Object pronouns", batch: 4,
+    note: "'Te amo' is the default. 'Amo você' is just as correct and lands a bit more deliberately — the full pronoun after the verb always carries more weight than the short one before it." },
+  { en: "I'll call you tomorrow.", pt: "Eu {call_you} amanhã.",
+    slots: { call_you: ["te ligo", "vou te ligar"] },
+    group: "Object pronouns", batch: 4,
+    note: "The two accepted answers are the whole placement rule in miniature: one verb → pronoun in front of it ('te ligo'); two verbs → pronoun between them ('vou te ligar')." },
+  { en: "I want to show you something.", pt: "Eu quero te mostrar uma coisa.",
+    group: "Object pronouns", batch: 4 },
+  { en: "Send her the receipt.", pt: "Manda o recibo pra ela.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "This is where English and Portuguese part ways. English stacks two objects ('send her the receipt'); Portuguese can't — you name the thing, then hang the person off 'pra'. The textbook pronoun is 'lhe' ('Manda-lhe o recibo'), which survives in formal service Portuguese ('Em que posso lhe ajudar?') but is not how anyone talks in Rio." },
+  { en: "Pass him the ball.", pt: "Passa a bola pra ele.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun",
+    note: "'Pra ele' / 'pra ela' is the spoken-BR answer to 'to him' / 'to her'. Unlike 'me' and 'te' it comes AFTER the verb and its object — there's no short pronoun to put in front." },
+  { en: "I gave him my number.", pt: "Eu dei meu número pra ele.",
+    group: "Object pronouns", batch: 4,
+    note: "'Eu lhe dei meu número' is correct and you'll read it in writing, but out loud it marks you as formal. 'Pra ele' is the neutral spoken choice." },
+  { en: "Tell her the truth.", pt: "{tell_her} a verdade pra ela.",
+    slots: { tell_her: ["Fala", "Conta"] },
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun" },
+  { en: "I already told them.", pt: "Eu já falei pra eles.",
+    group: "Object pronouns", batch: 4,
+    note: "Plural behaves the same way: pra eles (men or mixed), pra elas (all women), pra vocês (to you all). The textbook 'lhes' belongs to written Portuguese." },
+  { en: "Can you bring us the food?", pt: "Você pode {bring_us}?",
+    slots: { bring_us: ["trazer a comida pra gente", "nos trazer a comida"] },
+    group: "Object pronouns", batch: 4,
+    note: "'Pra gente' is how Brazilians say 'to us' out loud. 'Nos trazer' is perfectly correct — both are accepted — but 'nos' reads like a written report next to 'pra gente'." },
+  { en: "She showed us the house.", pt: "Ela mostrou a casa {showed_us}.",
+    slots: { showed_us: ["pra gente", "pra nós"] },
+    group: "Object pronouns", batch: 4,
+    note: "'A gente' means 'we / us' informally and stays singular, so it's always 'pra gente'. 'Pra nós' is natural too, just a touch more formal." },
+  { en: "Send us the photos.", pt: "Manda as fotos pra gente.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun" },
+  { en: "I saw him yesterday.", pt: "Eu vi ele ontem.",
+    group: "Object pronouns", batch: 4,
+    note: "Textbooks demand 'Eu o vi ontem'. Spoken BR drops the little 'o' and puts the full pronoun after the verb: 'vi ele'. This is one of the widest gaps between written and spoken Brazilian — 'vi ele' gets corrected in a school essay and is what you hear all day in Rio." },
+  { en: "Do you know her?", pt: "Você conhece ela?",
+    group: "Object pronouns", batch: 4,
+    note: "Same pattern as 'vi ele': the direct object comes out as the full pronoun after the verb, not the written 'a' ('Você a conhece?')." },
+  { en: "She loves me.", pt: "Ela me ama.",
+    group: "Object pronouns", batch: 4,
+    note: "The whole system in one line: me and te go BEFORE the verb, ele/ela/eles go AFTER it. 'Ela me ama' — but 'Ela ama ele'." },
+  { en: "Can you help me?", pt: "Você pode me ajudar?",
+    group: "Object pronouns", batch: 4,
+    note: "Ajudar takes the person directly — 'me ajudar', no 'pra'. That split runs under this whole group: ajudar, esperar, ver, conhecer, amar act ON the person, while dar, mandar, falar, mostrar, trazer give something TO them, and that's where 'pra ele / pra gente' shows up." },
+  { en: "She is waiting for you.", pt: "Ela está te esperando.",
+    group: "Object pronouns", batch: 4,
+    note: "With estar + gerund the pronoun goes in front of the gerund: 'está te esperando'. Out loud it collapses to 'tá te esperando'." },
+  { en: "Let me know later.", pt: "Me avisa depois.",
+    group: "Object pronouns", batch: 4,
+    sub: "a command — no subject pronoun" }
 ];
 
-const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions", "Questions", "Time expressions"];
+const GROUPS = ["Present basics", "Ser vs Estar", "Past", "Prepositions", "Questions", "Time expressions", "Object pronouns"];
 const LATEST_BATCH = Math.max(0, ...ALL_CARDS.map(c => c.batch ?? 0));
 
 const MAX_CARTESIAN = 32;
@@ -871,7 +968,7 @@ function render() {
       <div class="card-meta">${escapeHtml(card.group)}</div>
       <div class="card-english">${escapeHtml(card.en)}</div>
       <div class="card-portuguese" id="ptLine"></div>
-      <div class="card-sub">Translate to Portuguese · use explicit subject (eu, você, nós…)</div>
+      <div class="card-sub">Translate to Portuguese · ${escapeHtml(card.sub || "use explicit subject (eu, você, nós…)")}</div>
       <div class="input-row">
         <input class="answer-input" id="answerInput" type="text" placeholder="type the full sentence..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button class="check-btn" id="actionBtn" onclick="handleAction()">→</button>

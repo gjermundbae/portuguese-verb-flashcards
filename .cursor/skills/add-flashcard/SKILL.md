@@ -120,6 +120,7 @@ Read the file before authoring; this is the quick reference.
   pt: "Eu bebo água.",
   group: "Present basics",         // ∈ GROUPS
   batch: 2,                        // optional, = LATEST_BATCH for new drops
+  sub: "a command — no subject pronoun",  // optional, overrides the hint under the prompt
   note: "Only if there's a real gotcha." }
 ```
 With variants:
@@ -129,6 +130,9 @@ With variants:
   slots: { gender_br: ["brasileiro", "brasileira"] },  // first = canonical
   group: "Ser vs Estar" }
 ```
+- The default hint under the English prompt says "use explicit subject (eu, você, nós…)". Imperative
+  cards have no subject, so give them `sub: "a command — no subject pronoun"` instead of leaving a
+  hint that fights the card.
 
 
 ### `nouns.html`
