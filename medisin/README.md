@@ -71,13 +71,21 @@ teaches nothing:
 
 ## How a run behaves
 
-- Right answer: the card leaves the run.
-- Wrong answer: the card goes to the **back of the queue** and comes round again
-  — the deck isn't finished until every card has actually been answered.
-- `Vis fasit`: the card leaves the run, since the student chose to see it.
-- Missed and revealed cards are remembered in `localStorage` per deck, and the
-  `⚑ Vanskelige` chip drills just those on a later visit. Getting one right
-  clears its flag.
+Three buttons sit under every card:
+
+- **`Vis fasit`** reveals the answer and sends the card to the **back of the
+  queue**, then becomes `Neste →`. Being told the answer shouldn't get you out of
+  the card.
+- **`Hopp over`** passes on the card: it leaves the run and is *not* flagged as
+  difficult, since you never claimed not to know it. Disabled once the card is
+  settled.
+- **`Start på nytt`** reshuffles the current filter selection into a fresh run.
+
+Otherwise: a right answer clears the card, and a wrong answer sends it to the
+back of the queue — the deck isn't finished until every card has actually been
+answered. Cards you got wrong or had to look up are remembered in `localStorage`
+per deck, and the `⚑ Vanskelige` chip drills just those on a later visit.
+Getting one right clears its flag.
 
 ## Sources
 

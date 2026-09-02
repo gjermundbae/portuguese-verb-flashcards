@@ -123,9 +123,10 @@ const MedDrill = (function () {
    * Progress kept between visits
    * ------------------------------------------------------------------ */
 
-  /* Cards you have missed or skipped, so "Vanskelige kort" can bring them back
-     on the next visit. Keyed on the question text — stable as long as the
-     wording is. */
+  /* Cards you got wrong or had to look up, so "Vanskelige kort" can bring them
+     back on the next visit. Keyed on the question text — stable as long as the
+     wording is. Cards you merely skipped are not flagged: you never claimed
+     not to know them. */
   function readMisses(deckId) {
     try { return JSON.parse(localStorage.getItem('medMiss:' + deckId)) || {}; }
     catch (e) { return {}; }
@@ -185,7 +186,7 @@ const MedDrill = (function () {
     filled: [],       // per-answer: filled or not, on "nevn alle"-cards
     errorsOnCard: false,
     missedInRun: new Set(),
-    stats: { firstTry: 0, errors: 0, skipped: 0 },
+    stats: { firstTry: 0, errors: 0, revealed: 0, skipped: 0 },
   };
 
   /* ------------------------------------------------------------------ *
@@ -339,7 +340,7 @@ const MedDrill = (function () {
     state.answered = false;
     state.errorsOnCard = false;
     state.missedInRun = new Set();
-    state.stats = { firstTry: 0, errors: 0, skipped: 0 };
+    state.stats = { firstTry: 0, errors: 0, revealed: 0, skipped: 0 };
     render();
   }
 
@@ -402,21 +403,24 @@ const MedDrill = (function () {
 
     if (state.queue.length === 0) {
       markPractised(state.deck.id);
-      const clean = state.stats.errors === 0 && state.stats.skipped === 0;
+      const { firstTry, errors, revealed, skipped } = state.stats;
+      const clean = errors === 0 && revealed === 0 && skipped === 0;
+      const summary = clean
+        ? `Du tok alle ${state.total} kortene på første forsøk.`
+        : `Du kom gjennom alle ${state.total} kortene.` +
+          (skipped ? ` ${skipped} hoppet du over.` : '');
       area.innerHTML = `
         <div class="card done-screen">
           <h2>${clean ? 'Blankt!' : 'Bunken er ferdig'}</h2>
-          <p>${clean
-            ? `Du tok alle ${state.total} kortene på første forsøk.`
-            : `Du kom gjennom alle ${state.total} kortene.`}</p>
+          <p>${summary}</p>
           <div class="result-stats">
             <div class="result-stat">
-              <div class="result-stat-num green">${state.stats.firstTry}</div>
+              <div class="result-stat-num green">${firstTry}</div>
               <div class="result-stat-lbl">Rett på første</div>
             </div>
             <div class="result-stat">
-              <div class="result-stat-num red">${state.stats.errors + state.stats.skipped}</div>
-              <div class="result-stat-lbl">Bommet / hoppet over</div>
+              <div class="result-stat-num red">${errors + revealed}</div>
+              <div class="result-stat-lbl">Bommet / vist fasit</div>
             </div>
           </div>
           <button class="ctrl-btn" data-act="restart" style="font-size:0.8rem;padding:0.6rem 1.4rem;">Kjør igjen &#8635;</button>
@@ -453,14 +457,16 @@ const MedDrill = (function () {
         <div id="revealArea"></div>
       </div>
       <div class="controls">
-        <button class="ctrl-btn" data-act="skip">Vis fasit &rarr;</button>
-        <button class="ctrl-btn" data-act="restart">Start på nytt &#8635;</button>
+        <button class="ctrl-btn" id="revealBtn">Vis fasit</button>
+        <button class="ctrl-btn" id="skipBtn">Hopp over &rarr;</button>
+        <button class="ctrl-btn" id="restartBtn">Start på nytt &#8635;</button>
       </div>
     `;
 
     el('actionBtn').addEventListener('click', handleAction);
-    area.querySelector('[data-act="skip"]').addEventListener('click', skipCard);
-    area.querySelector('[data-act="restart"]').addEventListener('click', buildRun);
+    el('revealBtn').addEventListener('click', handleReveal);
+    el('skipBtn').addEventListener('click', skipCard);
+    el('restartBtn').addEventListener('click', buildRun);
 
     const input = el('answerInput');
     input.addEventListener('keydown', e => { if (e.key === 'Enter') handleAction(); });
@@ -476,22 +482,39 @@ const MedDrill = (function () {
     return specs.map(s => `<strong>${esc(s.canonical)}</strong>`).join(specs.length > 1 ? ' &middot; ' : ' / ');
   }
 
-  /* Settle the card on screen. `cleared` decides whether it leaves the run:
-     a card you got wrong goes to the back of the queue instead, so the deck is
-     not finished until you have actually answered it. */
-  function finishCard(card, specs, ok, cleared) {
+  /* Settle the card on screen.
+       ok:       true = green, false = red, null = neutral (you asked to see it)
+       cleared:  true leaves the run, false goes to the back of the queue
+       flagHard: true records it, false clears it, undefined leaves it alone
+     A card you got wrong is requeued, so the deck is not finished until you
+     have actually answered it. */
+  function finishCard(card, { ok, cleared, flagHard }) {
     state.answered = true;
     const input = el('answerInput');
     const button = el('actionBtn');
     input.disabled = true;
-    input.classList.add(ok ? 'correct' : 'wrong');
-    button.classList.add(ok ? 'go-green' : 'go-red');
+    if (ok !== null) {
+      input.classList.add(ok ? 'correct' : 'wrong');
+      button.classList.add(ok ? 'go-green' : 'go-red');
+    }
     el('revealArea').innerHTML = noteHtml(card);
 
-    if (ok) clearMiss(card); else recordMiss(card);
+    // "Vis fasit" becomes the way forward; skipping is no longer on the table.
+    const reveal = el('revealBtn');
+    if (reveal) reveal.innerHTML = 'Neste &rarr;';
+    const skip = el('skipBtn');
+    if (skip) skip.disabled = true;
+
+    if (flagHard === true) recordMiss(card);
+    else if (flagHard === false) clearMiss(card);
     if (cleared) clearFromQueue(); else moveToBackOfQueue();
 
     setTimeout(() => button.focus(), 0);
+  }
+
+  /** Text for the badge that promises a requeued card will be back. */
+  function againBadge() {
+    return state.queue.length > 1 ? ' <span class="again">kommer igjen senere</span>' : '';
   }
 
   function checkAnswer() {
@@ -510,17 +533,15 @@ const MedDrill = (function () {
         if (!state.missedInRun.has(card.sp)) state.stats.firstTry++;
         feedback.className = 'feedback ok';
         feedback.innerHTML = `&#10003; Riktig — ${fasit(specs)}`;
-        finishCard(card, specs, true, true);
+        finishCard(card, { ok: true, cleared: true, flagHard: false });
       } else {
         state.stats.errors++;
         state.missedInRun.add(card.sp);
         feedback.className = 'feedback err';
-        // With one card left, "later" is right now — don't promise a queue that isn't there.
-        const again = state.queue.length > 1 ? ' <span class="again">kommer igjen senere</span>' : '';
-        feedback.innerHTML = `&#10007; Fasit: ${fasit(specs)}${again}`;
+        feedback.innerHTML = `&#10007; Fasit: ${fasit(specs)}${againBadge()}`;
         input.classList.add('shake');
         setTimeout(() => input.classList.remove('shake'), 400);
-        finishCard(card, specs, false, false);
+        finishCard(card, { ok: false, cleared: false, flagHard: true });
       }
       return;
     }
@@ -561,11 +582,18 @@ const MedDrill = (function () {
     feedback.innerHTML = clean ? '&#10003; Alle på plass.' : '&#10003; Alle på plass — men det tok noen forsøk.';
     // You did produce every answer, so the card is cleared either way — a fumble
     // is remembered through the hard-card flag instead of by requeueing.
-    finishCard(card, specs, clean, true);
+    finishCard(card, { ok: clean, cleared: true, flagHard: !clean });
   }
 
-  function skipCard() {
+  /* "Vis fasit" before answering, "Neste" once the card is settled. */
+  function handleReveal() {
     if (state.answered) { nextCard(); return; }
+    revealAnswer();
+  }
+
+  /* You asked to be told. The card goes to the back of the queue, so you meet it
+     again in the same run rather than getting away with having looked. */
+  function revealAnswer() {
     const card = state.shown;
     const specs = answerSpecs(card);
     const feedback = el('feedback');
@@ -578,13 +606,23 @@ const MedDrill = (function () {
       el('slotText' + i).textContent = spec.canonical;
     });
 
-    state.stats.skipped++;
+    state.stats.revealed++;
     state.missedInRun.add(card.sp);
     state.errorsOnCard = false;
     feedback.className = 'feedback err';
-    feedback.innerHTML = `Fasit: ${fasit(specs)}`;
-    // Asking for the answer takes the card out of the run — you chose to see it.
-    finishCard(card, specs, false, true);
+    feedback.innerHTML = `Fasit: ${fasit(specs)}${againBadge()}`;
+    finishCard(card, { ok: null, cleared: false, flagHard: true });
+  }
+
+  /* "Hopp over" — pass on the card entirely. It leaves the run and is not
+     flagged as difficult, since you never claimed not to know it. */
+  function skipCard() {
+    if (state.answered) return;
+    state.stats.skipped++;
+    state.errorsOnCard = false;
+    clearFromQueue();
+    state.answered = false;
+    render();
   }
 
   /* The queue was already advanced when the card was settled, so moving on is
