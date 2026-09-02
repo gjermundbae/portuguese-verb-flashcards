@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pugg medisin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="drill.css">
+</head>
+<body>
+
+<div class="container hub">
+
+  <header>
+    <h1>Pugg <em>medisin</em></h1>
+    <p>Flashcards for profesjonsstudiet i medisin &middot; UiO</p>
+  </header>
+
+  <a class="daily" href="dagens.html">
+    <div>
+      <div class="daily-title">&#9733; Dagens kort</div>
+      <div class="daily-sub">20 kort på tvers av bunkene &middot; nytt sett hver dag</div>
+    </div>
+    <span class="daily-go">start &rarr;</span>
+  </a>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Humanbiologi</h2>
+      <span class="rule"></span>
+      <span class="hint">modul 1–2</span>
+    </div>
+    <div class="deck-list" data-decks="anatomi,fysiologi"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Sykdomslære</h2>
+      <span class="rule"></span>
+      <span class="hint">modul 3 &amp; 5</span>
+    </div>
+    <div class="deck-list" data-decks="farmakologi,mikrobiologi"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Klinisk hverdag</h2>
+      <span class="rule"></span>
+      <span class="hint">modul 3–8</span>
+    </div>
+    <div class="deck-list" data-decks="skarer,normalverdier"></div>
+  </div>
+
+  <div class="footnote">
+    <p><strong>Hvordan det virker.</strong> Du skriver svaret i stedet for å snu kortet —
+    aktiv gjenkalling sitter bedre enn gjenkjenning. Noen kort ber om flere svar; da fyller du
+    inn ett og ett, i den rekkefølgen du vil. Latinske forkortelser er valgfrie, og enheter
+    trenger du ikke skrive.</p>
+    <p style="margin-top:0.8rem"><strong>Bommer du, blir kortet lagt bakerst i bunken</strong>
+    og kommer igjen før du er ferdig — bunken er ikke tom før du faktisk har svart på alt.
+    Ber du om fasiten med <strong>Vis fasit</strong>, går kortet ut av runden. Begge tilfeller
+    merkes, så du kan hente dem tilbake senere med <strong>&#9873; Vanskelige</strong>.</p>
+    <p style="margin-top:0.8rem"><strong>Kildene.</strong> Antibiotikavalg følger
+    <a href="https://www.helsedirektoratet.no/retningslinjer/antibiotika-i-primaerhelsetjenesten">Helsedirektoratets
+    retningslinjer</a>, referanseområdene følger <a href="https://www.furst.no/analyse-og-klinikk/referanseomrader/">Fürst</a>,
+    og vaksinekortene <a href="https://www.fhi.no/va/vaksinasjonshandboka/vaksinasjon/barnevaksinasjonsprogrammet/">FHIs
+    barnevaksinasjonsprogram</a>. Dette er et puggeverktøy for eksamen — ikke en klinisk
+    oppslagsbok. Slå opp i retningslinjen før du behandler en pasient.</p>
+    <p style="margin-top:0.8rem" id="hubTotals"></p>
+  </div>
+
+</div>
+
+<script src="drill.js"></script>
+<script src="data/anatomi.js"></script>
+<script src="data/fysiologi.js"></script>
+<script src="data/farmakologi.js"></script>
+<script src="data/mikrobiologi.js"></script>
+<script src="data/skarer.js"></script>
+<script src="data/normalverdier.js"></script>
+<script>
+// The deck rows are built from the data, so the card counts can never drift out of
+// sync with what the decks actually hold.
+document.querySelectorAll('[data-decks]').forEach(list => {
+  list.innerHTML = list.dataset.decks.split(',').map(id => {
+    const deck = window.MED_DECKS[id];
+    if (!deck) return '';
+
+    const hard = MedDrill.hardCount(deck);
+    const sist = MedDrill.lastPractised(id);
+    const badges = [
+      hard ? `⚑ ${hard}` : '',
+      sist ? `sist ${sist.slice(8, 10)}.${sist.slice(5, 7)}.` : '',
+    ].filter(Boolean).join(' &middot; ');
+
+    return `
+      <a class="deck" href="${id}.html">
+        <div class="deck-main">
+          <div class="deck-name">${deck.navn}</div>
+          <div class="deck-desc">${deck.beskrivelse} &middot; <em>${deck.moduler}</em></div>
+        </div>
+        <div class="deck-meta">
+          <div class="deck-count">${deck.kort.length} kort</div>
+          <div class="deck-badges">${badges}</div>
+        </div>
+        <span class="deck-arrow">&rarr;</span>
+      </a>`;
+  }).join('');
+});
+
+const decks = Object.values(window.MED_DECKS);
+const total = decks.reduce((sum, deck) => sum + deck.kort.length, 0);
+document.getElementById('hubTotals').textContent =
+  `${total} kort i ${decks.length} bunker.`;
+</script>
+
+</body>
+</html>
