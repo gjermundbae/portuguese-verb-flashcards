@@ -76,9 +76,10 @@ Three buttons sit under every card:
 - **`Vis fasit`** reveals the answer and sends the card to the **back of the
   queue**, then becomes `Neste →`. Being told the answer shouldn't get you out of
   the card.
-- **`Hopp over`** passes on the card: it leaves the run and is *not* flagged as
-  difficult, since you never claimed not to know it. Disabled once the card is
-  settled.
+- **`Hopp over`** takes the card out of the run, and does *not* flag it as
+  difficult, since you never claimed not to know it. It stays live after a miss
+  or a reveal too: having read the answer shouldn't trap you with a card you
+  don't want to see again. On a card you already answered it simply moves on.
 - **`Start på nytt`** reshuffles the current filter selection into a fresh run.
 
 Otherwise: a right answer clears the card, and a wrong answer sends it to the

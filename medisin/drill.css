@@ -393,14 +393,6 @@ header p .nav-div {
 
 .ctrl-btn:hover { background: var(--surface); color: var(--text2); border-color: var(--border2); }
 
-.ctrl-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-  background: none;
-  color: var(--text3);
-  border-color: var(--border);
-}
-
 .done-screen { text-align: center; padding: 2.5rem 1rem; }
 
 .done-screen h2 {

@@ -499,11 +499,10 @@ const MedDrill = (function () {
     }
     el('revealArea').innerHTML = noteHtml(card);
 
-    // "Vis fasit" becomes the way forward; skipping is no longer on the table.
+    // "Vis fasit" becomes the way forward. "Hopp over" stays live: having seen
+    // the answer is no reason to be stuck with the card.
     const reveal = el('revealBtn');
     if (reveal) reveal.innerHTML = 'Neste &rarr;';
-    const skip = el('skipBtn');
-    if (skip) skip.disabled = true;
 
     if (flagHard === true) recordMiss(card);
     else if (flagHard === false) clearMiss(card);
@@ -614,13 +613,23 @@ const MedDrill = (function () {
     finishCard(card, { ok: null, cleared: false, flagHard: true });
   }
 
-  /* "Hopp over" — pass on the card entirely. It leaves the run and is not
-     flagged as difficult, since you never claimed not to know it. */
+  /* "Hopp over" — take the card out of the run, and not flagged as difficult,
+     since you never claimed not to know it. Works after "Vis fasit" too: if you
+     don't want to see the card again, having read the answer shouldn't trap you
+     with it. A card you already answered is gone from the queue anyway, so there
+     the button simply moves on. */
   function skipCard() {
-    if (state.answered) return;
-    state.stats.skipped++;
+    const card = state.shown;
+    if (!card) return;
+
+    const at = state.queue.indexOf(card);
+    if (at !== -1) {
+      state.queue.splice(at, 1);
+      state.stats.skipped++;
+      updateStats();
+    }
+
     state.errorsOnCard = false;
-    clearFromQueue();
     state.answered = false;
     render();
   }
